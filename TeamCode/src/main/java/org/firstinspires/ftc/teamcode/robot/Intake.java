@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
+
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.Locale;
@@ -29,20 +32,35 @@ public class Intake
         }
         catch (Exception e)
         {
-            RobotLog.ee(TAG, "ERROR get hardware map initIntake\n" + e.toString());
+            RobotLog.ee(TAG, "ERROR get hardware map init Motor Intake\n" + e.toString());
         }
 
         try
         {
-            intakeSrvo = hwMap.get(CRServo.class, "intake");
-            intakeSrvo.setDirection(RobotConstants.IN_DIR);
-            intakeSrvo.setPower(0.0);
+            intakeSrvo = hwMap.get(Servo.class, "sweeper1");
+            RobotLog.dd(TAG, "malachi wants to see if this will do something");
+           // intakeSrvo.init(RobotConstants.SWP_SRV);
+            intakeSrvo.setDirection(FORWARD);
+            intakeSrvo.setPosition(1.0);
             lastIntakePwr = 0.0;
             success = true;
         }
         catch (Exception e)
         {
-            RobotLog.ee(TAG, "ERROR get hardware map initIntake\n" + e.toString());
+            RobotLog.ee(TAG, "ERROR get hardware map init Servo Intake 1\n" + e.toString());
+        }
+        try
+        {
+            intakeSrvo2 = hwMap.get(Servo.class, "sweeper2");
+            RobotLog.dd(TAG, "malachi wants to see if this will do something");
+            // intakeSrvo.init(RobotConstants.SWP_SRV);
+            intakeSrvo2.setDirection(FORWARD);
+            intakeSrvo2.setPosition(1.0);
+            lastIntakePwr = 0.0;
+        }
+        catch (Exception e)
+        {
+            RobotLog.ee(TAG, "ERROR get hardware map init Servo Intake 2\n" + e.toString());
         }
 
         return success;
@@ -64,10 +82,10 @@ public class Intake
         }
         else if(intakeSrvo != null)
         {
-            curPwr = intakeSrvo.getPower();
+
+            curPwr = intakeSrvo.getPosition();
         }
     }
-
     public void stop()
     {
         setPwr(0.0);
@@ -75,6 +93,7 @@ public class Intake
 
     public void setPwr(double pwr)
     {
+        RobotLog.dd(TAG,"InsetPwr");
         if(intaker != null && pwr != lastIntakePwr)
         {
             intaker.setPower(pwr);
@@ -82,13 +101,16 @@ public class Intake
         }
         else if(intakeSrvo != null && pwr != lastIntakePwr)
         {
-            intakeSrvo.setPower(pwr);
+            intakeSrvo.setPosition(pwr);
+            intakeSrvo2.setPosition(pwr);
             lastIntakePwr = pwr;
+            RobotLog.dd(TAG,"Intake1pwr: %f, Intake2pwr: %f, LastIntakepwr: %f", intakeSrvo.getPosition(),intakeSrvo2.getPosition(),lastIntakePwr);
         }
     }
 
     private DcMotorEx intaker;
-    private CRServo intakeSrvo;
+    private Servo intakeSrvo;
+    private Servo intakeSrvo2;
 
     protected HardwareMap hwMap;
     private static final String TAG = "SJH_INT";

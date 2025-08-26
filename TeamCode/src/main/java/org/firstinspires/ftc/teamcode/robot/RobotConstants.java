@@ -62,6 +62,7 @@ public class RobotConstants
   public static double IN_ARM_EXT_IN = 0.0;
   public static double IN_ARM_EXT_DEPLOY = 0.2;
   public static DcMotorSimple.Direction IN_DIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction IN2_DIR = DcMotorSimple.Direction.REVERSE;
   public static Motors.MotorModel IN_MOTOR_MOT = Motors.MotorModel.GOBILDA_5202_71_2;
   public static double IN_GEAR = 1.0;
   public static double IN_ACT_SPD = 0.0;
@@ -83,19 +84,21 @@ public class RobotConstants
   public static double[] ARM_LEVS;
   public static double[] EX_LEVS;
   public static int EL_MAX_ENCODER;
-  public static int EL_MIN_ENCODER = 10;
+  public static int EL_MIN_ENCODER = -1000;
+  public static int EL_NEAR_ZERO = 19;
+  public static int EL_MAX_DEVIATION = 30;
 
   public static int ARM_MAX_ENCODER;
-  public static int ARM_MIN_ENCODER = 10;
+  public static int ARM_MIN_ENCODER = -1000;
   //public static double EL_LEV1 = EL_MIN_ENCODER;
   //public static double EL_LEV2 = EL_MIN_ENCODER;
 
-  public static double EL_LEV3 = 10;
-  public static double EL_LEV4 = 3.845;    //For hanging specimen
-  public static int EL_LEV5 = 3200;     //encoder counts, not a level
+  public static double EL_LEV3 = 0;
+  public static double EL_LEV4 = 0;    //For hanging specimen
+  public static int EL_LEV5 = 0;     //encoder counts, not a level
 
-  public static int   EX_MAX = 3200;
-  public static int   EX_MIN = 6;
+  public static int   EX_MAX = 0;
+  public static int   EX_MIN = 0;
   public static double   SLIDE_POWER = 1;
   public static DcMotorSimple.Direction EL_DIR = DcMotorSimple.Direction.REVERSE;
 
@@ -107,7 +110,7 @@ public class RobotConstants
   public static Motors.MotorModel ARM_MOT = Motors.MotorModel.GOBILDA_5202_50_9;
 
   public static DcMotorSimple.Direction ARM_DIR = DcMotorSimple.Direction.FORWARD;
-    public static DcMotorSimple.Direction SLIDE1_DIR = DcMotorSimple.Direction.REVERSE;
+    public static DcMotorSimple.Direction SLIDE1_DIR = DcMotorSimple.Direction.FORWARD;
   public static DcMotorSimple.Direction SLIDE2_DIR = DcMotorSimple.Direction.FORWARD;
 
   public static Double SWP_SRV = 4.8;
@@ -381,10 +384,10 @@ public class RobotConstants
     RobotLog.dd(TAG, "RobotConstants.init() " + chas);
 
     Field.StartPos sPos = (Field.StartPos)startPos;
-    EL_MIN_ENCODER = 10;
-    EL_MAX_ENCODER = 4000;
+    EL_MIN_ENCODER = 0;
+    EL_MAX_ENCODER = 1000;
 
-    ARM_MAX_ENCODER = 10;
+    ARM_MAX_ENCODER = 9999;
     ARM_MIN_ENCODER = -6200;  //-4200
 
     EL_SPD = 1;
@@ -392,26 +395,26 @@ public class RobotConstants
     EL_NUM_LEVS = 8;
     EL_LEVS = new double[EL_NUM_LEVS];
     SLIDECPI = 120;
-    EL_LEVS[0] = 380 / SLIDECPI;
+    EL_LEVS[0] = 0 / SLIDECPI;
     EL_LEVS[1] = EL_MIN_ENCODER / SLIDECPI;
     EL_LEVS[2] = EL_MIN_ENCODER / SLIDECPI;
     EL_LEVS[3] = EL_LEV3;
     EL_LEVS[4] = EL_LEV4;
     EL_LEVS[5] = EL_LEV5 / SLIDECPI;
     EL_LEVS[6] = EL_MAX_ENCODER / SLIDECPI;
-    EL_LEVS[7] = 3000 / SLIDECPI;
+    EL_LEVS[7] = 0 / SLIDECPI;
 
 
 
     ARM_NUM_LEVS = 7;
     ARM_LEVS = new double[ARM_NUM_LEVS];
-    ARM_LEVS[0] = -4.95;  //-2.95
-    ARM_LEVS[1] = -2.4;
-    ARM_LEVS[2] = -1.25;
-    ARM_LEVS[3] = -2.78;
-    ARM_LEVS[4] = -1.71;
-    ARM_LEVS[5] = -1.67;
-    ARM_LEVS[6] = 0.2;
+    ARM_LEVS[0] = 0;  //-2.95
+    ARM_LEVS[1] = 0;
+    ARM_LEVS[2] = 0;
+    ARM_LEVS[3] = 0;
+    ARM_LEVS[4] = 0;
+    ARM_LEVS[5] = 0;
+    ARM_LEVS[6] = 0;
 
     IP_IMG_TOP = 0.20;
     IP_IMG_BOT = 0.80;

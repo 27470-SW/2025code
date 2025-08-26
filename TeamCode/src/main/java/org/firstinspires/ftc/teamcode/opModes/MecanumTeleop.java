@@ -18,8 +18,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.field.ITD_Route;
 import org.firstinspires.ftc.teamcode.field.SpinRoute;
 import org.firstinspires.ftc.teamcode.field.SpinRoutebasket;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
@@ -41,14 +39,11 @@ import java.util.concurrent.TimeUnit;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MAX_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MIN_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_SPD;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_LEVS;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
 
 
 @Config
@@ -81,8 +76,9 @@ public class MecanumTeleop extends InitLinearOpMode
         robot.init(this, chas, true);
         robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
 
-        armButton = hardwareMap.get(TouchSensor .class, "armL0");
+/*        armButton = hardwareMap.get(TouchSensor .class, "armL0");
 
+ */
 //        if(robot.claw != null)
 //        {
 //            /* keep the claw Open in case we have a cone in our grasp */
@@ -91,12 +87,15 @@ public class MecanumTeleop extends InitLinearOpMode
         Pose2d startPose = new Pose2d();
         if(prevOpModeType != BasicBot.OpModeType.AUTO)
         {
-            if (robot.slides != null){
-                robot.initSlides();
-            }
-            if(robot.arm != null)
-            {
-                robot.initArmMot();
+            try {
+                if (robot.slides != null) {
+                    robot.initSlides();
+                }
+                if (robot.arm != null) {
+                    robot.initArmMot();
+                }
+            } catch (Exception e) {
+
             }
             // fo testin
 //            Thread.sleep(3000);
@@ -118,9 +117,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
 
-        spinRoute= new SpinRoute(robot);
 
-        spinRoutebasket= new SpinRoutebasket(robot);
 
 
 
@@ -167,28 +164,7 @@ public class MecanumTeleop extends InitLinearOpMode
     private int ONE_CONSTANT = 1;
 
     void processSensors(){
-        /*if (robot.colorFindDistance() < ONE_CONSTANT && !pixelDetected){
-            robot.pixelPieces ++;
-            pixelDetected = true;
-            if(VERBOSE) {  RobotLog.dd(TAG, "pixel detected: %d, pieces: %d", pixelDetected?1:0, robot.pixelPieces);}
-        }
-        if (pixelDetected && robot.colorFindDistance() > ONE_CONSTANT){
-            pixelDetected = false;
-            if(VERBOSE) { RobotLog.dd(TAG, "pixel detected: %d, pieces: %d", pixelDetected?1:0, robot.pixelPieces);}
-        }
 
-//        RobotLog.vv(TAG, "pixelSensorDistance: %f", robot.colorFindDistance());
-        if (robot.pixelPieces == 3){
-            robot.sweeperServo1.moveAtRate(0);
-            robot.sweeperServo2.moveAtRate(0);
-        }
-
-        if(goBrd == 2){
-            if (robot.rearDistSensor.getDistance(DistanceUnit.CM) < brdDis){
-
-                goBrd = 0;
-            }
-        }*/
     }
 
     private void update()
@@ -209,6 +185,7 @@ public class MecanumTeleop extends InitLinearOpMode
     protected static boolean VERBOSE = RobotConstants.logVerbose;
     private void printTelem()
     {
+
         String cntStr = String.format(Locale.US,"CNTS: %d %d %d %d",
                 cnts[0], cnts[1], cnts[2], cnts[3]);
         String velStr = String.format(Locale.US,"VELS: %d %d %d %d",
@@ -226,8 +203,8 @@ public class MecanumTeleop extends InitLinearOpMode
         dashboard.displayText(l++, String.format(Locale.US,"R_IN %4.2f R %4.2f", raw_fb, fb));
         dashboard.displayText(l++, String.format(Locale.US,"T_IN %4.2f T %4.2f", raw_turn, turn));
 
-        dashboard.displayText(l++, String.format(Locale.US,"Mrk Pos %.2f MvRate %.2f ",
-                lastMrkPos, moveAtRate));
+       // dashboard.displayText(l++, String.format(Locale.US,"Mrk Pos %.2f MvRate %.2f ", lastMrkPos, moveAtRate));
+
         if(null != robot) {
             if (null != robot.slides) {
                 dashboard.displayText(l++, String.format(Locale.US, "elevator encoding %d", robot.slides.getLiftPos()));
@@ -238,16 +215,15 @@ public class MecanumTeleop extends InitLinearOpMode
             }
         }
         dashboard.displayText(l++, String.format(Locale.US, "lyftpowr %4.2f", liftSpd ));
-        dashboard.displayText(14, String.format(Locale.US,"SW Ver SC Build 12_8_2022"));
         //dashboard.displayText(l++,String.format(Locale.US, "PixelDistance: %f", robot.colorFindDistance()));
         dashboard.displayText(l++, String.format(Locale.US, "arm encoder: %d", robot.arm.getCurEnc() ));
-        dashboard.displayText(l++, String.format(Locale.US, "arm limit switch value: %b", armButton.isPressed()));
-
 
         if(VERBOSE) RobotLog.dd(TAG, "TEL SHT:%.1f ARM:%.1f INT:%.1f DRV:%.1f",
             spinTime, liftTime, intTime, drvTime);
         if(VERBOSE) RobotLog.dd(TAG, "TEL U:%.1f C:%.1f D:%.1f P:%.1f L:%.1f F:%.1f W:%.1f",
             u, c, d, p, L, f, w);
+
+
     }
 
     private int logLoop = 0;
@@ -365,16 +341,15 @@ public class MecanumTeleop extends InitLinearOpMode
             if(VERBOSE) {  dashboard.displayText(13, String.format(Locale.US, "D down Pressed %d",stackLvlCnt));}
         }
  */
-        if (robot.arm.getMode() != RUN_TO_POSITION)
-        {
-            double armLimit = Math.min (ARM_MAX_ENCODER,getArmSoftLimit());
-            RobotLog.dd(TAG, "encoder = %d, MIN = %d, MAX = %d, the arm's mode: %s", robot.arm.getCurEnc(), ARM_MIN_ENCODER, ARM_MAX_ENCODER, robot.arm.getMode().name());
-            if (
-                    (liftSpd <= 0 && robot.arm.getCurEnc() > ARM_MIN_ENCODER ) ||
-                            (liftSpd >= 0 && robot.arm.getCurEnc() < armLimit)
-            )
-            {
-                double locSpeedLimit = 1;
+        try{
+            if (robot.arm.getMode() != RUN_TO_POSITION) {
+                double armLimit = Math.min(ARM_MAX_ENCODER, getArmSoftLimit());
+                RobotLog.dd(TAG, "encoder = %d, MIN = %d, MAX = %d, the arm's mode: %s", robot.arm.getCurEnc(), ARM_MIN_ENCODER, ARM_MAX_ENCODER, robot.arm.getMode().name());
+                if (
+                        (liftSpd <= 0 && robot.arm.getCurEnc() > ARM_MIN_ENCODER) ||
+                                (liftSpd >= 0 && robot.arm.getCurEnc() < armLimit)
+                ) {
+                    double locSpeedLimit = 1;
 //                if(liftSpd <= -.1) {
 //                    locSpeedLimit = .5;
 //                    if (robot.elbowMotor.getCurEnc() <= 300) {
@@ -386,15 +361,16 @@ public class MecanumTeleop extends InitLinearOpMode
 //                    }
 //                }
 
-                robot.arm.moveAtControlRate(EL_SPD * liftSpd * locSpeedLimit);
-                RobotLog.dd(TAG, "EL_SPD= %f, lftspd = %f, locSpeed = %f", EL_SPD, liftSpd, locSpeedLimit);
-            }
-            else
-            {
-                robot.arm.moveAtControlRate(0);
-            }
+                    robot.arm.moveAtControlRate(EL_SPD * liftSpd * locSpeedLimit);
+                    RobotLog.dd(TAG, "EL_SPD= %f, lftspd = %f, locSpeed = %f", EL_SPD, liftSpd, locSpeedLimit);
+                } else {
+                    robot.arm.moveAtControlRate(0);
+                }
 
+            }
         }
+        catch(Exception e)
+        {}
 /*
         robot.setClawPos(gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y));
             if(gpad2.pressed(ManagedGamepad.Button.D_RIGHT))
@@ -414,84 +390,44 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
  
-    private void controlClaw()
+    private void controlIntake()
     {
-       double openClaw = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
-        boolean halfClaw = gpad2.just_pressed(ManagedGamepad.Button.R_BUMP);
-        double closeClaw = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
-
-        if(openClaw != 0){
-            robot.claw.openClaw(openClaw);
-        }
-        else if(closeClaw != 0){
-            robot.claw.closeClaw(closeClaw);
-        }
-
-        if(halfClaw){
-            robot.claw.halfClaw(openClaw);
-        }
-/*
-        if (robot.claw != null)
+        double intakePwr = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        //RobotLog.dd(TAG, "intake");
+        if (intakePwr >= -.1 && intakePwr <= .1)
         {
-            if (openClaw > 0.05)
-            {
+            //RobotLog.dd(TAG, "intake not used");
 
-                robot.claw.openClaw(openClaw);
+        robot.intake.setPwr(0);
+        }else
+        {
+            RobotLog.dd(TAG, "working intake");
 
-                RobotLog.dd(TAG, "openclaw: %f", openClaw);
-                robot.claw.K1R2 = 1;
-                robot.claw.Triggr = true;
-                robot.claw.clawFunctions(openClaw);
-
-            }
-            if (closeClaw > 0.05)
-            {
-
-                robot.claw.closeClaw(closeClaw);
-
-                RobotLog.dd(TAG, "closeclaw: %f", closeClaw);
-                robot.claw.K1R2 = 2;
-                robot.claw.Triggr = true;
-                robot.claw.clawFunctions(closeClaw);
-
-            }
+            robot.intake.setPwr(intakePwr);
         }
+      
+/*
 */
     }
 
     private double getSlideSoftLimit() {
-        double x = robot.arm.getCurEnc();
-        return 0.0026 *x*x + 0.4735 * x + 1239.9;
+       return RobotConstants.EL_MAX_ENCODER;
     }
-    private double getArmSoftLimit(){
-        double x = robot.slides.getCurEnc();
-        return 0.0002*x*x - 1.5184*x + 1790;
+    private double getArmSoftLimit() {
+        return ARM_MAX_ENCODER;
     }
 
     private void controlSlides()
     {
 
-        double lftPwr = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        double lftPwr =gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL) -gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
         robot.slides.setLiftSpd(lftPwr, getSlideSoftLimit());
             //robot.elev.moveToCnt(robot.elev.getCurEnc(), RobotConstants.EL_SPD);
         }
 
-    /*    
-    private void presetClaws()
-    {
 
-       if (gpad2.just_pressed(ManagedGamepad.Button.L_BUMP) && (clawLev <= 1)) {
-           clawLev ++;
-           robot.claw.Triggr = false;
-           robot.claw.clawFunctions(clawLev);
-       } if(gpad2.just_pressed(ManagedGamepad.Button.R_BUMP) && (clawLev >= 1)){
-           clawLev --;
-           robot.claw.Triggr = false;
-           robot.claw.clawFunctions(clawLev);
-       }
 
-    }
-     */    
+
 
     private Pose2d tempPose = new Pose2d();
     private int goLeft = 0;
@@ -516,8 +452,9 @@ public class MecanumTeleop extends InitLinearOpMode
 
         //boolean strt =  gpad1.pressed(ManagedGamepad.Button.START);
         boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
-        boolean incr = gpad1.just_pressed(ManagedGamepad.Button.R_BUMP);
-        boolean decr = gpad1.just_pressed(ManagedGamepad.Button.L_BUMP);
+        boolean incr = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
+        boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
+
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
         boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
@@ -641,47 +578,11 @@ public class MecanumTeleop extends InitLinearOpMode
         }
 
 
-        if(spin){
-            if(null != spinRoute) {
-                if (null != spinRoute.trajList) {
-                    robot.drive.setPoseEstimate(spinRoute.getStart());
-                    int trajNum = 0;
-                    autoDriveActive=true;
-
-                    for (TrajectorySequence tSeq : spinRoute.trajList)
-                    {
-                        trajNum++;
-
-                        String seqName = String.format(Locale.US, "Seq %d",
-                                trajNum);
-
-                        mechDrv.followTrajectorySequenceAsync(tSeq);
-                    }
-                }
-            }
-        }
 
 
 
-        if(spinBasket){
-            if(null != spinRoutebasket) {
-                if (null != spinRoutebasket.trajList) {
-                    robot.drive.setPoseEstimate(spinRoutebasket.getStart());
-                    int trajNum = 0;
-                    autoDriveActive=true;
 
-                    for (TrajectorySequence tSeq : spinRoutebasket.trajList)
-                    {
-                        trajNum++;
 
-                        String seqName = String.format(Locale.US, "Seq %d",
-                                trajNum);
-
-                        mechDrv.followTrajectorySequenceAsync(tSeq);
-                    }
-                }
-            }
-        }
 
 /*
         if (rightOne){
@@ -731,72 +632,18 @@ public class MecanumTeleop extends InitLinearOpMode
             brdDis = getBrdDis();   //not for April tags, for distance sensor
         }else*/
 
-        if(goto4Tag){
-        goBrd = goBrd == 0?1:0;
-    }
-
-        targetFound = false;
-        desiredTag  = null;
-
-
-        if(goBrd == 1) {
-            // Step through the list of detected tags and look for a matching tag
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            for (AprilTagDetection detection : currentDetections) {
-                // Look to see if we have size info on this tag.
-                if (detection.metadata != null) {
-                    //  Check to see if we want to track towards this tag.
-                    if ((DESIRED_TAG_ID < 0) || (detection.id%3 == DESIRED_TAG_ID)) {
-                        // Yes, we want to use this tag.
-                        targetFound = true;
-                        desiredTag = detection;
-                        break;  // don't look any further.
-                    } else {
-                        // This tag is in the library, but we do not want to track it right now.
-                        telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-                    }
-                } else {
-                    // This tag is NOT in the library, so we don't have enough information to track to it.
-                    telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-                }
-
-            }
-
-
-        }
 
         RobotLog.dd(TAG, String.format("goLeft: %d, goRight: %d, goBrd: %d, targetFound: %d", goLeft, goRight, goBrd, targetFound?1:0));
 
 //        if(goLeft == 1 || goRight == 1 || goBrd == 2){
 //                velPose = new Pose2d(-BORD_SPD*goBrd, BUTT_SPD*goRight -BUTT_SPD*goLeft, Math.toRadians(0));
 //        } else
-        if(goBrd == 1 && targetFound) {
-            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-            double rangeError = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-            double headingError = desiredTag.ftcPose.bearing - DESIRED_HEADING;
-            double yawError = desiredTag.ftcPose.yaw - DESIRED_YAW;
 
-            // Use the speed and turn "gains" to calculate how we want the robot to move.
-            drive = Range.clip(yawError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-            turnA = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
-            strafe = -Range.clip(-rangeError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
-            //atBrd(rangeError, headingError, yawError);
-
-                velPose = new Pose2d(drive, strafe, turnA);
-            RobotLog.dd(TAG, String.format("drive: %f, turnA: %f, strafe: %f", drive, turnA, strafe));
-        }
-        else{
             velPose = new Pose2d(driveInput, -turn);
-       }
-
-        if(goBrd == 1 && targetFound) {
-            moveRobot(drive, strafe, turnA);
-        }
-        else if (!autoDriveActive) {
             mechDrv.setWeightedDrivePower(velPose);
-        }
 
     }
+
     private void clearDriverOveride(){
         mechDrv.cancelFollowing();
         autoDriveActive=false;
@@ -804,14 +651,7 @@ public class MecanumTeleop extends InitLinearOpMode
         goLeft = 0;
         goBrd = 0;
     }
-    public void atBrd(double rangeError, double headingError, double yawError) {
-//        if(VERBOSE){
-            RobotLog.dd(TAG, String.format("range: %f, heading: %f, yaw: %f", rangeError, headingError, yawError));
-//        }
-        if (rangeError <= 3 && Math.abs(headingError) <=25 && Math.abs(yawError) <= 2){
-            goBrd = 0;
-        }
-    }
+
 
 
 
@@ -1266,43 +1106,17 @@ public class MecanumTeleop extends InitLinearOpMode
 
         }
 
-        if(gpad2.just_pressed(ManagedGamepad.Button.D_RIGHT)) {
-            robot.currentMode = MecanumBot.ElbowPositions.SPECIMEN_MODE;
-            robot.armLevelUp(); //move arm and slides up
-        }
 
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.D_LEFT)) {
-            robot.currentMode = MecanumBot.ElbowPositions.SPECIMEN_MODE;
-            robot.armLevelDown(); //move arm and slides up
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.A)) {
-            robot.hangPos(); //move arm and slides up
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.X)) {
-            robot.specimenPos(); //move arm and slides up
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.Y)) {
+        if(gpad2.just_pressed(ManagedGamepad.Button.B) && !gpad2.pressed(ManagedGamepad.Button.START)) {
             robot.drivePos(); //move arm and slides up
         }
 
-        if(gpad2.pressed(ManagedGamepad.Button.START) && gpad2.just_pressed(ManagedGamepad.Button.X)) {
-            DcMotor.RunMode modeVar;
-            modeVar = robot.arm.getMode();
-            robot.arm.setMode(STOP_AND_RESET_ENCODER);
-            robot.arm.setMode(modeVar);
+
+        if(gpad2.just_pressed(ManagedGamepad.Button.A) && !gpad2.pressed(ManagedGamepad.Button.START)) {
+            robot.pickUp(); //move arm and slides up
         }
 
 
-        if(gpad2.pressed(ManagedGamepad.Button.START) && gpad2.just_pressed(ManagedGamepad.Button.Y)) {
-            DcMotor.RunMode modeVar;
-            modeVar = robot.arm.getMode();
-            robot.arm.moveAtRate(0.3);
-            robot.arm.setMode(RUN_USING_ENCODER);
-        }
 
 
         controlArm();
@@ -1318,8 +1132,8 @@ public class MecanumTeleop extends InitLinearOpMode
         opTimer.reset();
         liftTime = opTimer.milliseconds();
         opTimer.reset();
-
-        controlClaw();
+        spinTime = 0;
+        controlIntake();
 
         intTime = opTimer.milliseconds();
         opTimer.reset();
@@ -1328,7 +1142,17 @@ public class MecanumTeleop extends InitLinearOpMode
     private void processDriverInputs()
     {
         gpad1.update();
+        boolean foundUp = gpad1.just_pressed(ManagedGamepad.Button.L_BUMP);
+        boolean foundDown = gpad1.just_pressed(ManagedGamepad.Button.R_BUMP);
 
+        if(foundUp) {
+
+            robot.releaseFound();
+        }
+        if(foundDown) {
+
+            robot.clampFound();
+        }
         controlDrive();
         drvTime = opTimer.milliseconds();
     }
@@ -1372,7 +1196,7 @@ public class MecanumTeleop extends InitLinearOpMode
             d=opTimer.milliseconds();
             processSensors();
 //            oTimer.reset();
-//            printTelem();
+            printTelem();
 //            p=opTimer.milliseconds();
 //            oTimer.reset();
             doLogging(oTimer.milliseconds());

@@ -322,8 +322,8 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         }catch (InterruptedException e) {
             RobotLog.dd(TAG, "Stopped mid init for arm encoder reset");
         }
-        if(robot.claw != null) {
-            robot.initClaw();
+        if(robot.intake != null) {
+            robot.initIntake();
         }
         try {
             initAprilTag();

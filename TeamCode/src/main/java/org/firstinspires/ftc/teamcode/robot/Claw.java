@@ -10,11 +10,11 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 public class Claw {
 
-    public Claw(HardwareMap map)
+    public Claw(HardwareMap map, String clawservo)
     {
         this.hwMap = map;
         try {
-            clawServo = hwMap.get(Servo.class, "clawservo");
+            clawServo = hwMap.get(Servo.class, clawservo);
         }catch(Exception e){
             RobotLog.ee(TAG, "Unable to find claw");
         }

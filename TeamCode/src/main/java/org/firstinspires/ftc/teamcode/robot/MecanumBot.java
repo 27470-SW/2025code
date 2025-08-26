@@ -49,6 +49,9 @@ public class MecanumBot extends BasicBot
 public Claw claw =null;
 public Lifter slides=null;
 public MotorComponent arm=null;
+public Intake intake=null;
+public Claw foundation1 =null;
+public Claw foundation2 =null;
 
     public double logIntakeCurSpd = 0.0;
 
@@ -56,7 +59,7 @@ public MotorComponent arm=null;
     {
         super();
 
-        name= "B7252";
+        name= "27470";
         bulkCachingMode =  LynxModule.BulkCachingMode.MANUAL;
 
         DRIVE_GEARS =
@@ -87,37 +90,37 @@ public MotorComponent arm=null;
         boolean clrGood = false;
         boolean dist1Good = false;
 
-        try
-        {
-            colorSensor = hwMap.get(NormalizedColorSensor.class, "color1");
-            colorSensor.setGain(25.0f);
-            clrGood = true;
-        }
-        catch(Exception e)
-        {
-            RobotLog.ee(TAG, "ERROR get colorSensor\n" + e.toString());
-        }
-        try
-        {
-            rearDistSensor = hwMap.get(DistanceSensor.class, "rearDist");
-            dist1Good = true;
-        }
-        catch(Exception e)
-        {
-            RobotLog.ee(TAG, "ERROR get distanceSensor1\n" + e.toString());
-        }
-
-        try
-        {
-            pixelColorSensor = hwMap.get(ColorSensor.class, "color2");
-            dist1Good = true;
-        }
-        catch(Exception e)
-        {
-            RobotLog.ee(TAG, "ERROR get distanceSensor1\n" + e.toString());
-        }
-
-        capMap.put("sensor", clrGood && super.imuGood && dist1Good);
+//        try
+//        {
+//            colorSensor = hwMap.get(NormalizedColorSensor.class, "color1");
+//            colorSensor.setGain(25.0f);
+//            clrGood = true;
+//        }
+//        catch(Exception e)
+//        {
+//            RobotLog.ee(TAG, "ERROR get colorSensor\n" + e.toString());
+//        }
+//        try
+//        {
+//            rearDistSensor = hwMap.get(DistanceSensor.class, "rearDist");
+//            dist1Good = true;
+//        }
+//        catch(Exception e)
+//        {
+//            RobotLog.ee(TAG, "ERROR get distanceSensor1\n" + e.toString());
+//        }
+//
+//        try
+//        {
+//            pixelColorSensor = hwMap.get(ColorSensor.class, "color2");
+//            dist1Good = true;
+//        }
+//        catch(Exception e)
+//        {
+//            RobotLog.ee(TAG, "ERROR get distanceSensor1\n" + e.toString());
+//        }
+//
+//        capMap.put("sensor", clrGood && super.imuGood && dist1Good);
     }
 
     @Override
@@ -169,9 +172,12 @@ public MotorComponent arm=null;
         //sweeperServo2 = new MotorComponent("sweeper2", hwMap);
         //intake = new Intake(hwMap);
 
-        claw = new Claw(hwMap);
+        claw = new Claw(hwMap, "clawservo");
         slides = new Lifter( "slide1", "slide2",hwMap);
         arm = new MotorComponent("arm",hwMap);
+        intake = new Intake(hwMap);
+        foundation1 = new Claw(hwMap, "found1");
+        foundation2 = new Claw(hwMap, "found2");
 
         /*redLED1 = hwMap.get(DigitalChannel.class, "red1");
         greenLED1 = hwMap.get(DigitalChannel.class, "green1");
@@ -226,7 +232,7 @@ public MotorComponent arm=null;
         }
         intake.init();
         */
-         claw.init();
+         intake.init();
          arm.init(RobotConstants.ARM_MOT,1);
         arm.setDir(RobotConstants.ARM_DIR);
         //arm.setMode(STOP_AND_RESET_ENCODER);        //TODO: make not happen when comming back from auton;
@@ -254,9 +260,9 @@ public MotorComponent arm=null;
         super.update();
         double botTime = updTimer.milliseconds();
         updTimer.reset();
-        if(claw != null)
+        if(intake != null)
         {
-            claw.update();
+            intake.update();
         }
         if(slides != null)
         {
@@ -323,18 +329,16 @@ public MotorComponent arm=null;
         Thread.sleep(2000);
         arm.moveToCnt(-215, 0.1);
     }
-    public void initClaw() {
-        claw.setClawPos(1);
-        RobotLog.dd(TAG, "claw open init");
+    public void initIntake() {
+        intake.setPwr(0);
+        RobotLog.dd(TAG, "intake off init");
     }
 
     public void initSlides() throws InterruptedException {
        slides.initPos();
     }
 
-    public void setClawPos(double input){
-            claw.setClawPos(input * WR_SENSE );
-    }
+
 
     boolean extenderStopped = true;
 
@@ -367,30 +371,8 @@ public  int slideLevel;
 
     //TODO: combine arm and slide together into a single level concept
     public void armLevelUp(){
-        if(armLevel != ARM_NUM_LEVS - 2){  //change "-2" based on amount of levs needed
+        if(armLevel != ARM_NUM_LEVS - 1){  //change "-2" based on amount of levs needed
             armLevel ++;
-            if(currentMode==ElbowPositions.SPECIMEN_MODE){
-                if (armLevel>4){
-                    armLevel=4;
-                }
-
-
-            }
-            else //currentMode==SAMPLE_MODE
-            {
-                switch (armLevel){
-                    case 1:
-                        break;
-                    case 2:
-                    case 3:
-                    case 4:
-                        armLevel=5;
-                        break;
-                    case 5:
-                    case 6:
-                }
-            }
-
 
             arm.moveToLevel(armLevel, 1);
             slides.moveToLevel(armLevel);
@@ -401,26 +383,8 @@ public  int slideLevel;
     public void armLevelDown() {
         if(armLevel != 0){
             armLevel--;
-            if(currentMode==ElbowPositions.SPECIMEN_MODE){
-                if (armLevel>4){
-                    armLevel=4;
-                }
-            }
-            else //currentMode==SAMPLE_MODE
-            {
-                switch (armLevel) {
-                    case 0:
-                    case 1:
-                        break;
-                    case 2:
-                    case 3:
-                    case 4:
-                        armLevel = 1;
-                        break;
-                    case 5:
-                    case 6:
-                }
-            }
+
+
             arm.moveToLevel(armLevel, -1);
             slides.moveToLevel(armLevel);
         }
@@ -439,11 +403,21 @@ public  int slideLevel;
     }
 
     public void drivePos(){
-        arm.moveToLevel(2, 0.8);
-        slides.moveToLevel(2);
-        armLevel = 2;
+        arm.moveToLevel(1, 0.8);
+        slides.moveToLevel(1);
+        armLevel = 1;
     }
-
+    public void pickUp(){
+        arm.moveToLevel(0, 0.8);
+        slides.moveToLevel(0);
+        armLevel = 0;
+    }
+    public void releaseFound(){
+       foundation1.openClaw(0);
+    }
+    public void clampFound(){
+        foundation1.closeClaw(0);
+    }
 
     public double getElSpd(int targetEncoder){
         if(targetEncoder > slides.getLiftPos()){
