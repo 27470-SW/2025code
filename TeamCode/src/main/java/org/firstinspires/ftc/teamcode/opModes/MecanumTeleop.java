@@ -18,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.field.Field;
+import org.firstinspires.ftc.teamcode.field.ITD_Route;
 import org.firstinspires.ftc.teamcode.field.SpinRoute;
 import org.firstinspires.ftc.teamcode.field.SpinRoutebasket;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
@@ -39,11 +41,14 @@ import java.util.concurrent.TimeUnit;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MAX_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MIN_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_SPD;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_LEVS;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
 
 
 @Config
@@ -203,8 +208,8 @@ public class MecanumTeleop extends InitLinearOpMode
         dashboard.displayText(l++, String.format(Locale.US,"R_IN %4.2f R %4.2f", raw_fb, fb));
         dashboard.displayText(l++, String.format(Locale.US,"T_IN %4.2f T %4.2f", raw_turn, turn));
 
-       // dashboard.displayText(l++, String.format(Locale.US,"Mrk Pos %.2f MvRate %.2f ", lastMrkPos, moveAtRate));
-
+        dashboard.displayText(l++, String.format(Locale.US,"Mrk Pos %.2f MvRate %.2f ",
+                lastMrkPos, moveAtRate));
         if(null != robot) {
             if (null != robot.slides) {
                 dashboard.displayText(l++, String.format(Locale.US, "elevator encoding %d", robot.slides.getLiftPos()));
@@ -215,8 +220,10 @@ public class MecanumTeleop extends InitLinearOpMode
             }
         }
         dashboard.displayText(l++, String.format(Locale.US, "lyftpowr %4.2f", liftSpd ));
+        dashboard.displayText(14, String.format(Locale.US,"SW Ver SC Build 12_8_2022"));
         //dashboard.displayText(l++,String.format(Locale.US, "PixelDistance: %f", robot.colorFindDistance()));
         dashboard.displayText(l++, String.format(Locale.US, "arm encoder: %d", robot.arm.getCurEnc() ));
+        dashboard.displayText(l++, String.format(Locale.US, "arm limit switch value: %b", armButton.isPressed()));
 
         if(VERBOSE) RobotLog.dd(TAG, "TEL SHT:%.1f ARM:%.1f INT:%.1f DRV:%.1f",
             spinTime, liftTime, intTime, drvTime);
@@ -454,7 +461,8 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
         boolean incr = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
         boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
-
+        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.L_BUMP);
+        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.R_BUMP);
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
         boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
@@ -467,6 +475,16 @@ public class MecanumTeleop extends InitLinearOpMode
 
         boolean goto2 = gpad1.just_pressed(ManagedGamepad.Button.A) && !gpad1.pressed(ManagedGamepad.Button.START);
         boolean goto3 = gpad1.just_pressed(ManagedGamepad.Button.B) && !gpad1.pressed(ManagedGamepad.Button.START);
+
+        if (intakeOn)
+        {
+            robot.crAzYIntake.setPwr(1);
+        }
+        else if (intakeRev)
+        {
+            robot.crAzYIntake.setPwr(-1);
+        }
+        else robot.crAzYIntake.setPwr(0);
 
 //        boolean algn = gpad1.just_pressed(ManagedGamepad.Button.A) && !strt;
 //        boolean strf = gpad1.just_pressed(ManagedGamepad.Button.B) && !strt;
@@ -981,7 +999,20 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private void processControllerInputs()
     {
+
+
         gpad2.update();
+        boolean dpadUp= gpad2.pressed(ManagedGamepad.Button.D_UP);
+        boolean dpadLeft= gpad2.pressed(ManagedGamepad.Button.D_LEFT);
+        boolean dpadRight= gpad2.pressed(ManagedGamepad.Button.D_RIGHT);
+        boolean dpadDown= gpad2.pressed(ManagedGamepad.Button.D_DOWN);
+
+        if (dpadDown ||dpadUp||dpadRight||dpadLeft){
+            robot.shooter.setDistance(1);
+        }
+        else {
+            robot.shooter.stop();
+        }
 
         /* Rumble in the last 10 sec of match with custom effect */
 //        if (endGameNotificationRumble.seconds() > END_GAME_TIMEOUT)
@@ -1196,7 +1227,7 @@ public class MecanumTeleop extends InitLinearOpMode
             d=opTimer.milliseconds();
             processSensors();
 //            oTimer.reset();
-            printTelem();
+//            printTelem();
 //            p=opTimer.milliseconds();
 //            oTimer.reset();
             doLogging(oTimer.milliseconds());

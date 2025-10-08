@@ -78,10 +78,10 @@ public class Shooter
         return 2 * (v0 / cir) * SHOOTER_CPR;
     }
 
-    public void shotSpeed(double distance)
+    public void setDistance(double distance)
     {
         dist = distance;
-        cps = calcCps(dist);
+        cps = 1;
         if(shooter != null) shooter.setVelocity(cps);
     }
 
@@ -135,15 +135,7 @@ public class Shooter
 
     private PIDFCoefficients shtPid = RobotConstants.SH_PID;
 
-    public static void main(String[] args)
-    {
-        Shooter shtr = new Shooter(null);
-        for(double dist = 10; dist < 400; dist+=6)
-        {
-            double cps = shtr.calcCps(dist);
-            System.out.println(String.format(Locale.US, "Dist %4.2f cps %.2f rps %.2f v0: %.2f",
-                dist, cps, cps/shtr.SHOOTER_CPR, shtr.getV0()));
-        }
 
-    }
+
+
 }

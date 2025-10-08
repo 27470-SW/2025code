@@ -127,12 +127,12 @@ public class TestShooter extends InitLinearOpMode
 
             if (step_up && distance < MAX_DIST) {
                 distance += INCREMENT;
-                shooter.shotSpeed(distance);
+                shooter.setDistance(distance);
                 cps = shooter.getCmdSpd();
             }
             if (step_down && distance > MIN_DIST) {
                 distance -= INCREMENT;
-                shooter.shotSpeed(distance);
+                shooter.setDistance(distance);
                 cps = shooter.getCmdSpd();
             }
             if (zeroize)
@@ -142,7 +142,7 @@ public class TestShooter extends InitLinearOpMode
             }
             if (normal){
                 distance = FAV_DIST;
-                shooter.shotSpeed(distance);
+                shooter.setDistance(distance);
                 cps = shooter.getCmdSpd();
             }
 

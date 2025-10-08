@@ -47,11 +47,14 @@ public class MecanumBot extends BasicBot
     //public MotorComponent sweeperServo2 = null;
     //public Intake intake = null;
 public Claw claw =null;
+public ServoIntake servoIntake =null;
+public CrAzYintake crAzYIntake =null;
 public Lifter slides=null;
 public MotorComponent arm=null;
 public Intake intake=null;
 public Claw foundation1 =null;
 public Claw foundation2 =null;
+public Shooter shooter =null;
 
     public double logIntakeCurSpd = 0.0;
 
@@ -171,14 +174,16 @@ public Claw foundation2 =null;
         //sweeperServo1 = new MotorComponent("sweeper1", hwMap);
         //sweeperServo2 = new MotorComponent("sweeper2", hwMap);
         //intake = new Intake(hwMap);
-
+        servoIntake = new ServoIntake(hwMap);
+        crAzYIntake = new CrAzYintake(hwMap);
         claw = new Claw(hwMap, "clawservo");
         slides = new Lifter( "slide1", "slide2",hwMap);
         arm = new MotorComponent("arm",hwMap);
         intake = new Intake(hwMap);
         foundation1 = new Claw(hwMap, "found1");
         foundation2 = new Claw(hwMap, "found2");
-
+		shooter = new Shooter(hwMap);
+		
         /*redLED1 = hwMap.get(DigitalChannel.class, "red1");
         greenLED1 = hwMap.get(DigitalChannel.class, "green1");
         redLED2 = hwMap.get(DigitalChannel.class, "red2");
@@ -260,9 +265,22 @@ public Claw foundation2 =null;
         super.update();
         double botTime = updTimer.milliseconds();
         updTimer.reset();
-        if(intake != null)
+        if(claw != null)
         {
-            intake.update();
+            claw.update();
+        }
+        if(shooter != null)
+        {
+            shooter.update();
+        }
+
+        if(servoIntake != null)
+        {
+            servoIntake.update();
+        }
+        if(crAzYIntake != null)
+        {
+            crAzYIntake.update();
         }
         if(slides != null)
         {
@@ -338,6 +356,10 @@ public Claw foundation2 =null;
        slides.initPos();
     }
 
+    public void setClawPos(double input){
+            claw.setClawPos(input * WR_SENSE );
+    }
+
 
 
     boolean extenderStopped = true;
@@ -396,28 +418,20 @@ public  int slideLevel;
         slides.moveToLevel(7);
     }
 
-    public void specimenPos(){
+   /* public void specimenPos(){
         arm.moveToLevel(3, 0.8);
         slides.moveToLevel(3);
         armLevel = 3;
     }
 
+    */
+
     public void drivePos(){
-        arm.moveToLevel(1, 0.8);
-        slides.moveToLevel(1);
-        armLevel = 1;
+        arm.moveToLevel(2, 0.8);
+        slides.moveToLevel(2);
+        armLevel = 2;
     }
-    public void pickUp(){
-        arm.moveToLevel(0, 0.8);
-        slides.moveToLevel(0);
-        armLevel = 0;
-    }
-    public void releaseFound(){
-       foundation1.openClaw(0);
-    }
-    public void clampFound(){
-        foundation1.closeClaw(0);
-    }
+
 
     public double getElSpd(int targetEncoder){
         if(targetEncoder > slides.getLiftPos()){

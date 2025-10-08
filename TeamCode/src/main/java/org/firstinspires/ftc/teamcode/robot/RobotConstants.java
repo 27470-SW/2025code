@@ -384,8 +384,8 @@ public class RobotConstants
     RobotLog.dd(TAG, "RobotConstants.init() " + chas);
 
     Field.StartPos sPos = (Field.StartPos)startPos;
-    EL_MIN_ENCODER = 0;
-    EL_MAX_ENCODER = 1000;
+    EL_MIN_ENCODER = 10;
+    EL_MAX_ENCODER = 4000;
 
     ARM_MAX_ENCODER = 9999;
     ARM_MIN_ENCODER = -6200;  //-4200
