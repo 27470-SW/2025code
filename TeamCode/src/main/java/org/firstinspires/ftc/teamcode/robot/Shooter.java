@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.Locale;
@@ -36,6 +37,22 @@ public class Shooter
         {
             RobotLog.ee(TAG, "ERROR get hardware map initShooter\n" + e.toString());
         }
+        try
+        {
+            moveShooter1 = hwMap.get(Servo.class, "shooterTraj1");
+            moveShooter1.setPosition(0);
+            moveShooter2 = hwMap.get(Servo.class, "shooterTraj2");
+            moveShooter2.setPosition(0);
+            success = true;
+        }
+        catch (Exception e)
+        {
+            RobotLog.ee(TAG, "ERROR get hardware map initShooter\n" + e.toString());
+        }
+
+        shooter1 = new Transition("shooter1", hwMap);
+        shooter2 = new Transition("shooter2", hwMap);
+        shooter3 = new Transition("shooter3", hwMap);
 
         setPIDF(new PIDFCoefficients(80.0, 0.0, 0.0,14.9));
 
@@ -63,6 +80,8 @@ public class Shooter
     {
         cps = 0.0;
         if(shooter != null) shooter.setVelocity(cps);
+        if(moveShooter1 != null) moveShooter1.setPosition(encPos*1);
+        if(moveShooter2 != null) moveShooter2.setPosition(encPos*1);
     }
 
     private static final double g = -9.81 *3.28084 *12;
@@ -126,6 +145,11 @@ public class Shooter
     private double curSpd = 0;
     protected HardwareMap hwMap;
     public DcMotorEx shooter = null;
+    private Servo moveShooter1 = null;
+    private Servo moveShooter2 = null;
+    private Transition shooter1 = null;
+    private Transition shooter2 = null;
+    private Transition shooter3 = null;
     private static final String TAG = "SJH_SHT";
     private double dist = 0;
     private double cps = 0;
