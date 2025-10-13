@@ -51,9 +51,6 @@ public ServoIntake servoIntake =null;
 public CrAzYintake crAzYIntake =null;
 public Lifter slides=null;
 public MotorComponent arm=null;
-public Intake intake=null;
-public Claw foundation1 =null;
-public Claw foundation2 =null;
 public Shooter shooter =null;
 
     public double logIntakeCurSpd = 0.0;
@@ -179,11 +176,7 @@ public Shooter shooter =null;
         claw = new Claw(hwMap, "clawservo");
         slides = new Lifter( "slide1", "slide2",hwMap);
         arm = new MotorComponent("arm",hwMap);
-        intake = new Intake(hwMap);
-        foundation1 = new Claw(hwMap, "found1");
-        foundation2 = new Claw(hwMap, "found2");
-		shooter = new Shooter(hwMap);
-		
+        shooter = new Shooter(hwMap);
         /*redLED1 = hwMap.get(DigitalChannel.class, "red1");
         greenLED1 = hwMap.get(DigitalChannel.class, "green1");
         redLED2 = hwMap.get(DigitalChannel.class, "red2");
@@ -237,7 +230,8 @@ public Shooter shooter =null;
         }
         intake.init();
         */
-         intake.init();
+         claw.init();
+        shooter.init();
          arm.init(RobotConstants.ARM_MOT,1);
         arm.setDir(RobotConstants.ARM_DIR);
         //arm.setMode(STOP_AND_RESET_ENCODER);        //TODO: make not happen when comming back from auton;
@@ -347,9 +341,9 @@ public Shooter shooter =null;
         Thread.sleep(2000);
         arm.moveToCnt(-215, 0.1);
     }
-    public void initIntake() {
-        intake.setPwr(0);
-        RobotLog.dd(TAG, "intake off init");
+    public void initClaw() {
+        claw.setClawPos(1);
+        RobotLog.dd(TAG, "claw open init");
     }
 
     public void initSlides() throws InterruptedException {

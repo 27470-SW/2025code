@@ -47,7 +47,13 @@ public class Transition {
         setTransitionPos(percent);
     }
 
+    public void stop(){
+        percent = transitionServo.getPosition();
+        setTransitionPos(percent);
+    }
+
     public boolean init(){
+        setTransitionPos(TRANSITION_RESTPOINT);
         return true;
     }
     public double percent;

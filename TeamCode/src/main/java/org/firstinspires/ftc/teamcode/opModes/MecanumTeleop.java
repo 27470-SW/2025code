@@ -49,6 +49,8 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_LEVS;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
+import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
+import static java.lang.Math.abs;
 
 
 @Config
@@ -399,20 +401,17 @@ public class MecanumTeleop extends InitLinearOpMode
  
     private void controlIntake()
     {
-        double intakePwr = -gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
-        //RobotLog.dd(TAG, "intake");
-        if (intakePwr >= -.1 && intakePwr <= .1)
-        {
-            //RobotLog.dd(TAG, "intake not used");
+       double intakeOn = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
+        double intakeOff = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
 
-        robot.intake.setPwr(0);
-        }else
-        {
-            RobotLog.dd(TAG, "working intake");
-
-            robot.intake.setPwr(intakePwr);
+        if(intakeOn != 0){
+            robot.servoIntake.intakeOn(intakeOn);
         }
-      
+        else if(intakeOff != 0)
+            robot.servoIntake.intakeOff();
+
+
+
 /*
 */
     }
@@ -591,7 +590,7 @@ public class MecanumTeleop extends InitLinearOpMode
         turn = turn * spdScl;
         Pose2d velPose;
         Timer timer = new Timer();
-        if(Math.abs(lr)+Math.abs(fb) > .25){        //if joystick is being used
+        if(abs(lr)+ abs(fb) > .25){        //if joystick is being used
            clearDriverOveride();
         }
 
@@ -874,9 +873,9 @@ public class MecanumTeleop extends InitLinearOpMode
             double rightBackPower    =  x -y +yaw;
 
             // Normalize wheel powers to be less than 1.0
-            double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            double max = Math.max(abs(leftFrontPower), abs(rightFrontPower));
+            max = Math.max(max, abs(leftBackPower));
+            max = Math.max(max, abs(rightBackPower));
 
             if (max > 1.0) {
                 leftFrontPower /= max;
@@ -970,13 +969,13 @@ public class MecanumTeleop extends InitLinearOpMode
     private boolean comparePoses(Pose2d p1, Pose2d p2)
     {
         boolean similar = true;
-        if(Math.abs(p1.getX()-p2.getX()) > POSE_EQUAL){
+        if(abs(p1.getX()-p2.getX()) > POSE_EQUAL){
             similar = false;
         }
-        if(Math.abs(p1.getY()-p2.getY()) > POSE_EQUAL){
+        if(abs(p1.getY()-p2.getY()) > POSE_EQUAL){
             similar = false;
         }
-        if(Math.abs(Math.toDegrees(p1.getHeading())-Math.toDegrees(p2.getHeading()))/5 > POSE_EQUAL){
+        if(abs(Math.toDegrees(p1.getHeading())-Math.toDegrees(p2.getHeading()))/5 > POSE_EQUAL){
             similar = false;
         }
         return similar;
@@ -1006,12 +1005,27 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean dpadLeft= gpad2.pressed(ManagedGamepad.Button.D_LEFT);
         boolean dpadRight= gpad2.pressed(ManagedGamepad.Button.D_RIGHT);
         boolean dpadDown= gpad2.pressed(ManagedGamepad.Button.D_DOWN);
+        double rightTrig = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
+        double leftJoyY = gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
 
         if (dpadDown ||dpadUp||dpadRight||dpadLeft){
             robot.shooter.setDistance(1);
+            if(rightTrig >= 0.3){
+                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
+                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT);
+                if(dpadDown || dpadUp) robot.shooter.shoot(CENTER);
+            }
         }
         else {
-            robot.shooter.stop();
+            robot.shooter.stopWheel();
+        }
+
+        if (abs(leftJoyY) >= 0.3){
+            robot.shooter.changeShootTraj(leftJoyY);
+
+        }
+        else {
+            robot.shooter.changeShootTraj(0);
         }
 
         /* Rumble in the last 10 sec of match with custom effect */
@@ -1143,10 +1157,6 @@ public class MecanumTeleop extends InitLinearOpMode
         }
 
 
-        if(gpad2.just_pressed(ManagedGamepad.Button.A) && !gpad2.pressed(ManagedGamepad.Button.START)) {
-            robot.pickUp(); //move arm and slides up
-        }
-
 
 
 
@@ -1173,17 +1183,7 @@ public class MecanumTeleop extends InitLinearOpMode
     private void processDriverInputs()
     {
         gpad1.update();
-        boolean foundUp = gpad1.just_pressed(ManagedGamepad.Button.L_BUMP);
-        boolean foundDown = gpad1.just_pressed(ManagedGamepad.Button.R_BUMP);
 
-        if(foundUp) {
-
-            robot.releaseFound();
-        }
-        if(foundDown) {
-
-            robot.clampFound();
-        }
         controlDrive();
         drvTime = opTimer.milliseconds();
     }

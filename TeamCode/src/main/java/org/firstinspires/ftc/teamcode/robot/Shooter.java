@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -49,10 +50,28 @@ public class Shooter
         {
             RobotLog.ee(TAG, "ERROR get hardware map initShooter\n" + e.toString());
         }
+        try
+        {
+            moveShooterM = hwMap.get(DcMotorEx.class, "shooterTrajM");
+            moveShooterM.setDirection(DcMotor.Direction.FORWARD);
+            moveShooterM.setPower(0);
+            moveShooterM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            moveShooterM.setMode(RUN_USING_ENCODER);
+            success = true;
+        }
+        catch (Exception e)
+        {
+            RobotLog.ee(TAG, "ERROR get hardware map initShooter\n" + e.toString());
+
+        }
 
         shooter1 = new Transition("shooter1", hwMap);
         shooter2 = new Transition("shooter2", hwMap);
         shooter3 = new Transition("shooter3", hwMap);
+        if(shooter1 != null) shooter1.init();
+        if(shooter2 != null) shooter2.init();
+        if(shooter3 != null) shooter3.init();
 
         setPIDF(new PIDFCoefficients(80.0, 0.0, 0.0,14.9));
 
@@ -68,6 +87,9 @@ public class Shooter
             encPos = shooter.getCurrentPosition();
             curSpd = shooter.getVelocity();
         }
+        if(shooter1 != null) shooter1.update();
+        if(shooter2 != null) shooter2.update();
+        if(shooter3 != null) shooter3.update();
     }
 
     public String toString()
@@ -80,10 +102,17 @@ public class Shooter
     {
         cps = 0.0;
         if(shooter != null) shooter.setVelocity(cps);
-        if(moveShooter1 != null) moveShooter1.setPosition(encPos*1);
-        if(moveShooter2 != null) moveShooter2.setPosition(encPos*1);
+        if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
+        if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
+        if(moveShooterM != null) moveShooterM.setVelocity(cps);
+        shooter1.stop();
+        shooter2.stop();
+        shooter3.stop();
     }
-
+public void stopWheel(){
+        cps = 0.0;
+    if(shooter != null) shooter.setVelocity(cps);
+}
     private static final double g = -9.81 *3.28084 *12;
     private static final double height = 35;
     private static final double heightOfShooter = 10;
@@ -110,6 +139,18 @@ public class Shooter
         shtmode = mode;
     }
 
+    public void changeShootTraj(double speed){
+        try {
+            if (moveShooter1.getPosition() == 0 && speed < 0) return;
+            if (moveShooter1.getPosition() == 1 && speed > 0) return;
+            moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
+            moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
+            moveShooterM.setPower(speed);
+        }catch(Exception e){
+            RobotLog.dd(TAG, "unable to change Shoot Trajectory");
+        }
+    }
+
     public void shootPower(double pwr)
     {
         setShootMode(RUN_WITHOUT_ENCODER);
@@ -120,6 +161,20 @@ public class Shooter
     {
         this.cps = cps;
         if(shooter != null) shooter.setVelocity(cps);
+    }
+
+    public void shoot(BALL_CHOICE ball){
+        switch (ball){
+            case LEFT:
+                shooter1.startTransition();
+                break;
+            case CENTER:
+                shooter2.startTransition();
+                break;
+            case RIGHT:
+                shooter3.startTransition();
+                break;
+        }
     }
 
     public double getV0() {return v0;}
@@ -145,6 +200,7 @@ public class Shooter
     private double curSpd = 0;
     protected HardwareMap hwMap;
     public DcMotorEx shooter = null;
+    public DcMotorEx moveShooterM = null;
     private Servo moveShooter1 = null;
     private Servo moveShooter2 = null;
     private Transition shooter1 = null;
@@ -159,7 +215,11 @@ public class Shooter
 
     private PIDFCoefficients shtPid = RobotConstants.SH_PID;
 
-
+    public enum BALL_CHOICE {
+        RIGHT,
+        LEFT,
+        CENTER
+    }
 
 
 }
