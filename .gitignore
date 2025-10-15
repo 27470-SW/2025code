@@ -4,6 +4,8 @@
 *.ap_
 *.aab
 !libs/*.aar
+.gradle
+.idea
 
 # Files for the ART/Dalvik VM
 *.dex
