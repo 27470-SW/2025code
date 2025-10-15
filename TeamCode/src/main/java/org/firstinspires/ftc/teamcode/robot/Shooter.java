@@ -40,10 +40,10 @@ public class Shooter
         }
         try
         {
-            moveShooter1 = hwMap.get(Servo.class, "shooterTraj1");
-            moveShooter1.setPosition(0);
-            moveShooter2 = hwMap.get(Servo.class, "shooterTraj2");
-            moveShooter2.setPosition(0);
+            //moveShooter1 = hwMap.get(Servo.class, "shooterTraj1");
+            //moveShooter1.setPosition(0);
+            //moveShooter2 = hwMap.get(Servo.class, "shooterTraj2");
+            //moveShooter2.setPosition(0);
             success = true;
         }
         catch (Exception e)
@@ -102,8 +102,8 @@ public class Shooter
     {
         cps = 0.0;
         if(shooter != null) shooter.setVelocity(cps);
-        if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
-        if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
+        //if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
+        //if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
         if(moveShooterM != null) moveShooterM.setVelocity(cps);
         shooter1.stop();
         shooter2.stop();
@@ -129,8 +129,7 @@ public void stopWheel(){
     public void setDistance(double distance)
     {
         dist = distance;
-        cps = 1;
-        if(shooter != null) shooter.setVelocity(cps);
+        if(shooter != null) shooter.setPower(-1);
     }
 
     public void setShootMode(DcMotor.RunMode mode)
@@ -141,11 +140,12 @@ public void stopWheel(){
 
     public void changeShootTraj(double speed){
         try {
-            if (moveShooter1.getPosition() == 0 && speed < 0) return;
-            if (moveShooter1.getPosition() == 1 && speed > 0) return;
-            moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
-            moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
+           // if (moveShooter1.getPosition() == 0 && speed < 0) return;
+            //if (moveShooter1.getPosition() == 1 && speed > 0) return;
+            //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
+            //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
             moveShooterM.setPower(speed);
+            RobotLog.dd(TAG, "Set power to speed :%f",speed);
         }catch(Exception e){
             RobotLog.dd(TAG, "unable to change Shoot Trajectory");
         }

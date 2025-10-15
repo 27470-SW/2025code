@@ -32,11 +32,12 @@ public class Transition {
     }
 
     public void update(){
-        if(TRANSITION_ENDPOINT == transitionServo.getPosition())
-        {
-            percent = TRANSITION_RESTPOINT;
-        }
-        setTransitionPos(percent);
+        try {
+            if (TRANSITION_ENDPOINT == transitionServo.getPosition()) {
+                percent = TRANSITION_RESTPOINT;
+            }
+            setTransitionPos(percent);
+        }catch(Exception e){}
     }
 
     public void startTransition(){

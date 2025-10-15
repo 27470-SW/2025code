@@ -230,6 +230,7 @@ public Shooter shooter =null;
         }
         intake.init();
         */
+        crAzYIntake.init();
          claw.init();
         shooter.init();
          arm.init(RobotConstants.ARM_MOT,1);

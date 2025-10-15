@@ -221,12 +221,15 @@ public class MecanumTeleop extends InitLinearOpMode
                 dashboard.displayText(l++, String.format(Locale.US, "rear distance %f", robot.rearDistSensor.getDistance(DistanceUnit.CM)));
             }
         }
-        dashboard.displayText(l++, String.format(Locale.US, "lyftpowr %4.2f", liftSpd ));
-        dashboard.displayText(14, String.format(Locale.US,"SW Ver SC Build 12_8_2022"));
-        //dashboard.displayText(l++,String.format(Locale.US, "PixelDistance: %f", robot.colorFindDistance()));
-        dashboard.displayText(l++, String.format(Locale.US, "arm encoder: %d", robot.arm.getCurEnc() ));
-        dashboard.displayText(l++, String.format(Locale.US, "arm limit switch value: %b", armButton.isPressed()));
-
+        try {
+            dashboard.displayText(l++, String.format(Locale.US, "lyftpowr %4.2f", liftSpd));
+            dashboard.displayText(14, String.format(Locale.US, "SW Ver SC Build 12_8_2022"));
+            //dashboard.displayText(l++,String.format(Locale.US, "PixelDistance: %f", robot.colorFindDistance()));
+            dashboard.displayText(l++, String.format(Locale.US, "arm encoder: %d", robot.arm.getCurEnc()));
+            dashboard.displayText(l++, String.format(Locale.US, "arm limit switch value: %b", armButton.isPressed()));
+        } catch (Exception e){
+            System.out.println("something is wrong on line 231");
+        }
         if(VERBOSE) RobotLog.dd(TAG, "TEL SHT:%.1f ARM:%.1f INT:%.1f DRV:%.1f",
             spinTime, liftTime, intTime, drvTime);
         if(VERBOSE) RobotLog.dd(TAG, "TEL U:%.1f C:%.1f D:%.1f P:%.1f L:%.1f F:%.1f W:%.1f",
@@ -267,169 +270,8 @@ public class MecanumTeleop extends InitLinearOpMode
     boolean joystickUsed = false;
     int targetEncoder = 0;
 
-    private void controlArm()
-    {
 
 
-        if(robot.arm == null) return;
-        boolean start = gpad2.pressed(ManagedGamepad.Button.START);
-        double lftPwr = -gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-        /* Move the Elevator to desired HuB level */
-       // boolean armLevelUp   = gpad2.just_pressed(ManagedGamepad.Button.D_UP);
-        //boolean armLevelDown   = gpad2.just_pressed(ManagedGamepad.Button.D_DOWN);
-        if (lftPwr >= -.1 && lftPwr <= .1)
-        {
-            if(robot.arm.getMode() == RUN_TO_POSITION)
-            {
-
-
-            }
-            else
-            {
-                if(joystickUsed == true){
-                    targetEncoder = robot.arm.getCurEnc();
-                    joystickUsed = false;
-                }
-                robot.arm.moveToCnt(targetEncoder, ARM_SPD);
-                RobotLog.dd(TAG, "setting arm to encoder: %d", targetEncoder);
-
-                if(VERBOSE) { dashboard.displayText(13, String.format(Locale.US, "Target Encoder %d",targetEncoder));}
-            }
-
-        }
-        else
-        {
-            robot.arm.setMode(RUN_USING_ENCODER);
-            liftSpd = lftPwr;
-            joystickUsed = true;
-            RobotLog.dd(TAG, "setting arm mode to RUN_USING_ENCODER");
-
-            //robot.elev.moveToCnt(robot.elev.getCurEnc(), RobotConstants.EL_SPD);
-        }
-
-        int offset = 1;
-        //not working. why you ask? figure it out.
-//        if (robot.elbowMotor.getCurEnc() < -1600 && robot.elbowMotor.getCurEnc() > -1675){
-//            stackLvlCnt = 2;
-//        }
-//        if (robot.elbowMotor.getCurEnc() < -1800 && robot.elbowMotor.getCurEnc() > -1900){
-//            stackLvlCnt = 3;
-//        }
-//        if (robot.elbowMotor.getCurEnc() < -2100 && robot.elbowMotor.getCurEnc() > -2200){
-//            stackLvlCnt = 4;
-//        }
-/*        if (armLevelUp)
-        {
-            if (stackLvlCnt < EL_NUM_LEVS -1)
-            {
-                stackLvlCnt++;
-                robot.arm.moveToLevel(stackLvlCnt, EL_SPD);
-
-            }
-            else
-            {
-
-            }
-
-            if(VERBOSE) {  dashboard.displayText(13, String.format(Locale.US, "D up Pressed %d",stackLvlCnt));}
-        }
-        else if (armLevelDown)
-        {
-            if (stackLvlCnt > 0)
-            {
-                stackLvlCnt--;
-                robot.arm.moveToLevel(stackLvlCnt, EL_SPD_DWN);
-
-            }
-            else
-            {
-                stackLvlCnt = EL_NUM_LEVS - 1;
-                robot.arm.moveToLevel(stackLvlCnt, EL_SPD);
-            }
-
-            if(VERBOSE) {  dashboard.displayText(13, String.format(Locale.US, "D down Pressed %d",stackLvlCnt));}
-        }
- */
-        try{
-            if (robot.arm.getMode() != RUN_TO_POSITION) {
-                double armLimit = Math.min(ARM_MAX_ENCODER, getArmSoftLimit());
-                RobotLog.dd(TAG, "encoder = %d, MIN = %d, MAX = %d, the arm's mode: %s", robot.arm.getCurEnc(), ARM_MIN_ENCODER, ARM_MAX_ENCODER, robot.arm.getMode().name());
-                if (
-                        (liftSpd <= 0 && robot.arm.getCurEnc() > ARM_MIN_ENCODER) ||
-                                (liftSpd >= 0 && robot.arm.getCurEnc() < armLimit)
-                ) {
-                    double locSpeedLimit = 1;
-//                if(liftSpd <= -.1) {
-//                    locSpeedLimit = .5;
-//                    if (robot.elbowMotor.getCurEnc() <= 300) {
-//                        locSpeedLimit = .3;
-//                    } else if (robot.elbowMotor.getCurEnc() <= 200) {
-//                        locSpeedLimit = .15;
-//                    } else if (robot.elbowMotor.getCurEnc() <= 100) {
-//                        locSpeedLimit = .075;
-//                    }
-//                }
-
-                    robot.arm.moveAtControlRate(EL_SPD * liftSpd * locSpeedLimit);
-                    RobotLog.dd(TAG, "EL_SPD= %f, lftspd = %f, locSpeed = %f", EL_SPD, liftSpd, locSpeedLimit);
-                } else {
-                    robot.arm.moveAtControlRate(0);
-                }
-
-            }
-        }
-        catch(Exception e)
-        {}
-/*
-        robot.setClawPos(gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y));
-            if(gpad2.pressed(ManagedGamepad.Button.D_RIGHT))
-            {
-                robot.setClawPos(.2);
-                if(VERBOSE) { dashboard.displayText(12, String.format(Locale.US, "manually adjusting wrist"));}
-            }
-            if(gpad2.pressed(ManagedGamepad.Button.D_LEFT))
-            {
-                robot.setClawPos(-.2);
-                if(VERBOSE) { dashboard.displayText(12, String.format(Locale.US, "manually adjusting wrist"));}
-            }
-*/
-        if(VERBOSE) { dashboard.displayText(8, String.format(Locale.US, "extender motor: %d", robot.slides.getLiftPos()));
-        dashboard.displayText(15, String.format(Locale.US, "arm level: %d, encoder: %d, power: %f ",robot.armLevel,robot.arm.getCurEnc(),robot.arm.getPwr()));}
-    }
-
-
- 
-    private void controlIntake()
-    {
-       double intakeOn = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
-        double intakeOff = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
-
-        if(intakeOn != 0){
-            robot.servoIntake.intakeOn(intakeOn);
-        }
-        else if(intakeOff != 0)
-            robot.servoIntake.intakeOff();
-
-
-
-/*
-*/
-    }
-
-    private double getSlideSoftLimit() {
-       return RobotConstants.EL_MAX_ENCODER;
-    }
-    private double getArmSoftLimit() {
-        return ARM_MAX_ENCODER;
-    }
-
-    private void controlSlides()
-    {
-
-        double lftPwr =gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL) -gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
-        robot.slides.setLiftSpd(lftPwr, getSlideSoftLimit());
-            //robot.elev.moveToCnt(robot.elev.getCurEnc(), RobotConstants.EL_SPD);
-        }
 
 
 
@@ -466,97 +308,21 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
         boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
 //        boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
-        boolean drvbrd = gpad1.just_pressed(ManagedGamepad.Button.A) && !gpad1.pressed(ManagedGamepad.Button.START);
-        boolean rightOne = gpad1.just_pressed(ManagedGamepad.Button.D_RIGHT);
-        boolean leftOne = gpad1.just_pressed(ManagedGamepad.Button.D_LEFT);
-        boolean spin = gpad1.just_pressed(ManagedGamepad.Button.B);
-        boolean spinBasket = gpad1.just_pressed(ManagedGamepad.Button.X);
-
-        boolean goto2 = gpad1.just_pressed(ManagedGamepad.Button.A) && !gpad1.pressed(ManagedGamepad.Button.START);
-        boolean goto3 = gpad1.just_pressed(ManagedGamepad.Button.B) && !gpad1.pressed(ManagedGamepad.Button.START);
 
         if (intakeOn)
         {
             robot.crAzYIntake.setPwr(1);
+            RobotLog.dd(TAG,"intakeon");
+
         }
         else if (intakeRev)
         {
             robot.crAzYIntake.setPwr(-1);
+            RobotLog.dd(TAG,"intakereverse");
+
         }
         else robot.crAzYIntake.setPwr(0);
 
-//        boolean algn = gpad1.just_pressed(ManagedGamepad.Button.A) && !strt;
-//        boolean strf = gpad1.just_pressed(ManagedGamepad.Button.B) && !strt;
-//        boolean auto = gpad1.just_pressed(ManagedGamepad.Button.X);
-//
-//        if(algn || strf || auto)
-//        {
-//            if(autoDriveActive)
-//            {
-//                mechDrv.cancelFollowing();
-//                autoDriveActive = false;
-//                mechDrv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                autoDriveActive = false;
-//            }
-//            else
-//            {
-//                mechDrv.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//                if(algn)
-//                {
-//                    int sh = 1;
-//                    if(robot.getAlliance() == Field.Alliance.BLUE) sh = -1;
-//
-//                    double dstAng = sh * Math.PI/2.0;
-//                    double curAng = poseEstimate.getHeading();
-//
-//                    RobotLog.dd(TAG, "Auto turning from %.2f to %.2f", curAng, dstAng);
-//
-//                    mechDrv.turnAsync(dstAng - curAng);
-//                    autoDriveActive = true;
-//                }
-//
-//                if(strf)
-//                {
-//                    int sh = 1;
-//                    if(robot.getAlliance() == Field.Alliance.BLUE) sh = -1;
-//
-//                    Pose2d dstPose = new Pose2d(Field.halfField - RobotConstants.BOT_WID/2.0 -0.5,
-//                        poseEstimate.getY(), sh * Math.PI/2.0);
-//                    Pose2d curPose = poseEstimate;
-//
-//                    RobotLog.dd(TAG, "Auto strafing from %s to %s", curPose, dstPose);
-//
-//                    TrajectorySequenceBuilder tsb = new TrajectorySequenceBuilder(
-//                        poseEstimate, poseEstimate.getHeading(),
-//                        RobotConstants.defVelConstraint, RobotConstants.defAccelConstraint,
-//                        RobotConstants.MAX_ANG_VEL, RobotConstants.MAX_ANG_ACCEL);
-//
-//                    tsb.lineToLinearHeading(dstPose);
-//
-//                    TrajectorySequence tsq = tsb.build();
-//
-//                    mechDrv.followTrajectorySequenceAsync(tsq);
-//
-//                    autoDriveActive = true;
-//                }
-//
-//                if(auto)
-//                {
-//                    TrajectorySequence tsq = route.stateTrajMap.get(Route.State.DROP0);
-//
-//                    RobotLog.dd(TAG, "Auto driving/dumping");
-//                    mechDrv.followTrajectorySequenceAsync(tsq);
-//
-//                    autoDriveActive = true;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            if (autoDriveActive) return;
-//        }
-
-//        if (tglF) useField = !useField;       //We stole this button for the AprilTag detection and so commented this out (also, drivers were not using it at all this year)
 
         lr = ishaper.shape(raw_lr, 0.02);
         fb = ishaper.shape(raw_fb, 0.02);
@@ -1009,11 +775,17 @@ public class MecanumTeleop extends InitLinearOpMode
         double leftJoyY = gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
 
         if (dpadDown ||dpadUp||dpadRight||dpadLeft){
+            RobotLog.dd(TAG,"Dpad pressed");
+
             robot.shooter.setDistance(1);
+
             if(rightTrig >= 0.3){
                 if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
                 if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT);
                 if(dpadDown || dpadUp) robot.shooter.shoot(CENTER);
+
+                RobotLog.dd(TAG,"Dpad + trigger pressed");
+
             }
         }
         else {
@@ -1022,162 +794,17 @@ public class MecanumTeleop extends InitLinearOpMode
 
         if (abs(leftJoyY) >= 0.3){
             robot.shooter.changeShootTraj(leftJoyY);
+            RobotLog.dd(TAG,"Shooter Traj Y changed up or down");
 
         }
         else {
             robot.shooter.changeShootTraj(0);
-        }
-
-        /* Rumble in the last 10 sec of match with custom effect */
-//        if (endGameNotificationRumble.seconds() > END_GAME_TIMEOUT)
-//        {
-//            gpad2.customRumble(1);
-//            gpad1.customRumble(1);
-//            /* Sequence matters Processing Driver inputs gets called after
-//            * This is where the timer maintenance will be taken care of
-//            * */
-//            endGameNotificationRumble.reset();
-//            setENDGAMETIMOUTSECS(25.0);
-//            inEndGamePeriod = true;
-//        }
-//
-//        /* Rumble in the last 5 sec of match */
-//        if (
-//                (endGameNotificationRumble.seconds() > END_GAME_TIMEOUT) &&
-//                (inEndGamePeriod == true)
-//           )
-//        {
-//            gpad2.customRumble(2);
-//            gpad1.customRumble(2);
-//            endGameNotificationRumble.reset();
-//            inEndGamePeriod = false;
-//        }
-
-//        robot.setElbowMotor(gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y));
-//        robot.setExtenderPower(gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL)-gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL));
-//        dashboard.displayText(11, String.format(Locale.US, " LEFT TRIGGER(%f) - RIGHT TRIGGER(%f) = %f",gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL),gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL),gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL)-gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL)));
-
-//        robot.elbowMotor.moveToLevel();
-
-
-
- /*       if(gpad2.just_pressed(ManagedGamepad.Button.L_BUMP))
-        {
-            robot.toggleBucketServoForward();
-            robot.pixelPieces --;
-            robot.pixelPieces --;
-            RobotLog.dd(TAG, "pixel detected: %d, pieces: %d", pixelDetected?1:0, robot.pixelPieces);
-        }
-        if (robot.pixelPieces < 0){
-            robot.pixelPieces = 0;
-            RobotLog.dd(TAG, "pixel detected: %d, pieces: %d", pixelDetected?1:0, robot.pixelPieces);
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.R_BUMP))
-        {
-            robot.toggleBucketServoBackward();
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.X))
-        {
-            robot.destendr();
-            robot.toggleIntakes();
-            if(robot.rearDistSensor.getDistance(DistanceUnit.CM) > 30) {
-                robot.elbowMotor.moveToLevel(0, EL_SPD_DWN);
-                stackLvlCnt = 0;
-            }
-
-        }
-        if(gpad2.just_pressed(ManagedGamepad.Button.A))
-        {
-            Timer timer = new Timer();
-            if(robot.rearDistSensor.getDistance(DistanceUnit.CM) > 30 || robot.elbowMotor.getCurEnc() > -800 ) {
-                robot.destendr();
-                if (robot.extenderMotor.getCurEnc() < 100) {
-                    robot.elbowMotor.moveToLevel(1, EL_SPD);
-                    stackLvlCnt = 1;
-                } else{
-                    robot.elbowMotor.moveToLevel(1, 0.35);
-                    stackLvlCnt = 1;
-                }
-            }
-            robot.sweeperServo1.moveAtRate(-0.5);
-            robot.sweeperServo2.moveAtRate(-0.5);
-            robot.intakesOn = true;
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    robot.intakesOff();
-                }
-            };
-            timer.schedule(task, 500);
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.B) && !gpad2.pressed(ManagedGamepad.Button.START))
-        {
-            if (!ballfinalclim & !ballfinalclimout) {
-			    robot.elbowMotor.moveToCnt(-2400, 1);
-                ballfinalclim = true;
-            } else if (ballfinalclim & !ballfinalclimout & robot.elbowMotor.getCurEnc() < -2300) {
-                robot.extendr(1);
-                ballfinalclimout = true;
-            } else if (ballfinalclim & ballfinalclimout) {
-                ballfinalclim = false;
-                ballfinalclimout = false;
-  
-                robot.destendr();
-            } else {
-                robot.elbowMotor.moveToCnt(-2400, 1);
-                ballfinalclim = true;
-
-            }
-        }
-        if(gpad2.pressed(ManagedGamepad.Button.START) && (gpad2.just_pressed(ManagedGamepad.Button.L_BUMP) || gpad2.just_pressed(ManagedGamepad.Button.R_BUMP)))
-        {
-            robot.wristServo.init(-100,100);
-            wristRestrictionsOff = true;
-        }
-        /* disable triangele button during Teleop to prevent accidental Drone Deployment */
-
-       if(gpad2.just_pressed(ManagedGamepad.Button.D_DOWN)){
-           robot.currentMode= MecanumBot.ElbowPositions.SAMPLE_MODE;
-           robot.armLevelDown(); //move arm and slides down
-
-        }
-
-        if(gpad2.just_pressed(ManagedGamepad.Button.D_UP)){
-            robot.currentMode= MecanumBot.ElbowPositions.SAMPLE_MODE;
-            robot.armLevelUp(); //move arm and slides up
+            RobotLog.dd(TAG,"ShooterTraj Y is not being moved currently");
 
         }
 
 
-        if(gpad2.just_pressed(ManagedGamepad.Button.B) && !gpad2.pressed(ManagedGamepad.Button.START)) {
-            robot.drivePos(); //move arm and slides up
-        }
 
-
-
-
-
-        controlArm();
-
-        controlSlides();
-
-
-        //presetClaws();
-
-        //armNslidesLevs();
-
-
-        opTimer.reset();
-        liftTime = opTimer.milliseconds();
-        opTimer.reset();
-        spinTime = 0;
-        controlIntake();
-
-        intTime = opTimer.milliseconds();
-        opTimer.reset();
     }
 
     private void processDriverInputs()

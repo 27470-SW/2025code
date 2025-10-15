@@ -103,9 +103,14 @@ public class Lifter
 
 
     public int getLiftPos()
-    {
-       return liftMotor.getCurrentPosition();
-    }
+
+   {
+       if (liftMotor != null){
+           return liftMotor.getCurrentPosition();
+       }
+       else {return 0;}
+
+   }
 
 
     private boolean slidesOff = false;
@@ -159,7 +164,6 @@ public class Lifter
             {
                 lm2Pos = liftMotor2.getCurrentPosition();
             }
-            RobotLog.dd(TAG, "pwr: %f, lm1e: %d, lm2e: %d, lftCnts: %d, MIN: %d, MAX: %d",pwr, liftMotor.getCurrentPosition(), lm2Pos, lftCnts, RobotConstants.EL_MIN_ENCODER, RobotConstants.EL_MAX_ENCODER);
 
             if (lastRunMode != RUN_USING_ENCODER)
             {
