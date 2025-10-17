@@ -773,6 +773,13 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean dpadDown= gpad2.pressed(ManagedGamepad.Button.D_DOWN);
         double rightTrig = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
         double leftJoyY = gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        boolean aDown = gpad2.just_pressed(ManagedGamepad.Button.A);
+
+
+        if (aDown){
+            robot.shooter.resetTransition();
+        }
+
 
         if (dpadDown ||dpadUp||dpadRight||dpadLeft){
             RobotLog.dd(TAG,"Dpad pressed");

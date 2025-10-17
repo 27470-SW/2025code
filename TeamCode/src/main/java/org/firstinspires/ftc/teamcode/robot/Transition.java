@@ -24,24 +24,25 @@ public class Transition {
 
     public void setTransitionPos(double pos)
     {
-        pos = 1-pos;
         if(transitionServo == null) return;
         transitionServo.setPosition(pos);
-        RobotLog.dd(TAG, "Percent:%f POS:%f", percent, pos);
+        percent = pos;
 
     }
 
     public void update(){
         try {
-            if (TRANSITION_ENDPOINT == transitionServo.getPosition()) {
-                percent = TRANSITION_RESTPOINT;
-            }
+  //          double pos = transitionServo.getPosition();
+  //          if (TRANSITION_ENDPOINT == transitionServo.getPosition()) {
+  //              percent = TRANSITION_RESTPOINT;
+  //              RobotLog.dd(TAG, "in transition Update: Percent:%f POS:%f", percent, pos);
+  //          }
             setTransitionPos(percent);
         }catch(Exception e){}
     }
 
     public void startTransition(){
-        RobotLog.dd(TAG, "startTransition Percent:%f", percent);
+        RobotLog.dd(TAG, "startTransition Percent:%f pos:%f", percent, transitionServo.getPosition());
 
         percent = TRANSITION_ENDPOINT;
 
@@ -55,6 +56,7 @@ public class Transition {
 
     public boolean init(){
         setTransitionPos(TRANSITION_RESTPOINT);
+        RobotLog.dd(TAG, "init Transition Percent:%f pos:%f", percent, transitionServo.getPosition());
         return true;
     }
     public double percent;
@@ -65,5 +67,5 @@ public class Transition {
     public double maxClosed;
     public boolean Triggr;
     public int K1R2;
-    private double TRANSITION_ENDPOINT = 0.26 + TRANSITION_RESTPOINT;
+    private double TRANSITION_ENDPOINT = TRANSITION_RESTPOINT - 0.1;
 }

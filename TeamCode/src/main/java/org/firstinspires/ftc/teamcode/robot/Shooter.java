@@ -137,6 +137,12 @@ public void stopWheel(){
         if(shtmode != mode && shooter != null) shooter.setMode(mode);
         shtmode = mode;
     }
+    public void resetTransition() {
+        shooter1.init();
+        shooter2.init();
+        shooter3.init();
+        RobotLog.dd(TAG,"reseting transtions");
+    }
 
     public void changeShootTraj(double speed){
         try {

@@ -69,7 +69,7 @@ public class RobotConstants
   public static double IN_ACT_DLY = 0.0;
   public static double IN_ACT_DUR = 0.5;
   public static double IN_ACT_DIST = 3.0;
-  public static double TRANSITION_RESTPOINT = 0.0;
+  public static double TRANSITION_RESTPOINT = .88;
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
