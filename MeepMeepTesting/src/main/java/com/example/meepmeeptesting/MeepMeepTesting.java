@@ -6,7 +6,11 @@ package com.example.meepmeeptesting;
 //import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 //import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.awt.Toolkit;
 
 import static com.example.meepmeeptesting.Field.StartPos.*;
 import static com.example.meepmeeptesting.Field.Highways.*;
@@ -73,7 +77,9 @@ public class MeepMeepTesting
 
          System.out.println("STARTING at " +LocalDateTime.now());
 
-         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_OFFICIAL)
+         URL imageUrl = MeepMeepTesting.class.getResource("/field-2025-juice-dark.png");
+         Image background = Toolkit.getDefaultToolkit().getImage(imageUrl);
+         meepMeep.setBackground(background)
                  .setDarkMode(true)
                  .setBackgroundAlpha(0.95f)
                  .addEntity(rrBotEntity)

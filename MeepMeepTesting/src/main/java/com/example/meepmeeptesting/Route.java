@@ -152,8 +152,6 @@ public abstract class Route
         dropPreSpecimen = new Pose2d(sx * -5, 35, flip + sh*Math.toRadians(270));
         forward = new Pose2d(sx * -5, 35, flip + sh*Math.toRadians(270));
         startCSRedHigh = new Pose2d(sx * 63.25, 16, flip + sh*Math.toRadians(180));
-        specimen1PosPosToPush = new Pose2d(sx * -27.7, 35, flip + sh*Math.toRadians(270));
-        specimen1PosToPush = new Pose2d(sx * -48, 10, flip + sh*Math.toRadians(270));
        specimen1 = new Pose2d(sx * -48,55, flip + sh*Math.toRadians(270));
        corner = new Pose2d(sx * -55,55, flip + sh*Math.toRadians(310));
         corner2 = new Pose2d(sx * -55,55, flip + sh*Math.toRadians(310));
