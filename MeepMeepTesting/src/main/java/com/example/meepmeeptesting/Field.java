@@ -76,12 +76,12 @@ public abstract class Field
     public boolean hasVuMarks() {return hasVuMarks;}
     private boolean hasVuMarks = false;
 
-    public enum ParkPos implements PositionOption
-    {
-        CENTER_PARK,
-        LEFT_PARK,
-        RIGHT_PARK
-    }
+    //public enum ParkPos implements PositionOption
+    //{
+     //   CENTER_PARK,
+       // LEFT_PARK,
+        //RIGHT_PARK
+    //}
 
     public enum Route implements PositionOption
     {
@@ -92,14 +92,24 @@ public abstract class Field
 
     public enum StartPos implements PositionOption
     {
-        START_SAMPLES,
+       START_SAMPLES,
         START_SPECIMENS
-    }
+   }
 
     public enum AutonDebug implements PositionOption
     {
         ENABLE,
         DISABLE
+    }
+
+    public enum Start_Pos implements PositionOption{
+        START_GOAL_RED,
+        START_FAR_RED,
+        START_WALL_RED,
+        START_GOAL_BLUE,
+        START_FAR_BLUE,
+        START_WALL_BLUE,
+
     }
 
     public enum Highways implements PositionOption
@@ -109,12 +119,24 @@ public abstract class Field
         Park1
     }
 
-    public enum FirstLocation implements PositionOption
+    public enum Wiffle_Pos implements PositionOption
     {
-        BACKDROP,
-        PIXEL_WALL,
-        PIXEL_CENTER,
-        PIXEL_DOOR
+        HUMAN1,
+        PARK2,
+        GATE3,
+        GOAL4
+    }
+    public enum Park_Pos implements PositionOption
+    {
+        INSIDEPRIMARYPARK1RED,
+        INSIDEPRIMARYPARK2RED,
+        OUTSIDEPRIMARYPARK1RED,
+        OUTSIDEPRIMARYPARK2RED,
+        INSIDEPRIMARYPARK1BLUE,
+        INSIDEPRIMARYPARK2BLUE,
+        OUTSIDEPRIMARY1BLUE,
+
+
     }
 
 }

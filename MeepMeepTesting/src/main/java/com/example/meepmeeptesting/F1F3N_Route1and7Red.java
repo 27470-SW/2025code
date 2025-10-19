@@ -1,20 +1,15 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.Field.Highways.*;
-import static com.example.meepmeeptesting.Field.StartPos.*;
-import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.high;
-import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.low;
-import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.lowHigh;
-import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.med;
-import static com.example.meepmeeptesting.Route.Heading.*;
-import static com.example.meepmeeptesting.Route.Movement.*;
-import static com.example.meepmeeptesting.Route.TeamElement.*;
+import static com.example.meepmeeptesting.Field.Highways.WALL;
+import static com.example.meepmeeptesting.Route.Heading.HEAD_LINEAR;
+import static com.example.meepmeeptesting.Route.Movement.LINE;
+import static com.example.meepmeeptesting.Route.Movement.SPLINE;
+import static com.example.meepmeeptesting.Route.Movement.START;
+import static com.example.meepmeeptesting.Route.TeamElement.RIGHT;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import java.util.Locale;
-
-public class SpecimenRoute {
+public class F1F3N_Route1and7Red {
     Route route;
     private Field.Highways stackToBack;
     private Field.Highways pixelStack;
@@ -22,11 +17,11 @@ public class SpecimenRoute {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public SpecimenRoute(Route constructorRoute) {
+    public F1F3N_Route1and7Red(Route constructorRoute) {
         route = constructorRoute;
     }
 
-    public void makeTraj(PositionOption startPos, Field.Park_Pos parkPos, Field.Wiffle_Pos firstLocation) {
+    public void makeTraj(PositionOption startPos, Field.Park_Pos parkPos, Field.Wiffle_Pos lastLocation) {
   /*
         this.stackToBack = stackToBack;
         if(firstLocation == PIXEL_CENTER){
@@ -40,115 +35,105 @@ public class SpecimenRoute {
         this.alliance = alliance;
     */
         //  qualifierRoute(startPos,parkPos,firstLocation);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Working on
-        route.addLocation(route.startSpecimen, START, HEAD_DEFAULT);
-        route.addFunction(route::closeClaw);
+        route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
+
+        //shoot pre loaded wiffles
+        route.addLocation(route.shootFarPos, SPLINE, HEAD_LINEAR);
+        route.addFunction(route::wheelOn);
+        route.addEvent(Route.Action.WAIT, 2.0);
+        route.addFunction(route::transitonUp);
+        route.addEvent(Route.Action.WAIT, 0.35);
+        route.addFunction(route::transitonDown);
+
+        //intake wiffles human
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
+        route.addFunction(route::intakeOn);
+        route.addLocation(route.PrepPosIntake1, LINE, HEAD_LINEAR);
+        route.addLocation(route.intookpos1, LINE, HEAD_LINEAR);
+        //shoot human wiffles
+
+        route.addLocation(route.shootFarPos, LINE, HEAD_LINEAR);
+        route.addFunction(route::intakeOff);
         route.addEvent(Route.Action.WAIT, 0.2);
-        //Make slides up one and arm a little up.
-        route.addFunction(route::slidesUpOne, 0.1);
-        route.addFunction(route::armUpLittle, 1.65);
-        route.addLocation(route.forward, SPLINE, HEAD_LINEAR, Math.toRadians(90));
-        route.addFunction(route::openclaw);
+        route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::moveToDrive);
+        route.addFunction(route::transitonDown);
+        route.addFunction(route::intakeOn);
 
-
-        // route.addEvent(Route.Action.TANGENT,Math.toRadians(0));
-
-        route.addLocation(route.specimen1, LINE, HEAD_LINEAR, Math.toRadians(45));
-        pickUpSpecimenFromTape();
-
-        route.addLocation(route.corner, LINE, HEAD_LINEAR, Math.toRadians(45));
-        route.addFunction(route::moveArmForward);
-        //wait
-        route.addFunction(route::openclaw);
+        // go to pos lever wiffles
+        route.addLocation(route.preleverwiffle, LINE, HEAD_LINEAR);
+        route.addLocation(route.intakewifflelever, LINE, HEAD_LINEAR);
+        route.addLocation(route.hitlever, LINE, HEAD_LINEAR);
+        route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
+        route.addFunction(route::intakeOff);
+        //SHOOT  WIFFLES
+        route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
         route.addEvent(Route.Action.WAIT, 0.2);
-
-        route.addLocation(route.specimen2, LINE, HEAD_LINEAR, Math.toRadians(45));
-        pickUpSpecimenFromTape();
-
-        route.addLocation(route.corner2, LINE, HEAD_LINEAR, Math.toRadians(45));
-        //wait
-        route.addFunction(route::moveArmForward);
-
-        route.addFunction(route::openclaw);
+        route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.2);
+        route.addFunction(route::transitonDown);
 
-        route.addLocation(route.specimen3, LINE, HEAD_LINEAR, Math.toRadians(45));
-        pickUpSpecimenFromTape();
-        route.addLocation(route.corner3, LINE, HEAD_LINEAR, Math.toRadians(45));
-        //waot
-        route.addFunction(route::moveArmForward);
-        route.addFunction(route::openclaw);
-        route.addEvent(Route.Action.WAIT, 0.2);
-
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(135));
-        route.addLocation(route.waitForHumanPlayer, LINE, HEAD_LINEAR);
-        route.addFunction(route::armUpLittle);
-
-        route.addEvent(Route.Action.WAIT, 3);
-        pickUpSpecimenFromWall();
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addLocation(route.subPos, LINE, HEAD_LINEAR, Math.toRadians(90));
-        route.addFunction(route::moveToPosition4);
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::openclaw);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::moveToDrive); // this should put arm back up all the way
+        switch (lastLocation){
+            case GOAL4 :
+                route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
+                route.addFunction(route::intakeOn);
+                route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
+                route.addFunction(route::intakeOff);
+                //SHOOT  WIFFLES
+                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
+                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::intakeOff);
+                route.addFunction(route::transitonUp);
+                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::transitonDown);
 
 
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(135));
-        route.addLocation(route.waitForHumanPlayer, SPLINE, HEAD_SPLINE);
-        pickUpSpecimenFromWall();
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addLocation(route.subPos, LINE, HEAD_LINEAR, Math.toRadians(90));
-        route.addFunction(route::moveToPosition4);
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::openclaw);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::moveToDrive);
+                break;
+            case PARK2:
+                route.addLocation(route.pregotoparkwiffle,LINE,HEAD_LINEAR);
+                route.addFunction(route::intakeOn);
+                route.addLocation(route.gotoparkwiffle,LINE,HEAD_LINEAR);
+                route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
+                route.addFunction(route::intakeOff);
 
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(135));
-        route.addLocation(route.waitForHumanPlayer, SPLINE, HEAD_SPLINE);
-        pickUpSpecimenFromWall();
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addLocation(route.subPos, LINE, HEAD_LINEAR, Math.toRadians(90));
-        route.addFunction(route::moveToPosition4);
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::openclaw);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::moveToDrive);
+                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
+                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::transitonUp);
+                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::transitonDown);
+
+                break;
+        }
 
 
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(135));
-        route.addLocation(route.specimenPark1, SPLINE, HEAD_LINEAR, Math.toRadians(95));
-        //route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
-        //route.addLocation(route.start_route, LINE, HEAD_DEFAULT);
-        //route.addLocation(route.dropCenterPixel, SPLINE, HEAD_LINEAR);
-        // route.addLocation(route.dropCenterPixel, SPLINE, HEAD_LINEAR, Math.toRadians(45));
     }
 
-    private void pickUpSpecimenFromTape() {
+    private void pickupSampleFromTape() {
         route.addFunction(route::moveArmToPickup);
-//        route.addEvent(Route.Action.WAIT,0.2);
+        route.addEvent(Route.Action.WAIT, 0.2);
         route.addFunction(route::closeClaw);
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::moveArmToBack);
+        route.addEvent(Route.Action.WAIT, 0.2);
+        route.addFunction(route::moveArmTo90);
+        route.addFunction(route::maxSlides);
     }
 
-    private void pickUpSpecimenFromWall() {
-        // route.addFunction(route::arm.moveToLevel (3); btw this makes it to move to level 3 but i dont work
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::closeClaw);
-//        route.addEvent(Route.Action.WAIT,0.2);
-        route.addFunction(route::moveArmToBack);
+    private void deliverSample() {
+        route.addFunction(route::moveArmToDrop);
+        route.addEvent(Route.Action.WAIT, 0.2);
+        route.addFunction(route::openclaw);
+        route.addEvent(Route.Action.WAIT, 0.2);
+        route.addFunction(route::moveArmTo90);
+        route.addEvent(Route.Action.WAIT, 0.2);
+        route.addFunction(route::minSlides);
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     private void goToBackdrop(Pose2d backdrop) {
         if (stackToBack == WALL)
             viaWall(backdrop);
-        else if (stackToBack == Park2) {
+        else if (stackToBack == Field.Highways.Park2) {
             viaCenter(backdrop);
         } else {//DOOR
 
@@ -216,9 +201,7 @@ public class SpecimenRoute {
 ////                            route.addMovement(TURN, -0.5);
 //                            route.addEvent(Route.Action.WAIT, 0.1);
                             // my old route
-                            route.addLocation(route.startSpecimenSide, LINE, HEAD_LINEAR, Math.toRadians(100));
-                            route.addLocation(route.dropPreSpecimen, LINE, HEAD_LINEAR, Math.toRadians(100));
-                           /* route.addEvent(Route.Action.TANGENT, route.oneFifteen);
+                            route.addEvent(Route.Action.TANGENT, route.oneFifteen);
 //                            route.addLocation(route.dropPixelRedLeftTapeBackdropAdj,SPLINE,HEAD_LINEAR, 180);
                             route.addLocation(route.dropPixelRedLeftTapeBackdrop, LINE, HEAD_LINEAR, route.twofifity);
                             route.addFunction(route::armDropSpikePos);
@@ -232,7 +215,7 @@ public class SpecimenRoute {
                             route.addFunction(route::outPixel);
                             route.addEvent(Route.Action.WAIT, .75);
 //                            route.addFunction(route::outPixel);
-//                            route.addEvent(Route.Action.WAIT, .2);*/
+//                            route.addEvent(Route.Action.WAIT, .2);
                             break;
                         case CENTER:
                             // Red Center Backdrop (7252)
@@ -346,13 +329,8 @@ public class SpecimenRoute {
 //                            route.addEvent(Route.Action.WAIT, 0.75);
 //                            route.addLocation(route.moveTowardsRedBackdropHdAdj, LINE, HEAD_LINEAR);
                             // my old route
-                            route.addEvent(Route.Action.TANGENT, route.oneHundred);
-                            route.addFunction(route::armDropSpikePos, 1);
-                            route.addLocation(route.dropPixelRedLeftTapeStacks, LINE, HEAD_LINEAR);
-                            route.addFunction(route::outPurplePixel);
-                            route.addEvent(Route.Action.WAIT, .4);
-                            route.addEvent(Route.Action.TANGENT, Math.toRadians(200));
 
+                    }
 
    /*rotected final int sx;
     protected final int sy;
@@ -360,7 +338,7 @@ public class SpecimenRoute {
     protected int sf;
     protected int sr;
     protected final double flip;
-    protected final double strtX;
+                protected final double strtX;
     protected final double strtY;
     protected final double strtH;
     protected Field.Alliance alliance;
@@ -372,9 +350,10 @@ public class SpecimenRoute {
     protected Pose2d moveFromStart;
     protected Pose2d start;*/
 
-                    }
             }
         }
     }
 }
+
+
 

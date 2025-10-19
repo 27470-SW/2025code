@@ -1,9 +1,9 @@
 package com.example.meepmeeptesting;
 
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.high;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.low;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.lowHigh;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.med;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.high;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.low;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.lowHigh;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.med;
 import static com.example.meepmeeptesting.RobotConstants.MAX_LOOPS;
 import static com.example.meepmeeptesting.Route.Heading.HEAD_CONSTANT;
 import static com.example.meepmeeptesting.Route.Heading.HEAD_LINEAR;
@@ -17,7 +17,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import java.util.Locale;
 
 public class TimeForPixelRun extends Route{
-    ITD_Route route;
+    DECODE_Route route;
     int count;
 
     public TimeForPixelRun(Route constructorRoute, Field.Highways pixelStack) {
@@ -156,10 +156,10 @@ public class TimeForPixelRun extends Route{
     }
 
     public enum preLoadedCone{low,med,high,lowHigh}
-    public static ITD_Route.preLoadedCone preLoadedConeJunc = low;
-    public static ITD_Route.preLoadedCone firstConeStackCone = med;
-    public static ITD_Route.preLoadedCone secondConeStackCone = lowHigh;
-    public static ITD_Route.preLoadedCone thirdConeStackCone = high;
+    public static DECODE_Route.preLoadedCone preLoadedConeJunc = low;
+    public static DECODE_Route.preLoadedCone firstConeStackCone = med;
+    public static DECODE_Route.preLoadedCone secondConeStackCone = lowHigh;
+    public static DECODE_Route.preLoadedCone thirdConeStackCone = high;
 
     public void elvToConeStack()
     {

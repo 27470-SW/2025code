@@ -2,20 +2,23 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import static com.example.meepmeeptesting.Field.Park_Pos.INSIDEPRIMARYPARK1RED;
+import static com.example.meepmeeptesting.Field.Park_Pos.INSIDEPRIMARYPARK2RED;
 import static com.example.meepmeeptesting.Field.StartPos.*;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.high;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.low;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.lowHigh;
-import static com.example.meepmeeptesting.ITD_Route.preLoadedCone.med;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.high;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.low;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.lowHigh;
+import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.med;
+import static com.example.meepmeeptesting.Field.Start_Pos.*;
 import static com.example.meepmeeptesting.Route.Movement.*;
 import static com.example.meepmeeptesting.Route.Heading.*;
 
-public class ITD_Route extends Route
+public class DECODE_Route extends Route
 {
-  public ITD_Route(
+  public DECODE_Route(
                           PositionOption startPos,
-						  Field.Highways parkPos,
-                    Field.FirstLocation firstLocation)
+						  Field.Park_Pos parkPos,
+                    Field.Wiffle_Pos firstLocation)
   {
     super(startPos, parkPos, firstLocation);
   }
@@ -169,14 +172,23 @@ public class ITD_Route extends Route
        Pose2d lastPose;
        if(startPos == START_SAMPLES) {
            SampleRoute t1 = new SampleRoute(this);
-           t1.makeTraj(startPos, parkPos, firstLocation);
+           t1.makeTraj(startPos, parkPos, lastLocation);
        }
        else if(startPos == START_SPECIMENS)
        {
            SpecimenRoute t1 = new SpecimenRoute(this);
-           t1.makeTraj(startPos, parkPos, firstLocation);
+           t1.makeTraj(startPos, parkPos, lastLocation);
 
        }
+       else if( startPos == START_FAR_RED)
+       {
+           F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+
+       MoveToParkPOSDECODE t1 = new MoveToParkPOSDECODE(this);
+       t1.makeTraj(parkPos,alliance);
+
        lastPose = this.getEnd();
 
         //Always do this at the end of initTrajectories2

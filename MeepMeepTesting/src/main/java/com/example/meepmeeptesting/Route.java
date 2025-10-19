@@ -49,16 +49,16 @@ public abstract class Route
     protected static final boolean strafeDropX = false;
 
     public Route(Route copyRoute){
-        this(copyRoute.startPos, copyRoute.parkPos, copyRoute.firstLocation);
+        this(copyRoute.startPos, copyRoute.parkPos, copyRoute.lastLocation);
     }
      public Route(
                   PositionOption startPos,
-	 			  Field.Highways parkPos,
-                  Field.FirstLocation firstLocation)
+	 			  Field.Park_Pos parkPos,
+                  Field.Wiffle_Pos firstLocation)
     {
            this.startPos = startPos;
            this.parkPos  = parkPos;
-           this.firstLocation = firstLocation;
+           this.lastLocation = firstLocation;
 
            botLen = RobotConstants.BOT_LEN;
            botWid = RobotConstants.BOT_WID;
@@ -142,8 +142,26 @@ public abstract class Route
          ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //Put new poses here
-        startSample = new Pose2d(sx * 9, 65, flip + sh*Math.toRadians(270));
+        startSample = new Pose2d(sx * -60, 65, flip + sh*Math.toRadians(270));
         //specimen points
+        startSmallTri = new Pose2d(sx * 15, -61, flip + sh*Math.toRadians(90));
+        shootFarPos = new Pose2d (sx * 15, -58, flip + sh*Math.toRadians(70));
+        PrepPosIntake1 = new Pose2d(sx * 58, -50 , flip + sh*Math.toRadians(45));
+        intookpos1 = new Pose2d(sx * 60.3, -59 , flip + sh*Math.toRadians(0));
+        preleverwiffle= new Pose2d(sx * 15, -17 , flip + sh*Math.toRadians(90));
+        intakewifflelever = new Pose2d(sx * 52, -16 , flip + sh*Math.toRadians(90));
+        hitlever = new Pose2d(sx * 54, -11 , flip + sh*Math.toRadians(90));
+        prenearpos = new Pose2d (sx * 17,-10,flip +sh*Math.toRadians(40));
+        nearpos = new Pose2d (sx * 15,37,flip +sh*Math.toRadians(35));
+        pregotoparkwiffle = new Pose2d (sx * 15,-40,flip +sh*Math.toRadians(90));
+        gotoparkwiffle = new Pose2d (sx * 50,-40,flip +sh*Math.toRadians(90));
+        pregotogoalwiffles= new Pose2d (sx * 17,6,flip +sh*Math.toRadians(90));
+        gotogoalwiffles= new Pose2d (sx * 50,6,flip +sh*Math.toRadians(90));
+        parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
+        parkInside2Red = new Pose2d(sx * 15,-18,flip +sh*Math.toRadians(90));
+        parkOutside1Red =new Pose2d(sx * 30,58,flip +sh*Math.toRadians(90));
+        parkOutside2Red =new Pose2d(sx * 52,30,flip +sh*Math.toRadians(90));
+
         startSpecimenSide = new Pose2d(sx * -5, 63.25, flip + sh*Math.toRadians(270));
 		startSpecimen = new Pose2d(sx * -5, 63, flip + sh*Math.toRadians(270));
         specimenPark1 = new Pose2d(sx * -61, 62, flip + sh*Math.toRadians(270));
@@ -695,6 +713,27 @@ public void slidesUpOne(){
 //         System.out.println("Close Claw");
 
      }
+     protected void shootWiffleFar(){
+         System.out.println("Shoot Balls Far from small triangle");
+     }
+    protected void wheelOn(){
+         System.out.println("Turn on wheel");
+    }
+     protected void shootWiffleClose(){
+         System.out.println("Shoot Balls Close");
+     }
+     protected void transitonUp(){
+         System.out.println("Transition Up");
+     }
+     protected void transitonDown(){
+         System.out.println("Transition Down");
+     }
+     protected void intakeOn(){
+         System.out.println("IntakeOn");
+     }
+     protected void intakeOff (){
+         System.out.println("Intake Off");
+     }
      protected void doPark()
      {
          System.out.println("Parking bot");
@@ -709,11 +748,11 @@ public void slidesUpOne(){
 
      public final static int INIT_CONE_STACK = 5;
      public static int conestackNum = INIT_CONE_STACK;
-	 protected Field.Highways parkPos;
+	 protected Field.Park_Pos parkPos;
      protected PositionOption startPos;
      protected Field.Alliance alliance;
      protected Field.Route routeStrategy;
-     protected Field.FirstLocation firstLocation;
+     protected Field.Wiffle_Pos lastLocation;
      protected Field.Highways stackHighway;
      public TeamElement teamElement;
      protected Field.Highways[] highways;
@@ -764,6 +803,23 @@ public void slidesUpOne(){
     protected Pose2d subPos;
     protected Pose2d corner3;
      protected Pose2d startSample;
+     protected Pose2d startSmallTri;
+     protected Pose2d PrepPosIntake1;
+     protected Pose2d intookpos1;
+     protected Pose2d preleverwiffle;
+     protected Pose2d intakewifflelever;
+     protected Pose2d hitlever;
+     protected Pose2d prenearpos;
+     protected Pose2d nearpos;
+     protected Pose2d shootFarPos;
+     protected Pose2d pregotoparkwiffle;
+     protected Pose2d  gotoparkwiffle;
+     protected Pose2d pregotogoalwiffles;
+     protected Pose2d gotogoalwiffles;
+     protected Pose2d parkInside1Red;
+     protected Pose2d parkInside2Red;
+     protected Pose2d parkOutside1Red;
+     protected Pose2d parkOutside2Red;
     protected Pose2d startSpecimen;
      protected Pose2d purplePixelPlaceCenterTop;
     protected Pose2d dropCenterPixel;
@@ -1185,7 +1241,7 @@ public void slidesUpOne(){
     }
     }
 
-    public void addParkPosition(Field.ParkPos parkEnum, Pose2d loc, Movement move, Heading head)
+    public void addParkPosition(Field.Park_Pos parkEnum, Pose2d loc, Movement move, Heading head)
     {
          Pose2d origLastPose = lastPose;
          addLocation(loc, move, head, false, 0);
@@ -1448,7 +1504,7 @@ public void slidesUpOne(){
          newTraj = true;
     }
 
-    public void addParkTrajectory(Field.ParkPos parkEnum, TrajectorySequence trajectory)
+   // public void addParkTrajectory(Field.ParkPos parkEnum, TrajectorySequence trajectory)
     {
 //         parkMap.put(parkEnum, trajectory);
     }
