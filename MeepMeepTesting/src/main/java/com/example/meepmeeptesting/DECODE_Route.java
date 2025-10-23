@@ -2,8 +2,6 @@ package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import static com.example.meepmeeptesting.Field.Park_Pos.INSIDEPRIMARYPARK1RED;
-import static com.example.meepmeeptesting.Field.Park_Pos.INSIDEPRIMARYPARK2RED;
 import static com.example.meepmeeptesting.Field.StartPos.*;
 import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.high;
 import static com.example.meepmeeptesting.DECODE_Route.preLoadedCone.low;
@@ -180,7 +178,13 @@ public class DECODE_Route extends Route
            t1.makeTraj(startPos, parkPos, lastLocation);
 
        }
-       else if( startPos == START_FAR_RED)
+       else if( startPos == START_FAR_RED_1AND7)
+       {
+           F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+
+       else if( startPos == START_FAR_BLUE_1AND7)
        {
            F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
            t1.makeTraj(startPos, parkPos, lastLocation);

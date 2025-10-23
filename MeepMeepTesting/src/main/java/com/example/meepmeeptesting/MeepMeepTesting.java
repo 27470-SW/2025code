@@ -13,8 +13,6 @@ import java.awt.Toolkit;
 
 import static com.example.meepmeeptesting.Field.Park_Pos.*;
 import static com.example.meepmeeptesting.Field.Start_Pos.*;
-import static com.example.meepmeeptesting.Field.Highways.*;
-import static com.example.meepmeeptesting.MoveToParkPOSDECODE.*;
 
 import org.rowlandhall.meepmeep.MeepMeep;
 import org.rowlandhall.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
@@ -50,7 +48,7 @@ public class MeepMeepTesting
 
          RobotConstants.init(RobotConstants.Chassis.B7252);
          RobotConstants.MAX_LOOPS = 1;
-         DECODE_Route ffr = new DECODE_Route(START_FAR_RED,OUTSIDEPRIMARYPARK2RED, Field.Wiffle_Pos.PARK2) ;
+         DECODE_Route ffr = new DECODE_Route(START_FAR_RED_1AND7,OUTSIDEPRIMARYPARK2RED, Field.Wiffle_Pos.PARK2) ;
 
          TrajectorySequence seq = ffr.fullSeq;
 

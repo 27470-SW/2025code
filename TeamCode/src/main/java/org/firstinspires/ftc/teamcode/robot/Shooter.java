@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 
 import java.util.Locale;
 
@@ -34,6 +36,8 @@ public class Shooter
             shtmode = RUN_USING_ENCODER;
             success = true;
         }
+
+
         catch (Exception e)
         {
             RobotLog.ee(TAG, "ERROR get hardware map initShooter\n" + e.toString());
@@ -58,6 +62,7 @@ public class Shooter
             moveShooterM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             moveShooterM.setMode(RUN_USING_ENCODER);
+            vs = hwMap.get(VoltageSensor.class, "Control Hub");
             success = true;
         }
         catch (Exception e)
@@ -129,7 +134,8 @@ public void stopWheel(){
     public void setDistance(double distance)
     {
         dist = distance;
-        if(shooter != null) shooter.setPower(-1);
+        double voltage = vs.getVoltage();
+        if(shooter != null) shooter.setPower(-12/voltage);
     }
 
     public void setShootMode(DcMotor.RunMode mode)
@@ -207,6 +213,7 @@ public void stopWheel(){
     protected HardwareMap hwMap;
     public DcMotorEx shooter = null;
     public DcMotorEx moveShooterM = null;
+    private VoltageSensor vs;
     private Servo moveShooter1 = null;
     private Servo moveShooter2 = null;
     private Transition shooter1 = null;

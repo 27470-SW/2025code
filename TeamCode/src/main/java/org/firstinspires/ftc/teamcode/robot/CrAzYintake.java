@@ -20,11 +20,11 @@ public class CrAzYintake
     public boolean init() {
         boolean success = false;
         try {
-            //intakeMotor1 = hwMap.get(DcMotorEx.class, "im1");
-            //intakeMotor1.setDirection(RobotConstants.IN_DIR);
-            //intakeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            //intakeMotor1.setPower(0);
-            //lastIntakePwr = 0.0;
+            intakeMotor1 = hwMap.get(DcMotorEx.class, "im1");
+            intakeMotor1.setDirection(RobotConstants.IN_DIR);
+            intakeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intakeMotor1.setPower(0);
+            lastIntakePwr = 0.0;
             success = true;
         } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR get hardware map initIntake\n" + e.toString());
@@ -45,35 +45,35 @@ public class CrAzYintake
 
 
         try {
-            intakeServo1 = hwMap.get(Servo.class, "is1");
-            intakeServo1.setPosition(0.5);
-            lastIntakePwr = 0.0;
+            //intakeServo1 = hwMap.get(Servo.class, "is1");
+            //intakeServo1.setPosition(0.5);
+            //lastIntakePwr = 0.0;
             success = true;
         } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR get hardware map initIntake servo 1\n" + e.toString());
         }
 
         try {
-            intakeServo2 = hwMap.get(Servo.class, "is2");
-            intakeServo2.setPosition(0.5);
-            lastIntakePwr = 0.0;
+            //intakeServo2 = hwMap.get(Servo.class, "is2");
+            //intakeServo2.setPosition(0.5);
+            //lastIntakePwr = 0.0;
             success = true;
         } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR get hardware map initIntake servo 2\n" + e.toString());
         }
 
         try {
-            intakeServo3 = hwMap.get(Servo.class, "is3");
-            intakeServo3.setPosition(0.5);
-            lastIntakePwr = 0.0;
+            //intakeServo3 = hwMap.get(Servo.class, "is3");
+            //intakeServo3.setPosition(0.5);
+            //lastIntakePwr = 0.0;
             success = true;
         } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR get hardware map initIntake servo 3\n" + e.toString());
         }
         try {
-            intakeServo4 = hwMap.get(Servo.class, "is4");
-            intakeServo4.setPosition(0.5);
-            lastIntakePwr = 0.0;
+            //intakeServo4 = hwMap.get(Servo.class, "is4");
+            //intakeServo4.setPosition(0.5);
+            //lastIntakePwr = 0.0;
             success = true;
         } catch (Exception e) {
             RobotLog.ee(TAG, "ERROR get hardware map initIntake servo 4\n" + e.toString());
@@ -89,27 +89,27 @@ public class CrAzYintake
 
     public void update()
     {
-        if (intakeServo1 != null)
+        //if (intakeServo1 != null)
+        //{
+          //  curPwr=intakeServo1.getPosition();
+        //}
+        //if (intakeServo2 != null)
+        //{
+         //   curPwr=intakeServo2.getPosition();
+        //}
+        //if (intakeServo3 != null)
+        //{
+         //   curPwr=intakeServo3.getPosition();
+        //}
+        //if (intakeServo4 != null)
+        //{
+          //  curPwr=intakeServo4.getPosition();
+        //}
+        if(intakeMotor1 != null)
         {
-            curPwr=intakeServo1.getPosition();
-        }
-        if (intakeServo2 != null)
-        {
-            curPwr=intakeServo2.getPosition();
-        }
-        if (intakeServo3 != null)
-        {
-            curPwr=intakeServo3.getPosition();
-        }
-        if (intakeServo4 != null)
-        {
-            curPwr=intakeServo4.getPosition();
-        }
-        //if(intakeMotor1 != null)
-        {
-           // encPos = intakeMotor1.getCurrentPosition();
-            //curSpd = intakeMotor1.getVelocity();
-            //curPwr = intakeMotor1.getPower();
+            encPos = intakeMotor1.getCurrentPosition();
+            curSpd = intakeMotor1.getVelocity();
+            curPwr = intakeMotor1.getPower();
         }
         //if(intakeMotor2 != null)
         {
@@ -131,27 +131,27 @@ public class CrAzYintake
 
         if(pwr != lastIntakePwr)
         {
-            lastIntakePwr = pwr;
-            if(intakeServo1 != null){
-                intakeServo1.setPosition(.5-pwr/2);
-                RobotLog.dd(TAG,"Intake1on");
-            }
-            if(intakeServo2 != null){
-                intakeServo2.setPosition(.5+pwr/2);
-                RobotLog.dd(TAG,"Intake2on");
-            }
-            if(intakeServo3 != null) {
-                intakeServo3.setPosition(.5+pwr/2);
-                RobotLog.dd(TAG,"Intake3on");
+            //lastIntakePwr = pwr;
+            //if(intakeServo1 != null){
+                //intakeServo1.setPosition(.5-pwr/2);
+              //  RobotLog.dd(TAG,"Intake1on");
+            //}
+            //if(intakeServo2 != null){
+                //intakeServo2.setPosition(.5+pwr/2);
+              //  RobotLog.dd(TAG,"Intake2on");
+            //}
+            //if(intakeServo3 != null) {
+          //      intakeServo3.setPosition(.5+pwr/2);
+        //        RobotLog.dd(TAG,"Intake3on");
 
-        }
-            if(intakeServo4 != null){
-                intakeServo4.setPosition(.5-pwr/2);
-                RobotLog.dd(TAG,"Intake4on");
+      //  }
+            //if(intakeServo4 != null){
+              //  intakeServo4.setPosition(.5-pwr/2);
+                //RobotLog.dd(TAG,"Intake4on");
 
-            }
-            //if(intakeMotor1 != null)intakeMotor1.setPower(pwr);
-            //if(intakeMotor2 != null)intakeMotor2.setPower(pwr);
+            //}
+            if(intakeMotor1 != null)intakeMotor1.setPower(pwr);
+           // if(intakeMotor2 != null)intakeMotor2.setPower(pwr);
 
         }
 

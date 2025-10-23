@@ -302,8 +302,8 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
         boolean incr = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
         boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
-        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.L_BUMP);
-        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.R_BUMP);
+        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.R_BUMP);
+        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.L_BUMP);
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
         boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
@@ -315,6 +315,7 @@ public class MecanumTeleop extends InitLinearOpMode
             RobotLog.dd(TAG,"intakeon");
 
         }
+
         else if (intakeRev)
         {
             robot.crAzYIntake.setPwr(-1);

@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2199e05c-3138-4b7d-a2cf-18c836bfa53a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/8.7/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.7/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.7/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/checksums/sha1-checksums.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/F1F3N_Route1and7BLUE.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.7/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.7/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.7/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/fileHashes/fileHashes.bin" afterDir="false" />
@@ -15,20 +13,16 @@
       <change beforePath="$PROJECT_DIR$/.gradle/8.7/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.7/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/other.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/DropOnTapeThenBackdrop.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/DropOnTapeThenBackdrop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/DECODE_Route.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/DECODE_Route.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/Field.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/Field.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/ITD_Route.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/DECODE_Route.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/MeepMeepTesting.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/MeepMeepTesting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/Route.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/Route.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/SampleRoute.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/SampleRoute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/SpecimenRoute.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/SpecimenRoute.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/TimeForPixelRun.java" beforeDir="false" afterPath="$PROJECT_DIR$/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/TimeForPixelRun.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opModes/MecanumTeleop.java" beforeDir="false" afterPath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opModes/MecanumTeleop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/CrAzYintake.java" beforeDir="false" afterPath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/CrAzYintake.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/Shooter.java" beforeDir="false" afterPath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/Shooter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/Transition.java" beforeDir="false" afterPath="$PROJECT_DIR$/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot/Transition.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +82,7 @@
       <recent name="org.firstinspires.ftc.teamcode.robot" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.MeepMeepTesting">
+  <component name="RunManager" selected="Android App.TeamCode">
     <configuration name="TeamCode" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="2025code.TeamCode.main" />
       <option name="DEPLOY" value="true" />

@@ -59,6 +59,8 @@ public class Transition {
         RobotLog.dd(TAG, "init Transition Percent:%f pos:%f", percent, transitionServo.getPosition());
         return true;
     }
+
+
     public double percent;
     private static final String TAG = "Transition";
     public Servo transitionServo;
