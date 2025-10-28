@@ -69,7 +69,15 @@ public class RobotConstants
   public static double IN_ACT_DLY = 0.0;
   public static double IN_ACT_DUR = 0.5;
   public static double IN_ACT_DIST = 3.0;
-  public static double TRANSITION_RESTPOINT = .88;
+  public static double TRANSITION_RESTPOINT1 = .06;
+  public static double TRANSITION_RESTPOINT2 = .86;
+  public static double TRANSITION_RESTPOINT3 = .89;
+  public static double TRANSITION_MOVEMENT = .15;
+  public static  double SHOOTER_KP = 0;
+  public static  double SHOOTER_KI = 0;
+  public static  double SHOOTER_KD = 0;
+  public static  double SHOOTER_KF = 0;
+  public static  double SHOOTER_VELOCITY = 2750;
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;

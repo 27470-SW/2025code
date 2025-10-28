@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_MOVEMENT;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -27,7 +27,11 @@ public class Transition {
         if(transitionServo == null) return;
         transitionServo.setPosition(pos);
         percent = pos;
+    }
 
+    public void moveToStartPos()
+    {
+        setTransitionPos(TRANSITION_STARTPOINT);
     }
 
     public void update(){
@@ -49,13 +53,25 @@ public class Transition {
         setTransitionPos(percent);
     }
 
+    public void moveTransitionLittle(double amount){
+        percent = percent + amount;
+        setTransitionPos(percent);
+        RobotLog.dd(TAG, "moving to position: %f", percent);
+    }
+
     public void stop(){
         percent = transitionServo.getPosition();
         setTransitionPos(percent);
     }
 
-    public boolean init(){
-        setTransitionPos(TRANSITION_RESTPOINT);
+    public boolean init(double start, boolean forward){
+        setTransitionPos(start);
+        TRANSITION_STARTPOINT = start;
+        if(forward) {
+            TRANSITION_ENDPOINT = start + TRANSITION_MOVEMENT;
+        }else {
+            TRANSITION_ENDPOINT = start - TRANSITION_MOVEMENT;
+        }
         RobotLog.dd(TAG, "init Transition Percent:%f pos:%f", percent, transitionServo.getPosition());
         return true;
     }
@@ -69,5 +85,7 @@ public class Transition {
     public double maxClosed;
     public boolean Triggr;
     public int K1R2;
-    private double TRANSITION_ENDPOINT = TRANSITION_RESTPOINT - 0.1;
+    private double TRANSITION_ENDPOINT;
+    private double TRANSITION_STARTPOINT;
+
 }

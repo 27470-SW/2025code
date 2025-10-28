@@ -18,15 +18,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.field.Field;
-import org.firstinspires.ftc.teamcode.field.ITD_Route;
 import org.firstinspires.ftc.teamcode.field.SpinRoute;
 import org.firstinspires.ftc.teamcode.field.SpinRoutebasket;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveLRR;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.BasicBot;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.util.Input_Shaper;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
@@ -34,21 +31,11 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MAX_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_MIN_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_SPD;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_LEVS;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 import static java.lang.Math.abs;
 
@@ -94,6 +81,7 @@ public class MecanumTeleop extends InitLinearOpMode
         Pose2d startPose = new Pose2d();
         if(prevOpModeType != BasicBot.OpModeType.AUTO)
         {
+            startPose = new Pose2d(0,0,Math.toRadians(90));
             try {
                 if (robot.slides != null) {
                     robot.initSlides();
@@ -302,27 +290,11 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
         boolean incr = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
         boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
-        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.R_BUMP);
-        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.L_BUMP);
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
         boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
-//        boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
+        boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
 
-        if (intakeOn)
-        {
-            robot.crAzYIntake.setPwr(1);
-            RobotLog.dd(TAG,"intakeon");
-
-        }
-
-        else if (intakeRev)
-        {
-            robot.crAzYIntake.setPwr(-1);
-            RobotLog.dd(TAG,"intakereverse");
-
-        }
-        else robot.crAzYIntake.setPwr(0);
 
 
         lr = ishaper.shape(raw_lr, 0.02);
@@ -335,7 +307,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
 
-
+        if (tglF) useField = !useField;
 
         Vector2d driveInput;
         if(useField)
@@ -762,6 +734,30 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private boolean lBumperPressed;
 
+    private void processIntakeInputs()
+    {
+        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.R_BUMP) || gpad2.pressed(ManagedGamepad.Button.R_BUMP);
+        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.L_BUMP) || gpad2.pressed(ManagedGamepad.Button.L_BUMP);
+
+        if (intakeOn)
+        {
+            robot.crAzYIntake.setPwr(1);
+            RobotLog.dd(TAG,"intakeon");
+
+        }
+
+        else if (intakeRev)
+        {
+            robot.crAzYIntake.setPwr(-1);
+            RobotLog.dd(TAG,"intakereverse");
+
+        }
+        else {
+            robot.crAzYIntake.setPwr(0);
+            RobotLog.dd(TAG,"intake power 0");
+        }
+
+    }
 
     private void processControllerInputs()
     {
@@ -775,17 +771,37 @@ public class MecanumTeleop extends InitLinearOpMode
         double rightTrig = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
         double leftJoyY = gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
         boolean aDown = gpad2.just_pressed(ManagedGamepad.Button.A);
+        double leftTrig = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
+        boolean xDown = gpad2.just_pressed(ManagedGamepad.Button.X);
+        boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
 
 
         if (aDown){
             robot.shooter.resetTransition();
         }
 
+        if(xDown && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(-.01);
+            RobotLog.dd(TAG, "moving transition 1 down");
+        }
+        if(xDown && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(-.01);
+            RobotLog.dd(TAG, "moving transition 2 down");}
+        if(xDown && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(-.01);
+            RobotLog.dd(TAG, "moving transition 3 down");}
+        if(yUp && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(.01);
+            RobotLog.dd(TAG, "moving transition 1 up");}
+        if(yUp && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(.01);
+            RobotLog.dd(TAG, "moving transition 2 up"); }
+        if(yUp && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(.01);
+            RobotLog.dd(TAG, "moving transition 3 up");}
+          if(leftTrig >= 0.3) {
+              robot.shooter.spinShooterW(1);
+          }else {
+              robot.shooter.stopWheel();
+          }
 
         if (dpadDown ||dpadUp||dpadRight||dpadLeft){
             RobotLog.dd(TAG,"Dpad pressed");
 
-            robot.shooter.setDistance(1);
 
             if(rightTrig >= 0.3){
                 if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
@@ -796,9 +812,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
             }
         }
-        else {
-            robot.shooter.stopWheel();
-        }
+
 
         if (abs(leftJoyY) >= 0.3){
             robot.shooter.changeShootTraj(leftJoyY);
@@ -861,6 +875,7 @@ public class MecanumTeleop extends InitLinearOpMode
             processDriverInputs();
             d=opTimer.milliseconds();
             processSensors();
+            processIntakeInputs();
 //            oTimer.reset();
 //            printTelem();
 //            p=opTimer.milliseconds();

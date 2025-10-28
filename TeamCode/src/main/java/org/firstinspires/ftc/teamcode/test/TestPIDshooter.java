@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -9,18 +10,93 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opModes.InitLinearOpMode;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.Shooter;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
+import org.firstinspires.ftc.teamcode.util.PIDControl;
 
 import java.util.List;
 
 @Config
-@TeleOp(name = "TestShooter", group = "Test")
-@Disabled
-public class TestShooter extends InitLinearOpMode
+@TeleOp(name = "TestPidShooter", group = "Test")
+public class TestPIDshooter extends InitLinearOpMode
 {
+    // These can be tuned in FTC Dashboard
+    public static double kP = 0.05;  // Start with calculated values
+    public static double kI = 0.005;
+    public static double kD = 0.0;
+
+    public static double kS = 0.0;   // Static friction feedforward
+    public static double kV = 0.0004; // Velocity feedforward (start small!)
+    public static double kA = 0.0;   // Acceleration feedforward
+
+    public static double targetVelocity = 1000; // ticks per second
+
+    private PIDControl shooterMotor;
+    private PIDControl shooterMotor2;
+
+    @Override
+    public void runOpMode() {
+        // Initialize motor
+        shooterMotor = new PIDControl(hardwareMap, "shoot");
+        shooterMotor2 = new PIDControl(hardwareMap, "shoot2");
+
+        // Set initial coefficients
+        shooterMotor.init(kP, kI, kD, kV);
+        shooterMotor2.init(kP, kI,kD,kV);
+
+        telemetry.addLine("Connect to FTC Dashboard:");
+        telemetry.addLine("192.168.49.1:8080/dash (phone)");
+        telemetry.addLine("192.168.43.1:8080/dash (Control Hub)");
+        telemetry.addLine("\nPress A to spin up, B to stop");
+        telemetry.update();
+
+        waitForStart();
+
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        Telemetry dashTelemetry = dashboard.getTelemetry();
+
+        while (opModeIsActive()) {
+            // Update coefficients from Dashboard in real-time
+            shooterMotor.init(kP, kI, kD, kV);
+            shooterMotor2.init(kP, kI,kD,kV);
+            shooterMotor.update();
+            shooterMotor2.update();
+
+            // Control motor
+            if (gamepad1.a) {
+                shooterMotor.setWheelVelocity(targetVelocity);
+            } else if (gamepad1.b) {
+                shooterMotor.setWheelVelocity(0);
+            }
+
+            // Get current velocity
+            double currentVelocity = shooterMotor.getVelocity();
+            double error = targetVelocity - currentVelocity;
+
+            // Send data to Dashboard for graphing
+
+            dashTelemetry.addData("targetVelocity", targetVelocity);
+            dashTelemetry.addData("currentVelocity", currentVelocity);
+            dashTelemetry.addData("error", error);
+            dashTelemetry.addData("kP", kP);
+            dashTelemetry.addData("kI", kI);
+            dashTelemetry.addData("kD", kD);
+            dashTelemetry.addData("kV", kV);
+            dashTelemetry.update();
+
+            // Also show on Driver Station
+            telemetry.addData("Target", targetVelocity);
+            telemetry.addData("Current", "%.1f", currentVelocity);
+            telemetry.addData("Error", "%.1f", error);
+            telemetry.addLine("\nTune values in Dashboard!");
+            telemetry.update();
+        }
+    }
+}
+/*{
     private static final double INCREMENT = 3.0;     // amount to step motor each CYCLE_MS cycle
     private static final int     CYCLE_MS = 20;       // period of each cycle
     private static final double   MAX_DIST = 136;     // Maximum that we can shoot
@@ -153,3 +229,4 @@ public class TestShooter extends InitLinearOpMode
         shooter.stop();
     }
 }
+*/

@@ -22,7 +22,8 @@ public class CrAzYintake
         try {
             intakeMotor1 = hwMap.get(DcMotorEx.class, "im1");
             intakeMotor1.setDirection(RobotConstants.IN_DIR);
-            intakeMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intakeMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intakeMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             intakeMotor1.setPower(0);
             lastIntakePwr = 0.0;
             success = true;
@@ -131,7 +132,7 @@ public class CrAzYintake
 
         if(pwr != lastIntakePwr)
         {
-            //lastIntakePwr = pwr;
+            lastIntakePwr = pwr;
             //if(intakeServo1 != null){
                 //intakeServo1.setPosition(.5-pwr/2);
               //  RobotLog.dd(TAG,"Intake1on");

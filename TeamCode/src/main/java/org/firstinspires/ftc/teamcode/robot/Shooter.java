@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -14,6 +13,16 @@ import java.util.Locale;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KD;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KF;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KI;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KP;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_VELOCITY;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT1;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT2;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT3;
+
+import org.firstinspires.ftc.teamcode.util.PIDControl;
 
 public class Shooter
 {
@@ -27,13 +36,24 @@ public class Shooter
         boolean success = false;
         try
         {
-            shooter = hwMap.get(DcMotorEx.class, "shoot");
-            shooter.setDirection(DcMotor.Direction.REVERSE);
-            shooter.setPower(0);
-            shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            shooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            shooter.setMode(RUN_USING_ENCODER);
+            shooterW = hwMap.get(DcMotorEx.class, "shoot");
+            shooterW.setDirection(DcMotor.Direction.REVERSE);
+            shooterW.setPower(0);
+            shooterW.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            shooterW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shooterW.setMode(RUN_USING_ENCODER);
+            shooterW2 = hwMap.get(DcMotorEx.class, "shoot2");
+            shooterW2.setDirection(DcMotor.Direction.REVERSE);
+            shooterW2.setPower(0);
+            shooterW2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            shooterW2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shooterW2.setMode(RUN_USING_ENCODER);
             shtmode = RUN_USING_ENCODER;
+            controlShooterW = new PIDControl(hwMap, "shoot");
+            controlShooterW2 = new PIDControl(hwMap, "shoot2");
+            controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
+            controlShooterW2.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
+
             success = true;
         }
 
@@ -74,9 +94,9 @@ public class Shooter
         shooter1 = new Transition("shooter1", hwMap);
         shooter2 = new Transition("shooter2", hwMap);
         shooter3 = new Transition("shooter3", hwMap);
-        if(shooter1 != null) shooter1.init();
-        if(shooter2 != null) shooter2.init();
-        if(shooter3 != null) shooter3.init();
+        if(shooter1 != null) shooter1.init(TRANSITION_RESTPOINT1, true);
+        if(shooter2 != null) shooter2.init(TRANSITION_RESTPOINT2, true);
+        if(shooter3 != null) shooter3.init(TRANSITION_RESTPOINT3, false);
 
         setPIDF(new PIDFCoefficients(80.0, 0.0, 0.0,14.9));
 
@@ -87,10 +107,15 @@ public class Shooter
 
     public void update()
     {
-        if(shooter != null)
+        if(shooterW != null)
         {
-            encPos = shooter.getCurrentPosition();
-            curSpd = shooter.getVelocity();
+            encPos = shooterW.getCurrentPosition();
+            curSpd = shooterW.getVelocity();
+        }
+        if(shooterW2 != null)
+        {
+            encPos = shooterW2.getCurrentPosition();
+            curSpd = shooterW2.getVelocity();
         }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
@@ -106,7 +131,9 @@ public class Shooter
     public void stop()
     {
         cps = 0.0;
-        if(shooter != null) shooter.setVelocity(cps);
+        if(shooterW != null) shooterW.setVelocity(cps);
+        if(shooterW2 != null) shooterW2.setVelocity(cps);
+
         //if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
         //if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
         if(moveShooterM != null) moveShooterM.setVelocity(cps);
@@ -116,7 +143,9 @@ public class Shooter
     }
 public void stopWheel(){
         cps = 0.0;
-    if(shooter != null) shooter.setVelocity(cps);
+    if(shooterW != null) shooterW.setVelocity(cps);
+    if(shooterW2 != null) shooterW2.setVelocity(cps);
+
 }
     private static final double g = -9.81 *3.28084 *12;
     private static final double height = 35;
@@ -131,22 +160,32 @@ public void stopWheel(){
         return 2 * (v0 / cir) * SHOOTER_CPR;
     }
 
-    public void setDistance(double distance)
+    boolean usePIDs = false;
+
+    public void spinShooterW(double distance)
     {
         dist = distance;
         double voltage = vs.getVoltage();
-        if(shooter != null) shooter.setPower(-12/voltage);
+        if(usePIDs) {
+            if (controlShooterW != null) controlShooterW.setWheelVelocity(SHOOTER_VELOCITY);
+            if (controlShooterW2 != null) controlShooterW2.setWheelVelocity(SHOOTER_VELOCITY);
+        }
+        else {
+            if (controlShooterW != null) shooterW.setVelocity(SHOOTER_VELOCITY);
+            if (controlShooterW2 != null) shooterW2.setVelocity(SHOOTER_VELOCITY);
+        }
     }
 
     public void setShootMode(DcMotor.RunMode mode)
     {
-        if(shtmode != mode && shooter != null) shooter.setMode(mode);
+        if(shtmode != mode && shooterW != null) shooterW.setMode(mode);
+        if(shtmode != mode && shooterW2 != null) shooterW2.setMode(mode);
         shtmode = mode;
     }
     public void resetTransition() {
-        shooter1.init();
-        shooter2.init();
-        shooter3.init();
+        shooter1.moveToStartPos();
+        shooter2.moveToStartPos();
+        shooter3.moveToStartPos();
         RobotLog.dd(TAG,"reseting transtions");
     }
 
@@ -166,13 +205,17 @@ public void stopWheel(){
     public void shootPower(double pwr)
     {
         setShootMode(RUN_WITHOUT_ENCODER);
-        if(shooter != null) shooter.setPower(pwr);
+        if(shooterW != null) shooterW.setPower(pwr);
+        if(shooterW2 != null) shooterW2.setPower(pwr);
+
     }
 
     public void shootCps(double cps)
     {
         this.cps = cps;
-        if(shooter != null) shooter.setVelocity(cps);
+        if(shooterW != null) shooterW.setVelocity(cps);
+        if(shooterW2 != null) shooterW2.setVelocity(cps);
+
     }
 
     public void shoot(BALL_CHOICE ball){
@@ -200,8 +243,10 @@ public void stopWheel(){
     public void setPIDF(PIDFCoefficients pidf)
     {
         shtPid = pidf;
-        if(shooter == null) return;
-        shooter.setPIDFCoefficients(RUN_USING_ENCODER, shtPid);
+        if(shooterW == null) return;
+        shooterW.setPIDFCoefficients(RUN_USING_ENCODER, shtPid);
+        if(shooterW2 == null) return;
+        shooterW2.setPIDFCoefficients(RUN_USING_ENCODER, shtPid);
     }
 
     private final double SHOOTER_CPER = 28; //quad encoder cnts/encoder rev
@@ -211,14 +256,18 @@ public void stopWheel(){
     private int encPos = 0;
     private double curSpd = 0;
     protected HardwareMap hwMap;
-    public DcMotorEx shooter = null;
+    public DcMotorEx shooterW = null;
+    public DcMotorEx shooterW2 = null;
+    private PIDControl controlShooterW = null;
+    private PIDControl controlShooterW2 = null;
+
     public DcMotorEx moveShooterM = null;
     private VoltageSensor vs;
     private Servo moveShooter1 = null;
     private Servo moveShooter2 = null;
-    private Transition shooter1 = null;
-    private Transition shooter2 = null;
-    private Transition shooter3 = null;
+    public Transition shooter1 = null;
+    public Transition shooter2 = null;
+    public Transition shooter3 = null;
     private static final String TAG = "SJH_SHT";
     private double dist = 0;
     private double cps = 0;

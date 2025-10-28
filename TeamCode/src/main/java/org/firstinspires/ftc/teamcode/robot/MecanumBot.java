@@ -10,7 +10,6 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD_DWN;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EX_MAX;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EX_MIN;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.WR_SENSE;
 
 import com.qualcomm.hardware.lynx.LynxModule;
