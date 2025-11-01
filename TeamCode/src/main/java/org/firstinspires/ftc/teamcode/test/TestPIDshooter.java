@@ -24,15 +24,15 @@ import java.util.List;
 public class TestPIDshooter extends InitLinearOpMode
 {
     // These can be tuned in FTC Dashboard
-    public static double kP = 0.05;  // Start with calculated values
-    public static double kI = 0.005;
-    public static double kD = 0.0;
+    public static double kP = 0.03;  // Start with calculated values
+    public static double kI = 0.000016;
+    public static double kD = 0.0005;
 
     public static double kS = 0.0;   // Static friction feedforward
-    public static double kV = 0.0004; // Velocity feedforward (start small!)
+    public static double kV = 0.0003; // Velocity feedforward (start small!)
     public static double kA = 0.0;   // Acceleration feedforward
 
-    public static double targetVelocity = 1000; // ticks per second
+    public static double targetVelocity = -2000; // ticks per second
 
     private PIDControl shooterMotor;
     private PIDControl shooterMotor2;
@@ -45,7 +45,7 @@ public class TestPIDshooter extends InitLinearOpMode
 
         // Set initial coefficients
         shooterMotor.init(kP, kI, kD, kV);
-        shooterMotor2.init(kP, kI,kD,kV);
+        shooterMotor2.init(kP, kI, kD, kV);
 
         telemetry.addLine("Connect to FTC Dashboard:");
         telemetry.addLine("192.168.49.1:8080/dash (phone)");
@@ -62,8 +62,8 @@ public class TestPIDshooter extends InitLinearOpMode
             // Update coefficients from Dashboard in real-time
             shooterMotor.init(kP, kI, kD, kV);
             shooterMotor2.init(kP, kI,kD,kV);
-            shooterMotor.update();
-            shooterMotor2.update();
+            double update = shooterMotor.update();
+            double update2 = shooterMotor2.update();
 
             // Control motor
             if (gamepad1.a) {
@@ -71,6 +71,7 @@ public class TestPIDshooter extends InitLinearOpMode
             } else if (gamepad1.b) {
                 shooterMotor.setWheelVelocity(0);
             }
+
 
             // Get current velocity
             double currentVelocity = shooterMotor.getVelocity();
@@ -85,6 +86,8 @@ public class TestPIDshooter extends InitLinearOpMode
             dashTelemetry.addData("kI", kI);
             dashTelemetry.addData("kD", kD);
             dashTelemetry.addData("kV", kV);
+            dashTelemetry.addData("Power", update);
+            dashTelemetry.addData("filteredVelocity", shooterMotor.getFilteredVelocity());
             dashTelemetry.update();
 
             // Also show on Driver Station

@@ -165,10 +165,10 @@ public class MecanumDriveLRR extends MecanumDrive
             rightRear = hardwareMap.get(DcMotorEx.class, "BR");
             rightFront = hardwareMap.get(DcMotorEx.class, "FR");
 
-            leftFront.setDirection(RobotConstants.DT_LDIR);
-            leftRear.setDirection(RobotConstants.DT_LDIR);
-            rightRear.setDirection(RobotConstants.DT_RDIR);
-            rightFront.setDirection(RobotConstants.DT_RDIR);
+            leftFront.setDirection(RobotConstants.DT_FLDIR);
+            leftRear.setDirection(RobotConstants.DT_BLDIR);
+            rightRear.setDirection(RobotConstants.DT_BRDIR);
+            rightFront.setDirection(RobotConstants.DT_FRDIR);
         }
         catch(Exception e)
         {

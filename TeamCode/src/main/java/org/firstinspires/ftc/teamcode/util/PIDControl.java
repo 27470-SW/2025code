@@ -18,6 +18,7 @@ public class PIDControl {
     ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
     private double targetVelocity;
+    Input_Shaper ishaper;
 
     public PIDControl(HardwareMap map,String motorName)
     {
@@ -34,17 +35,42 @@ public class PIDControl {
         return motor.getVelocity();
     }
 
-    public void setWheelVelocity(double targetVelocity){
+    public double setWheelVelocity(double targetVelocity){
         this.targetVelocity= targetVelocity;
 
 
+        return targetVelocity;
     }
 
-   public void update (){
-       double power = PIDControlVoltage(targetVelocity,motor.getVelocity());
+    double vel0 = 0;
+    double vel1 = 0;
+    double vel2 = 0;
+    double vel3 = 0;
+
+
+    double filteredVelocity = 0;
+    double a = 0.4;
+    double b = 0.25;
+    double c = 0.2;
+    double d = 0.15;
+   public double update (){
+
+       vel3 = vel2;
+       vel2 = vel1;
+       vel1 = vel0;
+       vel0 = motor.getVelocity();
+
+       filteredVelocity = a*vel0 + b*vel1 + c*vel2 + d*vel3;
+       double power = PIDControlVoltage(targetVelocity, filteredVelocity);
+       power = ishaper.shape(power, 0.02);
        motor.setPower(power);
 
        timer.reset();
+       return power;
+    }
+
+    public double getFilteredVelocity(){
+       return filteredVelocity;
     }
 
     public boolean init (double Kp, double Ki, double Kd,double Kf){
@@ -53,6 +79,7 @@ public class PIDControl {
         this.Ki=Ki;
         this.Kf=Kf;
 
+        ishaper = new Input_Shaper();
         return true;
     }
 

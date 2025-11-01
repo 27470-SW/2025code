@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_MOVEMENT;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.info;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
@@ -47,7 +48,7 @@ public class Transition {
 
     public void startTransition(){
         RobotLog.dd(TAG, "startTransition Percent:%f pos:%f", percent, transitionServo.getPosition());
-
+        init(TRANSITION_STARTPOINT, forward);
         percent = TRANSITION_ENDPOINT;
 
         setTransitionPos(percent);
@@ -67,6 +68,7 @@ public class Transition {
     public boolean init(double start, boolean forward){
         setTransitionPos(start);
         TRANSITION_STARTPOINT = start;
+        this.forward = forward;
         if(forward) {
             TRANSITION_ENDPOINT = start + TRANSITION_MOVEMENT;
         }else {
@@ -76,7 +78,7 @@ public class Transition {
         return true;
     }
 
-
+private boolean forward;
     public double percent;
     private static final String TAG = "Transition";
     public Servo transitionServo;

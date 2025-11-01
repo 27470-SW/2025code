@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
+@Config
 public class RobotConstants
 {
   //Indicates whether to use InitTrajectories, InitTrajectories2, or Both for the Auton route
@@ -69,15 +71,15 @@ public class RobotConstants
   public static double IN_ACT_DLY = 0.0;
   public static double IN_ACT_DUR = 0.5;
   public static double IN_ACT_DIST = 3.0;
-  public static double TRANSITION_RESTPOINT1 = .06;
-  public static double TRANSITION_RESTPOINT2 = .86;
+  public static double TRANSITION_RESTPOINT1 = .35;
+  public static double TRANSITION_RESTPOINT2 = .48;
   public static double TRANSITION_RESTPOINT3 = .89;
   public static double TRANSITION_MOVEMENT = .15;
-  public static  double SHOOTER_KP = 0;
-  public static  double SHOOTER_KI = 0;
-  public static  double SHOOTER_KD = 0;
-  public static  double SHOOTER_KF = 0;
-  public static  double SHOOTER_VELOCITY = 2750;
+  public static  double SHOOTER_KP = 0.03;
+  public static  double SHOOTER_KI = 0.000016;
+  public static  double SHOOTER_KD = 0.0005;
+  public static  double SHOOTER_KF = 0.0003;
+  public static  double SHOOTER_VELOCITY = 1400;
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
@@ -256,8 +258,10 @@ public class RobotConstants
   public static PositionOption startPos = Field.StartPos.START_SPECIMENS;
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
-  public static DcMotorSimple.Direction DT_LDIR = DcMotorSimple.Direction.REVERSE;
-  public static DcMotorSimple.Direction DT_RDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.FORWARD;
 
   public static AxesOrder HUB_ORDER = AxesOrder.ZYX;
   public static AxesSigns HUB_SIGNS = AxesSigns.PPP;
@@ -429,9 +433,6 @@ public class RobotConstants
     IP_IMG_BOT = 0.80;
     IP_IMG_LFT = 0.05;
     IP_IMG_RGT = 0.95;
-
-    DT_LDIR = DcMotorSimple.Direction.REVERSE;
-    DT_RDIR = DcMotorSimple.Direction.FORWARD;
 
     BOT_LEN = 18;
     BOT_WID = 18;
@@ -632,8 +633,6 @@ public class RobotConstants
     RobotLog.dd(TAG, " DT_MAX_IPS: %4.1f", DT_MAX_IPS);
     RobotLog.dd(TAG, " DT_SAF_CPS: %4.1f", DT_SAF_CPS);
     RobotLog.dd(TAG, " DT_SAF_IPS: %4.1f", DT_SAF_IPS);
-    RobotLog.dd(TAG, " DT_LDIR: %s", DT_LDIR.toString());
-    RobotLog.dd(TAG, " DT_RDIR: %s", DT_RDIR.toString());
     RobotLog.dd(TAG, " DT_DIR: %s", DT_DIR.toString());
     RobotLog.dd(TAG, " DT_kA: %4.2f ", kA);
     RobotLog.dd(TAG, " DT_kV: %4.2f ", kV);

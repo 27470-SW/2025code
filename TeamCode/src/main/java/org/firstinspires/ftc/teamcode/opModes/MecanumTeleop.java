@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -69,6 +71,7 @@ public class MecanumTeleop extends InitLinearOpMode
         */
         robot.init(this, chas, true);
         robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
+
 
 /*        armButton = hardwareMap.get(TouchSensor .class, "armL0");
 
@@ -821,7 +824,7 @@ public class MecanumTeleop extends InitLinearOpMode
         }
         else {
             robot.shooter.changeShootTraj(0);
-            RobotLog.dd(TAG,"ShooterTraj Y is not being moved currently");
+           // RobotLog.dd(TAG,"ShooterTraj Y is not being moved currently");
 
         }
 

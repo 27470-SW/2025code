@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,7 +22,10 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_VELOCI
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT1;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT2;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT3;
+import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.*;
+import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.targetVelocity;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.PIDControl;
 
 public class Shooter
@@ -50,9 +54,10 @@ public class Shooter
             shooterW2.setMode(RUN_USING_ENCODER);
             shtmode = RUN_USING_ENCODER;
             controlShooterW = new PIDControl(hwMap, "shoot");
-            controlShooterW2 = new PIDControl(hwMap, "shoot2");
             controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
-            controlShooterW2.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
+
+            dashboardShooter = FtcDashboard.getInstance();
+            dashTelemetry = dashboardShooter.getTelemetry();
 
             success = true;
         }
@@ -117,9 +122,26 @@ public class Shooter
             encPos = shooterW2.getCurrentPosition();
             curSpd = shooterW2.getVelocity();
         }
+        if(usePIDs && controlShooterW != null){
+           double update = controlShooterW.update();
+            shooterW2.setPower(update);
+
+            double currentVelocity = controlShooterW.getVelocity();
+            double error = targetVelocity - currentVelocity;
+
+            dashTelemetry.addData("targetVelocity", targetVelocity);
+            dashTelemetry.addData("currentVelocity", currentVelocity);
+            dashTelemetry.addData("error", error);
+            dashTelemetry.addData("Power", update);
+            dashTelemetry.addData("filteredVelocity", controlShooterW.getFilteredVelocity());
+            dashTelemetry.update();
+        }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
         if(shooter3 != null) shooter3.update();
+
+        
+
     }
 
     public String toString()
@@ -160,19 +182,20 @@ public void stopWheel(){
         return 2 * (v0 / cir) * SHOOTER_CPR;
     }
 
-    boolean usePIDs = false;
+    boolean usePIDs = true;
 
     public void spinShooterW(double distance)
     {
         dist = distance;
         double voltage = vs.getVoltage();
         if(usePIDs) {
-            if (controlShooterW != null) controlShooterW.setWheelVelocity(SHOOTER_VELOCITY);
-            if (controlShooterW2 != null) controlShooterW2.setWheelVelocity(SHOOTER_VELOCITY);
+            if (controlShooterW != null) {
+                controlShooterW.setWheelVelocity (SHOOTER_VELOCITY);
+            }
         }
         else {
-            if (controlShooterW != null) shooterW.setVelocity(SHOOTER_VELOCITY);
-            if (controlShooterW2 != null) shooterW2.setVelocity(SHOOTER_VELOCITY);
+            if (shooterW != null) shooterW.setVelocity(SHOOTER_VELOCITY);
+            if (shooterW2 != null) shooterW2.setVelocity(SHOOTER_VELOCITY);
         }
     }
 
@@ -259,7 +282,6 @@ public void stopWheel(){
     public DcMotorEx shooterW = null;
     public DcMotorEx shooterW2 = null;
     private PIDControl controlShooterW = null;
-    private PIDControl controlShooterW2 = null;
 
     public DcMotorEx moveShooterM = null;
     private VoltageSensor vs;
@@ -276,7 +298,8 @@ public void stopWheel(){
     private DcMotor.RunMode shtmode = RUN_USING_ENCODER;
 
     private PIDFCoefficients shtPid = RobotConstants.SH_PID;
-
+    private Telemetry dashTelemetry;
+    private FtcDashboard dashboardShooter;
     public enum BALL_CHOICE {
         RIGHT,
         LEFT,
