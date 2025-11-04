@@ -47,8 +47,10 @@ public class MeepMeepTesting
          // With a field size of 800 pixels
 
          RobotConstants.init(RobotConstants.Chassis.B7252);
+
+
          RobotConstants.MAX_LOOPS = 1;
-         DECODE_Route ffr = new DECODE_Route(START_FAR_RED_1AND7,OUTSIDEPRIMARYPARK2RED, Field.Wiffle_Pos.PARK2) ;
+         DECODE_Route ffr = new DECODE_Route( START_WALL_BLUE_3,INSIDEPRIMARYPARK1RED, Field.Wiffle_Pos.PARK2, Field.Motif.SHOOTGPP,Field.Num_shots.THREE) ;
 
          TrajectorySequence seq = ffr.fullSeq;
 

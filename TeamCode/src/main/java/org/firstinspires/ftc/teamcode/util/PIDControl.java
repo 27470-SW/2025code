@@ -25,7 +25,7 @@ public class PIDControl {
         this.hwMap = map;
         motor = hwMap.get(DcMotorEx.class, motorName);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.FLOAT);
+        motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
 
 

@@ -1,15 +1,17 @@
 package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.Field.Highways.WALL;
+import static com.example.meepmeeptesting.Field.Num_shots.THREE;
 import static com.example.meepmeeptesting.Route.Heading.HEAD_LINEAR;
 import static com.example.meepmeeptesting.Route.Movement.LINE;
 import static com.example.meepmeeptesting.Route.Movement.SPLINE;
 import static com.example.meepmeeptesting.Route.Movement.START;
 import static com.example.meepmeeptesting.Route.TeamElement.RIGHT;
+import static com.example.meepmeeptesting.Route.numshot;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-public class F1F3N_Route1and7BLUE {
+public class Route3BLUE {
     Route route;
     private Field.Highways stackToBack;
     private Field.Highways pixelStack;
@@ -17,7 +19,7 @@ public class F1F3N_Route1and7BLUE {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public F1F3N_Route1and7BLUE(Route constructorRoute) {
+    public Route3BLUE(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -37,80 +39,63 @@ public class F1F3N_Route1and7BLUE {
         //  qualifierRoute(startPos,parkPos,firstLocation);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        route.addLocation(route.startSmallTriBlue, START, HEAD_LINEAR);
-
-        //shoot pre loaded wiffles
-        route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR);
+        route.addLocation(route.startBlueWall, START, HEAD_LINEAR);
         route.addFunction(route::wheelOn);
-        route.addEvent(Route.Action.WAIT, 2.0);
-        route.addFunction(route::transitonUp);
+        route.addLocation(route.shootNearBlue, LINE, HEAD_LINEAR);
+        route.addEvent(Route.Action.WAIT, 1.0);
+        route.addFunction(route::shoot1);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.addFunction(route::shoot2);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.addFunction(route::shoot3);
         route.addEvent(Route.Action.WAIT, 0.35);
         route.addFunction(route::transitonDown);
-
-        //intake wiffles human
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
-        route.addFunction(route::intakeOn);
-        route.addLocation(route.PrepPosIntake1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUEDONE, LINE, HEAD_LINEAR);
-
-        //shoot human wiffles
-
-        route.addLocation(route.shootFarPosBLUE, LINE, HEAD_LINEAR);
-        route.addFunction(route::intakeOff);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonDown);
         route.addFunction(route::intakeOn);
 
-        // go to pos lever wiffles
-        route.addLocation(route.preleverwiffle, LINE, HEAD_LINEAR);
-        route.addLocation(route.intakewifflelever, LINE, HEAD_LINEAR);
-        route.addLocation(route.hitlever, LINE, HEAD_LINEAR);
-        route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
+
+        route.addLocation(route.goNear2Blue, LINE, HEAD_LINEAR);
+        route.addLocation(route.collect2Blue, LINE, HEAD_LINEAR);
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(-10));
+        route.addLocation(route.shootNearBlue, SPLINE, HEAD_LINEAR);
         route.addFunction(route::intakeOff);
-        //SHOOT  WIFFLES
-        route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.2);
+       //shooting stuff
+        route.addEvent(Route.Action.WAIT, 1.0);
+        route.addFunction(route::shoot1);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.addFunction(route::shoot2);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.addFunction(route::shoot3);
+        route.addEvent(Route.Action.WAIT, 0.35);
         route.addFunction(route::transitonDown);
+        route.addFunction(route::intakeOn);
+        if (numshot==THREE) {
+            route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
+            route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
+            route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
+            route.addLocation(route.shootNearBlue, SPLINE, HEAD_LINEAR);
+            route.addFunction(route::intakeOff);
+            route.shootMotif();
+        }else {
+            route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
+            route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
+            route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
+            route.addLocation(route.shootNearBlue, SPLINE, HEAD_LINEAR);
+            route.addFunction(route::intakeOff);
+            route.shootMotif();
 
-        switch (lastLocation){
-            case GOAL4 :
-                route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOn);
-                route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOff);
-                //SHOOT  WIFFLES
-                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-                route.addEvent(Route.Action.WAIT, 0.2);
-                route.addFunction(route::intakeOff);
-                route.addFunction(route::transitonUp);
-                route.addEvent(Route.Action.WAIT, 0.2);
-                route.addFunction(route::transitonDown);
-
-
-                break;
-            case PARK2:
-                route.addLocation(route.pregotoparkwiffle,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOn);
-                route.addLocation(route.gotoparkwiffle,LINE,HEAD_LINEAR);
-                route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
-                route.addFunction(route::intakeOff);
-
-                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-                route.addEvent(Route.Action.WAIT, 0.2);
-                route.addFunction(route::transitonUp);
-                route.addEvent(Route.Action.WAIT, 0.2);
-                route.addFunction(route::transitonDown);
-
-                break;
+            route.addFunction(route::intakeOn);
+            route.addEvent(Route.Action.TANGENT, Math.toRadians(60));
+            route.addLocation(route.goNear1Blue, SPLINE, HEAD_LINEAR);
+            route.addLocation(route.collect1Blue, LINE, HEAD_LINEAR);
+            route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
+            route.addLocation(route.shootNearBlueSpline, SPLINE, HEAD_LINEAR);
+            route.addFunction(route::intakeOff);
+            route.shootMotif();
         }
-
-
     }
+
+
+
 
     private void pickupSampleFromTape() {
         route.addFunction(route::moveArmToPickup);

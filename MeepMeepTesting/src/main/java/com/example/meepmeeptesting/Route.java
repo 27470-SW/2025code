@@ -49,16 +49,20 @@ public abstract class Route
     protected static final boolean strafeDropX = false;
 
     public Route(Route copyRoute){
-        this(copyRoute.startPos, copyRoute.parkPos, copyRoute.lastLocation);
+        this(copyRoute.startPos, copyRoute.parkPos, copyRoute.lastLocation, copyRoute.motif, copyRoute.numshot);
     }
      public Route(
-                  PositionOption startPos,
-	 			  Field.Park_Pos parkPos,
-                  Field.Wiffle_Pos firstLocation)
+             PositionOption startPos,
+             Field.Park_Pos parkPos,
+             Field.Wiffle_Pos firstLocation,
+             Field.Motif  Motif,
+             Field.Num_shots num_shot)
     {
            this.startPos = startPos;
            this.parkPos  = parkPos;
            this.lastLocation = firstLocation;
+           this.numshot= num_shot;
+           this.motif = Motif;
 
            botLen = RobotConstants.BOT_LEN;
            botWid = RobotConstants.BOT_WID;
@@ -144,10 +148,63 @@ public abstract class Route
         //Put new poses here
         startSample = new Pose2d(sx * -60, 65, flip + sh*Math.toRadians(270));
         //specimen points
+        blueFar  = new Pose2d(sx * -11, -60, flip + sh*Math.toRadians(270));
+        shootPreWhiffles  = new Pose2d(sx * -14, -57, flip + sh*Math.toRadians(115));
+        redWall  = new Pose2d(sx * 36, 62, flip + sh*Math.toRadians(270));
+        aroundPartner = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
+        shootZonefornear = new Pose2d(sx * 30, 29, flip + sh*Math.toRadians(53));
+        shootZonefornearblue = new Pose2d(sx * -30, 20, flip + sh*Math.toRadians(-53));
+
+        intakeGoal = new Pose2d(sx * 31.3, 8, flip + sh*Math.toRadians(90));
+        intakeGoalWhiffles = new Pose2d(sx * 55 , 8, flip + sh*Math.toRadians(90));
+        shootGoalWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
+        intakeGate = new Pose2d(sx * 31.3, -14, flip + sh*Math.toRadians(90));
+        intakeGateWhiffles = new Pose2d(sx * 52, -14, flip + sh*Math.toRadians(90));
+        shootGateWhiffles = new Pose2d(sx * 24, 43.1, flip + sh*Math.toRadians(30));
+        intakePark = new Pose2d(sx * 31.3, -37, flip + sh*Math.toRadians(90));
+        intakeParkWhiffles = new Pose2d(sx * 52, -37, flip + sh*Math.toRadians(90));
+        shootParkWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
+        redGoal = new Pose2d(sx * 43.8, 57.5, flip + sh*Math.toRadians(217));
+        blueGoal = new Pose2d(sx * -43.8, 57.5, flip + sh*Math.toRadians(143));
+        blueWall  = new Pose2d(sx * -36, 62, flip + sh*Math.toRadians(270));
+        aroundPartnerBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
+        intakeGateBlue = new Pose2d(sx * -13, -5, flip + sh*Math.toRadians(270));
+        intakeGateWhifflesBlue = new Pose2d(sx * -53, -5, flip + sh*Math.toRadians(270));
+        shootGateWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
+        aroundWhiffles = new Pose2d(sx * -13, -5, flip + sh*Math.toRadians(150));
+        intakeGoalBlue = new Pose2d(sx * -13, 17.3, flip + sh*Math.toRadians(270));
+        shootGoalWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
+        intakeGoalWhifflesBlue = new Pose2d(sx * -54 , 17.3, flip + sh*Math.toRadians(270));
+        intakeParkBlue = new Pose2d(sx * -13, -29.4, flip + sh*Math.toRadians(270));
+        intakeParkWhifflesBlue = new Pose2d(sx * -51, -29.4, flip + sh*Math.toRadians(270));
+        shootParkWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
+        //ITD poses
         startSmallTri = new Pose2d(sx * 15, -61, flip + sh*Math.toRadians(90));
+        startSmallTriBlue = new Pose2d(sx * -15, -61, flip + sh*Math.toRadians(90));
+        shootFarPosBLUE = new Pose2d(sx * -15, -56, flip + sh*Math.toRadians(110));
+
         shootFarPos = new Pose2d (sx * 15, -58, flip + sh*Math.toRadians(70));
+        shootFarPosB = new Pose2d (sx * -16, -58, flip + sh*Math.toRadians(290));
+        shootNearPos = new Pose2d (sx * 10, 1, flip + sh*Math.toRadians(70));
+        shootNearPosB = new Pose2d (sx * 10, 1, flip + sh*Math.toRadians(290));
         PrepPosIntake1 = new Pose2d(sx * 58, -50 , flip + sh*Math.toRadians(45));
+        PrepPosIntake1BLUE = new Pose2d(sx * -58, -50 , flip + sh*Math.toRadians(-75));
+
         intookpos1 = new Pose2d(sx * 60.3, -59 , flip + sh*Math.toRadians(0));
+        intookpos1BLUE = new Pose2d(sx * -59, -60 , flip + sh*Math.toRadians(-45));
+        intookpos1BLUEDONE = new Pose2d(sx * -59, -60 , flip + sh*Math.toRadians(-40));
+
+        intakepos2 = new Pose2d(sx * 25, -40 , flip + sh*Math.toRadians(90));
+        intakepos2B = new Pose2d(sx * -29, -28 , flip + sh*Math.toRadians(270));
+        intakeloading2 = new Pose2d(sx * 50, -40 , flip + sh*Math.toRadians(90));
+        intakeloading2B = new Pose2d(sx * -49, -28 , flip + sh*Math.toRadians(270));
+        intakepos3 = new Pose2d(sx * 25, -17 , flip + sh*Math.toRadians(90));
+        intakepos3B = new Pose2d(sx * -29, -5 , flip + sh*Math.toRadians(270));
+        intakeloading3 = new Pose2d(sx * 50, -17 , flip + sh*Math.toRadians(90));
+        intakeloading3B = new Pose2d(sx * -49, -5 , flip + sh*Math.toRadians(270));
+        shootPos3 = new Pose2d(sx * -5, 18 , flip + sh*Math.toRadians(90));
+        intakepos4 = new Pose2d(sx * 25, 7 , flip + sh*Math.toRadians(90));
+        intakeloading4 = new Pose2d(sx * 50, 7 , flip + sh*Math.toRadians(90));
         preleverwiffle= new Pose2d(sx * 15, -17 , flip + sh*Math.toRadians(90));
         intakewifflelever = new Pose2d(sx * 52, -16 , flip + sh*Math.toRadians(90));
         hitlever = new Pose2d(sx * 54, -11 , flip + sh*Math.toRadians(90));
@@ -157,11 +214,30 @@ public abstract class Route
         gotoparkwiffle = new Pose2d (sx * 50,-40,flip +sh*Math.toRadians(90));
         pregotogoalwiffles= new Pose2d (sx * 17,6,flip +sh*Math.toRadians(90));
         gotogoalwiffles= new Pose2d (sx * 50,6,flip +sh*Math.toRadians(90));
-        parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
-        parkInside2Red = new Pose2d(sx * 15,-18,flip +sh*Math.toRadians(90));
-        parkOutside1Red =new Pose2d(sx * 30,58,flip +sh*Math.toRadians(90));
-        parkOutside2Red =new Pose2d(sx * 52,30,flip +sh*Math.toRadians(90));
 
+        parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
+        parkInside1Blue = new Pose2d(sx * -17,37,flip +sh*Math.toRadians(90));
+
+        parkInside2Red = new Pose2d(sx * 15,-18,flip +sh*Math.toRadians(90));
+        parkInside2Blue = new Pose2d(sx * -15,-18,flip +sh*Math.toRadians(90));
+
+        parkOutside1Red =new Pose2d(sx * 30,58,flip +sh*Math.toRadians(90));
+        parkOutside1Blue =new Pose2d(sx * -30,58,flip +sh*Math.toRadians(90));
+
+        parkOutside2Red =new Pose2d(sx * 52,30,flip +sh*Math.toRadians(90));
+        parkOutside2BLUE =new Pose2d(sx * -52,30,flip +sh*Math.toRadians(90));
+
+        startRedFar = new Pose2d(sx * 20, -60, flip + sh*Math.toRadians(90));
+        moveToPark = new Pose2d (sx * 25, -40, flip + sh*Math.toRadians(90));
+        collect2 = new Pose2d (sx * 60, -40, flip + sh*Math.toRadians(90));
+        backToStart = new Pose2d (sx * 20, -55, flip + sh*Math.toRadians(70));
+        nearLeaver = new Pose2d (sx * 17, -15, flip + sh*Math.toRadians(90));
+        collect3 = new Pose2d (sx * 54, -15, flip + sh*Math.toRadians(90));
+        shootNear = new Pose2d (sx * 15, 37, flip + sh*Math.toRadians(25));
+        shootNearForSpline = new Pose2d (sx * 30, 37, flip + sh*Math.toRadians(30));
+        moveToHumanPlayerZone = new Pose2d (sx * 61, -40, flip + sh*Math.toRadians(360));
+        collect1 = new Pose2d (sx * 61, -60, flip + sh*Math.toRadians(360));
+        shootNear2 = new Pose2d (sx * 30, 37, flip + sh*Math.toRadians(30));
         startSpecimenSide = new Pose2d(sx * -5, 63.25, flip + sh*Math.toRadians(270));
 		startSpecimen = new Pose2d(sx * -5, 63, flip + sh*Math.toRadians(270));
         specimenPark1 = new Pose2d(sx * -61, 62, flip + sh*Math.toRadians(270));
@@ -191,10 +267,20 @@ public abstract class Route
         sample3 = new Pose2d(sx * 55, 56, flip + sh*Math.toRadians(-60));
         park = new Pose2d(sx * 25, 10, flip + sh*Math.toRadians(-180));
         positionToPark = new Pose2d(sx * 40,10 , flip + sh*Math.toRadians(-90));
-        waitForHumanPlayer = new Pose2d(sx * -48, 48, flip + sh*Math.toRadians(89.9));
+        waitForHumanPlayer = new Pose2d(sx * -48, 48, flip + sh*Math.toRadians(90));
         park2 = new Pose2d(sx * -70, 63, flip + sh*Math.toRadians(-90));
         subPos = new Pose2d(sx * -5, 35, flip + sh*Math.toRadians(270));
-
+        startRedWall = new Pose2d(sx * 30, 62, flip + sh*Math.toRadians(270));
+        startBlueWall = new Pose2d(sx * -30, 62, flip + sh*Math.toRadians(270));
+        shootNearBlue = new Pose2d(sx * -25, 50, flip + sh*Math.toRadians(150));
+        goNear2Blue = new Pose2d(sx * -25, -30, flip + sh*Math.toRadians(270));
+        collect2Blue = new Pose2d(sx * -55, -30, flip + sh*Math.toRadians(270));
+        goNear3Blue = new Pose2d(sx * -25, -5, flip + sh*Math.toRadians(270));
+        collect3Blue = new Pose2d(sx * -55, -5, flip + sh*Math.toRadians(270));
+        goNear1Blue = new Pose2d(sx * -61, -43, flip + sh*Math.toRadians(180));
+        collect1Blue = new Pose2d(sx * -61, -60, flip + sh*Math.toRadians(180));
+        shootNearBlueSpline = new Pose2d(sx * -30, 40, flip + sh*Math.toRadians(150));
+        startBlueFar= new Pose2d(sx * -20, -55, flip + sh*Math.toRadians(90));
 
 
 
@@ -723,10 +809,10 @@ public void slidesUpOne(){
          System.out.println("Shoot Balls Close");
      }
      protected void transitonUp(){
-         System.out.println("Transition Up");
+         System.out.println("Transition Up ALL");
      }
      protected void transitonDown(){
-         System.out.println("Transition Down");
+         System.out.println("Transition Down ALL");
      }
      protected void intakeOn(){
          System.out.println("IntakeOn");
@@ -738,7 +824,43 @@ public void slidesUpOne(){
      {
          System.out.println("Parking bot");
      }
+    protected void shoot1(){System.out.println("Shoot Transition 1");}
+    protected void shoot2(){System.out.println("Shoot Transition 2");}
+    protected void shoot3(){System.out.println("Shoot Transition 3");}
 
+
+
+    protected void shootMotif(){
+        
+       switch (motif)
+       {
+           case SHOOTGPP:
+               addFunction(this::shoot1);
+               addEvent(Route.Action.WAIT, 2.0);
+               addFunction(this::shoot2);
+               addEvent(Route.Action.WAIT, 1.0);
+               addFunction(this::shoot3);
+               addEvent(Route.Action.WAIT, 0.34);
+               break;
+           case SHOOTPGP:
+               addFunction(this::shoot1);
+               addEvent(Route.Action.WAIT, 2.0);
+               addFunction(this::shoot2);
+               addEvent(Route.Action.WAIT, 2.0);
+               addFunction(this::shoot3);
+               addEvent(Route.Action.WAIT, 0.34);
+
+               break;
+           case SHOOTPPG:
+               addFunction(this::shoot1);
+               addEvent(Route.Action.WAIT, 1.0);
+               addFunction(this::shoot2);
+               addEvent(Route.Action.WAIT, 2.0);
+               addFunction(this::shoot3);
+               addEvent(Route.Action.WAIT, 0.34);
+               break;
+       }
+     }
 
 
      public String toString()
@@ -753,6 +875,8 @@ public void slidesUpOne(){
      protected Field.Alliance alliance;
      protected Field.Route routeStrategy;
      protected Field.Wiffle_Pos lastLocation;
+     protected Field.Motif motif;
+     protected static Field.Num_shots numshot;
      protected Field.Highways stackHighway;
      public TeamElement teamElement;
      protected Field.Highways[] highways;
@@ -804,14 +928,38 @@ public void slidesUpOne(){
     protected Pose2d corner3;
      protected Pose2d startSample;
      protected Pose2d startSmallTri;
-     protected Pose2d PrepPosIntake1;
-     protected Pose2d intookpos1;
+
+    protected Pose2d startSmallTriBlue;
+    protected Pose2d shootFarPosBLUE;
+    protected Pose2d PrepPosIntake1;
+    protected Pose2d PrepPosIntake1BLUE;
+
+    protected Pose2d intookpos1;
+    protected Pose2d intookpos1BLUE;
+    protected Pose2d intookpos1BLUEDONE;
+
+    protected Pose2d intakepos2;
+    protected Pose2d intakepos2B;
+    protected Pose2d intakeloading2;
+    protected Pose2d intakeloading2B;
+    protected Pose2d intakepos3;
+    protected Pose2d intakepos3B;
+    protected Pose2d intakeloading3;
+    protected Pose2d intakeloading3B;
+    protected Pose2d shootPos3;
+    protected Pose2d intakepos4;
+    protected Pose2d intakeloading4;
+    protected Pose2d shootNearPos;
+    protected Pose2d shootNearPosB;
+
      protected Pose2d preleverwiffle;
      protected Pose2d intakewifflelever;
      protected Pose2d hitlever;
      protected Pose2d prenearpos;
      protected Pose2d nearpos;
      protected Pose2d shootFarPos;
+
+    protected Pose2d shootFarPosB;
      protected Pose2d pregotoparkwiffle;
      protected Pose2d  gotoparkwiffle;
      protected Pose2d pregotogoalwiffles;
@@ -820,12 +968,46 @@ public void slidesUpOne(){
      protected Pose2d parkInside2Red;
      protected Pose2d parkOutside1Red;
      protected Pose2d parkOutside2Red;
+     protected Pose2d parkInside1Blue;
+     protected Pose2d parkInside2Blue;
+     protected Pose2d parkOutside1Blue;
+    protected Pose2d parkOutside2BLUE;
     protected Pose2d startSpecimen;
      protected Pose2d purplePixelPlaceCenterTop;
     protected Pose2d dropCenterPixel;
     protected Pose2d hangSpecimen;
     protected Pose2d moveBackFromSpecimen;
     protected Pose2d sample1;
+    protected Pose2d redWall;
+    protected Pose2d blueFar;
+    protected Pose2d shootPreWhiffles;
+    protected Pose2d blueWall;
+    protected Pose2d aroundPartner;
+    protected Pose2d shootZonefornear;
+    protected Pose2d shootZonefornearblue;
+
+    protected Pose2d aroundPartnerBlue;
+    protected Pose2d intakeGoal;
+    protected Pose2d intakeGoalBlue;
+    protected Pose2d intakeGoalWhiffles;
+    protected Pose2d shootGoalWhiffles;
+    protected Pose2d intakeGate;
+    protected Pose2d intakeGateBlue;
+    protected Pose2d intakeGateWhiffles;
+    protected Pose2d intakeGateWhifflesBlue;
+    protected Pose2d intakeGoalWhifflesBlue;
+    protected Pose2d shootGateWhiffles;
+    protected Pose2d shootGateWhifflesBlue;
+    protected Pose2d aroundWhiffles;
+    protected Pose2d shootGoalWhifflesBlue;
+    protected Pose2d intakePark;
+    protected Pose2d intakeParkBlue;
+    protected Pose2d intakeParkWhiffles;
+    protected Pose2d intakeParkWhifflesBlue;
+    protected Pose2d shootParkWhiffles;
+    protected Pose2d shootParkWhifflesBlue;
+    protected Pose2d redGoal;
+    protected Pose2d blueGoal;
     protected Pose2d sample2;
     protected Pose2d rotateToSample2;
     protected Pose2d sample3;
@@ -873,6 +1055,29 @@ public void slidesUpOne(){
     protected Pose2d pickUpPixelStackRightLeft;
     protected Pose2d dropLeftPixel;
     protected Pose2d getDropRightPixelBlue;
+    protected Pose2d startRedFar;
+    protected Pose2d startRedWall;
+    protected Pose2d backToStart;
+    protected Pose2d startBlueFar;
+    protected Pose2d moveToPark;
+    protected Pose2d collect2;
+    protected Pose2d nearLeaver;
+    protected Pose2d collect3;
+    protected Pose2d shootNear;
+    protected Pose2d shootNearForSpline;
+    protected Pose2d startBlueWall;
+    protected Pose2d shootNearBlue;
+    protected Pose2d goNear2Blue;
+    protected Pose2d goNear3Blue;
+    protected Pose2d goNear1Blue;
+    protected Pose2d shootNearBlueSpline;
+    protected Pose2d collect1Blue;
+    protected Pose2d collect2Blue;
+    protected Pose2d collect3Blue;
+    protected Pose2d moveToHumanPlayerZone;
+    protected Pose2d collect1;
+    protected Pose2d shootNear2;
+
     protected Pose2d dropRightPixel;
     protected Pose2d dropRightPixelCircuit;
     protected Pose2d dropRightPixelCuircut;

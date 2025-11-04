@@ -71,6 +71,7 @@ public class MecanumTeleop extends InitLinearOpMode
         */
         robot.init(this, chas, true);
         robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
+        RobotConstants.info();
 
 
 /*        armButton = hardwareMap.get(TouchSensor .class, "armL0");
@@ -325,7 +326,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
         double maxCPS = RobotConstants.DT_SAF_CPS;
         if(hspd) maxCPS = RobotConstants.DT_MAX_CPS;
-        if (slow) maxCPS = RobotConstants.DT_SAF_CPS/3;
+        if (slow) maxCPS = RobotConstants.DT_SAF_CPS/4;
         double spdScl = maxCPS/RobotConstants.DT_MAX_CPS;
 
         driveInput = driveInput.times(spdScl);
@@ -777,6 +778,7 @@ public class MecanumTeleop extends InitLinearOpMode
         double leftTrig = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
         boolean xDown = gpad2.just_pressed(ManagedGamepad.Button.X);
         boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
+        boolean bDown = gpad2.just_pressed(ManagedGamepad.Button.B);
 
 
         if (aDown){

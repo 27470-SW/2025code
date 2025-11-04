@@ -79,7 +79,14 @@ public class RobotConstants
   public static  double SHOOTER_KI = 0.000016;
   public static  double SHOOTER_KD = 0.0005;
   public static  double SHOOTER_KF = 0.0003;
-  public static  double SHOOTER_VELOCITY = 1400;
+  public static  double SHOOTER_VELOCITY = 1200;
+  public static  double MIN_W_SPEED = 800;
+  public static  double MAX_W_SPEED = 1250;
+  public static  double MIN_SHOOTER_DIST = 0;
+  public static  double MAX_SHOOTER_DIST = 135;
+  public static  double MIN_TRAJ_ENCODER = 0;
+  public static  double MAX_TRAJ_ENCODER = 700;
+
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
@@ -230,7 +237,7 @@ public class RobotConstants
   public static DcMotorSimple.Direction LD_DIR = DcMotorSimple.Direction.REVERSE;
 
   public static final double MMPERIN = 25.4;
-  public static Motors.MotorModel DT_MOTOR = Motors.MotorModel.GOBILDA_5202_19_2;
+  public static Motors.MotorModel DT_MOTOR = Motors.MotorModel.GOBILDA_5202_13_7;
   public static double DT_CPMR = DT_MOTOR.getCpr(); //counts per motor output shaft rev
   public static double DT_MAX_RPM = DT_MOTOR.getRpm();
   public static double DT_EXT_GEAR_RATIO = 1.0;
@@ -247,9 +254,9 @@ public class RobotConstants
   public static double BOT_LEN = 18.0;
   public static double BOT_WID = 18.0;
 
-  public static final double DT_SAF_IPS = 30.0;
+  public static double DT_SAF_IPS;
   public static double DT_MAX_IPS;
-  public static final double DT_SAF_CPS = DT_SAF_IPS * DT_CPI;
+  public static double DT_SAF_CPS;
   public static double DT_MAX_CPS;
   public static double BUTT_SPD = .9987;
   public static double BORD_SPD = .1;
@@ -259,8 +266,8 @@ public class RobotConstants
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
   public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.FORWARD;
-  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.REVERSE;
-  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.FORWARD;
   public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.FORWARD;
 
   public static AxesOrder HUB_ORDER = AxesOrder.ZYX;
@@ -555,6 +562,8 @@ public class RobotConstants
 
     DT_MAX_IPS = DT_MAX_RPM/60.0 * DT_CIRCUM;
     DT_MAX_CPS = DT_MAX_IPS * DT_CPI;
+    DT_SAF_IPS = DT_MAX_IPS * 0.7;
+    DT_SAF_CPS = DT_SAF_IPS * DT_CPI;
 
     if(!kVsetManual) kV = 1.0 / rpmToVelocity(DT_MAX_RPM);
 

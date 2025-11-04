@@ -40,8 +40,8 @@ public class F1F3N_Route1and7Red {
         route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
 
         //shoot pre loaded wiffles
-        route.addLocation(route.shootFarPos, SPLINE, HEAD_LINEAR);
         route.addFunction(route::wheelOn);
+        route.addLocation(route.shootFarPos, SPLINE, HEAD_LINEAR);
         route.addEvent(Route.Action.WAIT, 2.0);
         route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.35);

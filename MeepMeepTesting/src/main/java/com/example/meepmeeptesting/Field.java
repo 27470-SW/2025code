@@ -106,6 +106,16 @@ public abstract class Field
         START_GOAL_RED,
         START_FAR_RED_1AND7,
         START_FAR_BLUE_1AND7,
+        START_WALL_BLUE_3,
+        START_WALL_RED_3,
+        START_WALL_RED4,
+        START_WALL_BLUE4,
+        START_GOAL_RED5,
+        START_GOAL_BLUE5,
+        START_FAR_RED6,
+        START_FAR_BLUE6,
+
+        START_FAR_RED,
         START_WALL_RED,
         START_GOAL_BLUE,
         START_FAR_BLUE,
@@ -120,6 +130,17 @@ public abstract class Field
         Park1
     }
 
+    public enum Motif implements PositionOption
+    {
+        SHOOTGPP,
+        SHOOTPGP,
+        SHOOTPPG,
+    }
+    public enum Num_shots implements PositionOption
+    {
+        THREE,
+        FOUR,
+    }
     public enum Wiffle_Pos implements PositionOption
     {
         HUMAN1,
@@ -139,8 +160,8 @@ public abstract class Field
         OUTSIDEPRIMARYPARK2RED,
         INSIDEPRIMARYPARK1BLUE,
         INSIDEPRIMARYPARK2BLUE,
-        OUTSIDEPRIMARY1BLUE,
-
+        OUTSIDEPRIMARYPARK1BLUE,
+        OUTSIDEPRIMARYPARK2BLUE,
 
     }
 

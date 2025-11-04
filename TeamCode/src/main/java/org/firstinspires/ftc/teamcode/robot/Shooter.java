@@ -14,6 +14,12 @@ import java.util.Locale;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_TRAJ_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_W_SPEED;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_W_SPEED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KF;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KI;
@@ -136,12 +142,20 @@ public class Shooter
             dashTelemetry.addData("filteredVelocity", controlShooterW.getFilteredVelocity());
             dashTelemetry.update();
         }
+        if (engageAutoTraj){
+            moveShooterM.setTargetPosition(getTrajEncoderDist());
+        }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
         if(shooter3 != null) shooter3.update();
 
-        
 
+
+    }
+    private int getTrajEncoderDist(){
+        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
+        RobotLog.dd(TAG, "Traj encoder dist = %d", value);
+        return value;
     }
 
     public String toString()
@@ -183,14 +197,23 @@ public void stopWheel(){
     }
 
     boolean usePIDs = true;
-
+    boolean useDistance = true;
+    public double distanceWVelocity( double distance){
+        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
+    }
     public void spinShooterW(double distance)
     {
         dist = distance;
         double voltage = vs.getVoltage();
         if(usePIDs) {
             if (controlShooterW != null) {
-                controlShooterW.setWheelVelocity (SHOOTER_VELOCITY);
+                if (useDistance) {
+                    double distanceShooterVelocity = distanceWVelocity(distance);
+                    controlShooterW.setWheelVelocity(distanceShooterVelocity);
+                }
+                else {
+                    controlShooterW.setWheelVelocity(SHOOTER_VELOCITY);
+                }
             }
         }
         else {
@@ -294,6 +317,7 @@ public void stopWheel(){
     private double dist = 0;
     private double cps = 0;
     private double v0 = 0.0;
+    public boolean engageAutoTraj = false;
 
     private DcMotor.RunMode shtmode = RUN_USING_ENCODER;
 

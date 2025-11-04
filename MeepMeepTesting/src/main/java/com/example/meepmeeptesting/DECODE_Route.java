@@ -16,9 +16,12 @@ public class DECODE_Route extends Route
   public DECODE_Route(
                           PositionOption startPos,
 						  Field.Park_Pos parkPos,
-                    Field.Wiffle_Pos firstLocation)
+                    Field.Wiffle_Pos firstLocation,
+                          Field.Motif Motif,
+                          Field.Num_shots numshot
+  )
   {
-    super(startPos, parkPos, firstLocation);
+    super(startPos, parkPos, firstLocation,Motif,numshot);
   }
 
  public enum preLoadedCone{low,med,high,lowHigh}
@@ -168,17 +171,8 @@ public class DECODE_Route extends Route
    {
 
        Pose2d lastPose;
-       if(startPos == START_SAMPLES) {
-           SampleRoute t1 = new SampleRoute(this);
-           t1.makeTraj(startPos, parkPos, lastLocation);
-       }
-       else if(startPos == START_SPECIMENS)
-       {
-           SpecimenRoute t1 = new SpecimenRoute(this);
-           t1.makeTraj(startPos, parkPos, lastLocation);
 
-       }
-       else if( startPos == START_FAR_RED_1AND7)
+       if( startPos == START_FAR_RED_1AND7)
        {
            F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
@@ -186,7 +180,44 @@ public class DECODE_Route extends Route
 
        else if( startPos == START_FAR_BLUE_1AND7)
        {
-           F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
+           F1F3N_Route1and7BLUE t1 = new F1F3N_Route1and7BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_WALL_RED4)
+       {
+           Route4RED t1 = new  Route4RED(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_WALL_BLUE4)
+       {
+           Route4BLUE t1 = new Route4BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_GOAL_RED5)
+       {
+           Route5RED t1 = new  Route5RED(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_GOAL_BLUE5)
+       {
+           Route5BLUE t1 = new  Route5BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_FAR_RED6)
+       {
+           ROUTE6REDT t1 = new  ROUTE6REDT(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }else if( startPos == START_FAR_BLUE6)
+       {
+           ROUTE6BLUET t1 = new ROUTE6BLUET(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if (startPos == START_WALL_BLUE_3){
+           Route3BLUE t1 = new Route3BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+         else if (startPos == START_WALL_RED_3){
+             Route3Red t1 = new Route3Red(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
 
