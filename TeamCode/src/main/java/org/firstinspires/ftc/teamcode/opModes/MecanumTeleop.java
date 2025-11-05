@@ -33,11 +33,14 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 import static java.lang.Math.abs;
 
@@ -270,11 +273,8 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
     private Pose2d tempPose = new Pose2d();
-    private int goLeft = 0;
-    private int goRight = 0;
-    private int goBrd = 0;
-    private double brdDis;
 
+    double distanceToTheGoal = -1;
     boolean targetFound     = false;    // Set to true when an AprilTag target is detected
     double  drive           = 0;        // Desired forward power/speed (-1 to +1)
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -321,7 +321,7 @@ public class MecanumTeleop extends InitLinearOpMode
         }
         else
         {
-            driveInput = new Vector2d(fb, -lr);
+            driveInput = new Vector2d(-lr, -fb);
         }
 
         double maxCPS = RobotConstants.DT_SAF_CPS;
@@ -392,9 +392,6 @@ public class MecanumTeleop extends InitLinearOpMode
             brdDis = getBrdDis();   //not for April tags, for distance sensor
         }else*/
 
-
-        RobotLog.dd(TAG, String.format("goLeft: %d, goRight: %d, goBrd: %d, targetFound: %d", goLeft, goRight, goBrd, targetFound?1:0));
-
 //        if(goLeft == 1 || goRight == 1 || goBrd == 2){
 //                velPose = new Pose2d(-BORD_SPD*goBrd, BUTT_SPD*goRight -BUTT_SPD*goLeft, Math.toRadians(0));
 //        } else
@@ -407,9 +404,6 @@ public class MecanumTeleop extends InitLinearOpMode
     private void clearDriverOveride(){
         mechDrv.cancelFollowing();
         autoDriveActive=false;
-        goRight = 0;
-        goLeft = 0;
-        goBrd = 0;
     }
 
 
@@ -534,50 +528,52 @@ public class MecanumTeleop extends InitLinearOpMode
 //
 //
 //                // Step through the list of detected tags and look for a matching tag
-//                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//                for (AprilTagDetection detection : currentDetections) {
-//                    // Look to see if we have size info on this tag.
-//                    if (detection.metadata != null) {
-//                        //  Check to see if we want to track towards this tag.
-//                        if ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID)) {
-//                            // Yes, we want to use this tag.
-//                            targetFound = true;
-//                            desiredTag = detection;
-//                            break;  // don't look any further.
-//                        } else {
-//                            // This tag is in the library, but we do not want to track it right now.
-//                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
-//                        }
-//                    } else {
-//                        // This tag is NOT in the library, so we don't have enough information to track to it.
-//                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
-//                    }
-//                }
-//
-//                // Tell the driver what we see, and what to do.
-//                if (targetFound) {
-//                    telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
-//                    telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-//                    telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-//                    telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-//                    telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
-//                } else {
-//                    telemetry.addData("\n>","Drive using joysticks to find valid target\n");
-//                }
-//                telemetry.addData("Searching for", "%d", DESIRED_TAG_ID);
-//
-//
-//                // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
-//                if ((gamepad1.left_bumper || goBrd) && targetFound) {
-//
-//                    // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
-//                    double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
-//                    double  headingError    = desiredTag.ftcPose.bearing;
-//                    double  yawError        = desiredTag.ftcPose.yaw;
-//
-//                    // Use the speed and turn "gains" to calculate how we want the robot to move.
-//                    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
-//                    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+     public boolean       detectAprilTag(){
+
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                for (AprilTagDetection detection : currentDetections) {
+                    // Look to see if we have size info on this tag.
+                   if (detection.metadata != null) {
+                       //  Check to see if we want to track towards this tag.
+                       if ((detection.id == RED_GOAL_APRIL_TAG || detection.id == BLUE_GOAL_APRIL_TAG )) {
+                            // Yes, we want to use this tag.
+                           targetFound = true;
+                            desiredTag = detection;
+                            break;  // don't look any further.
+                        } else {
+                            // This tag is in the library, but we do not want to track it right now.
+                            telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                        }
+                    } else {
+                        // This tag is NOT in the library, so we don't have enough information to track to it.
+                        telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+                    }
+                }
+
+
+                if (targetFound) {
+                    telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+                    telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+                    telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+                    telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+                    telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                } else {
+                    telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+                }
+
+
+                // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
+                if (targetFound) {
+                    distanceToTheGoal = desiredTag.ftcPose.range;
+                    // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+                   // double  rangeError      = (desiredTag.ftcPose.range - DESIRED_DISTANCE);
+                   // double  headingError    = desiredTag.ftcPose.bearing;
+
+                   // double  yawError        = desiredTag.ftcPose.yaw;
+
+
+                    // Use the speed and turn "gains" to calculate how we want the robot to move.
+//                    drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);//                    turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
 //                    strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 //
 //                    telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
@@ -589,8 +585,10 @@ public class MecanumTeleop extends InitLinearOpMode
 //                    turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
 //                    telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
 //                    goBrd = false;
-//                }
+              }
 //                telemetry.update();
+               return targetFound;
+                }
 //
 //                // Apply desired axes motions to the drivetrain.
 //                moveRobot(drive, strafe, turn);
@@ -778,9 +776,11 @@ public class MecanumTeleop extends InitLinearOpMode
         double leftTrig = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
         boolean xDown = gpad2.just_pressed(ManagedGamepad.Button.X);
         boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
-        boolean bDown = gpad2.just_pressed(ManagedGamepad.Button.B);
+        boolean autoTrajOn = gpad2.just_pressed(ManagedGamepad.Button.B);
 
-
+        if (autoTrajOn){
+            robot.shooter.onAutoTraj();
+        }
         if (aDown){
             robot.shooter.resetTransition();
         }
@@ -819,7 +819,7 @@ public class MecanumTeleop extends InitLinearOpMode
         }
 
 
-        if (abs(leftJoyY) >= 0.3){
+        if (abs(leftJoyY) >= 0.2){
             robot.shooter.changeShootTraj(leftJoyY);
             RobotLog.dd(TAG,"Shooter Traj Y changed up or down");
 

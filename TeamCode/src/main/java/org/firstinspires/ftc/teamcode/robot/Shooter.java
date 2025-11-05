@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import java.util.Locale;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
@@ -30,6 +31,8 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RES
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT3;
 import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.*;
 import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.targetVelocity;
+
+import static java.lang.Math.signum;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.PIDControl;
@@ -143,7 +146,15 @@ public class Shooter
             dashTelemetry.update();
         }
         if (engageAutoTraj){
-            moveShooterM.setTargetPosition(getTrajEncoderDist());
+            int targetpos;
+            int currentpos;
+            targetpos = getTrajEncoderDist();
+            currentpos = moveShooterM.getCurrentPosition();
+
+           moveShooterM.setPower( signum (targetpos - currentpos));
+
+            moveShooterM.setTargetPosition(targetpos);
+
         }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
@@ -151,6 +162,10 @@ public class Shooter
 
 
 
+    }
+    public void onAutoTraj(){
+        engageAutoTraj = true;
+        moveShooterM.setMode(RUN_TO_POSITION);
     }
     private int getTrajEncoderDist(){
         int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
@@ -242,7 +257,12 @@ public void stopWheel(){
             //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
             //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
             moveShooterM.setPower(speed);
+            engageAutoTraj = false;
+            moveShooterM.setMode(RUN_USING_ENCODER);
+
+
             RobotLog.dd(TAG, "Set power to speed :%f",speed);
+
         }catch(Exception e){
             RobotLog.dd(TAG, "unable to change Shoot Trajectory");
         }

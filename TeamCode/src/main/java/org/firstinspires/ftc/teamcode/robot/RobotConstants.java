@@ -86,7 +86,8 @@ public class RobotConstants
   public static  double MAX_SHOOTER_DIST = 135;
   public static  double MIN_TRAJ_ENCODER = 0;
   public static  double MAX_TRAJ_ENCODER = 700;
-
+  public static  double RED_GOAL_APRIL_TAG = 24;
+  public static  double BLUE_GOAL_APRIL_TAG = 20;
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
@@ -266,8 +267,8 @@ public class RobotConstants
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
   public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.FORWARD;
-  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.FORWARD;
-  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.REVERSE;
   public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.FORWARD;
 
   public static AxesOrder HUB_ORDER = AxesOrder.ZYX;
