@@ -39,6 +39,8 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
@@ -96,6 +98,8 @@ public class MecanumTeleop extends InitLinearOpMode
                 if (robot.arm != null) {
                     robot.initArmMot();
                 }
+                robot.shooter.spinShooterW(distanceToTheGoal);
+                robot.shooter.stopWheel();
             } catch (Exception e) {
 
             }
@@ -274,7 +278,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private Pose2d tempPose = new Pose2d();
 
-    double distanceToTheGoal = -1;
+    double distanceToTheGoal = (MAX_SHOOTER_DIST+MIN_SHOOTER_DIST)/2;
     boolean targetFound     = false;    // Set to true when an AprilTag target is detected
     double  drive           = 0;        // Desired forward power/speed (-1 to +1)
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -638,7 +642,9 @@ public class MecanumTeleop extends InitLinearOpMode
          */
         private void initAprilTag() {
             // Create the AprilTag processor by using a builder.
-            aprilTag = new AprilTagProcessor.Builder().build();
+            aprilTag = new AprilTagProcessor.Builder()
+            //        .setTagLibrary()
+                    .build();
 
             // Adjust Image Decimation to trade-off detection-range for detection-rate.
             // eg: Some typical detection data using a Logitech C920 WebCam
@@ -647,7 +653,7 @@ public class MecanumTeleop extends InitLinearOpMode
             // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
             // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
             // Note: Decimation can be changed on-the-fly to adapt during a match.
-            aprilTag.setDecimation(2);
+            aprilTag.setDecimation(1);
 
             // Create the vision portal by using a builder.
             if (USE_WEBCAM) {
@@ -799,7 +805,8 @@ public class MecanumTeleop extends InitLinearOpMode
         if(yUp && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(.01);
             RobotLog.dd(TAG, "moving transition 3 up");}
           if(leftTrig >= 0.3) {
-              robot.shooter.spinShooterW(1);
+              detectAprilTag();
+              robot.shooter.spinShooterW(distanceToTheGoal);
           }else {
               robot.shooter.stopWheel();
           }

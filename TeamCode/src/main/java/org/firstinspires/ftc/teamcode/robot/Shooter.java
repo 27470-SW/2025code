@@ -165,6 +165,7 @@ public class Shooter
     }
     public void onAutoTraj(){
         engageAutoTraj = true;
+        moveShooterM.setTargetPosition(getTrajEncoderDist());
         moveShooterM.setMode(RUN_TO_POSITION);
     }
     private int getTrajEncoderDist(){
