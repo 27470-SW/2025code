@@ -136,8 +136,28 @@ public abstract class Field
 
     public enum AutonDebug implements PositionOption
     {
-        DISABLE,
-        ENABLE
+        ENABLE,
+        DISABLE
+    }
+
+    public enum Start_Pos implements PositionOption{
+        START_GOAL_RED,
+        START_FAR_RED_1AND7,
+        START_FAR_BLUE_1AND7,
+        START_WALL_BLUE_3,
+        START_WALL_RED_3,
+        START_WALL_RED4,
+        START_WALL_BLUE4,
+        START_GOAL_RED5,
+        START_GOAL_BLUE5,
+        START_FAR_RED6,
+        START_FAR_BLUE6,
+
+        START_FAR_RED,
+        START_WALL_RED,
+        START_GOAL_BLUE,
+        START_FAR_BLUE,
+        START_WALL_BLUE,
 
     }
 
@@ -148,12 +168,39 @@ public abstract class Field
         Park1
     }
 
-    public enum FirstLocation implements PositionOption
+    public enum Motif implements PositionOption
     {
-        BACKDROP,
-        PIXEL_WALL,
-        PIXEL_CENTER,
-        PIXEL_DOOR
+        SHOOTGPP,
+        SHOOTPGP,
+        SHOOTPPG,
+    }
+    public enum Num_shots implements PositionOption
+    {
+        THREE,
+        FOUR,
+    }
+    public enum Wiffle_Pos implements PositionOption
+    {
+        HUMAN1,
+        PARK2,
+        GATE3,
+        GOAL4,
+        HUMAN1BLUE,
+        PARK2BLUE,
+        GATE3BLUE,
+        GOAL4BLUE,
+    }
+    public enum Park_Pos implements PositionOption
+    {
+        INSIDEPRIMARYPARK1RED,
+        INSIDEPRIMARYPARK2RED,
+        OUTSIDEPRIMARYPARK1RED,
+        OUTSIDEPRIMARYPARK2RED,
+        INSIDEPRIMARYPARK1BLUE,
+        INSIDEPRIMARYPARK2BLUE,
+        OUTSIDEPRIMARYPARK1BLUE,
+        OUTSIDEPRIMARYPARK2BLUE,
+        DEFAULT
     }
 
 }

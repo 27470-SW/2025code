@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,7 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.field.ITD_Route;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.teamcode.field.Decode_Route;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.field.Route;
 import org.firstinspires.ftc.teamcode.image.Detector;
@@ -30,24 +33,34 @@ import org.firstinspires.ftc.teamcode.util.CommonUtil;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 import org.firstinspires.ftc.teamcode.util.PreferenceMgr;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
-import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.field.Field.StartPos.*;
+import static org.firstinspires.ftc.teamcode.opModes.MecanumTeleop.VERBOSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.GPP_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.PGP_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.PPG_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
 
 //@SuppressWarnings("ConstantConditions")
 @SuppressWarnings("StatementWithEmptyBody")
 @Config
-@Autonomous(name="IntoTheDeepAuton", group="Auton")
+@Autonomous(name="Decode Auton", group="Auton")
 //@Disabled
-public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButtons
+public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuButtons
 {
     private static final String TAG = "SJH_PPA";
 
@@ -61,18 +74,23 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
     private static float xOffset;
     /* Allows pausing between each route state - useful for testing trajectory sequences 1 at a time */
     public static Field.AutonDebug autonDebug;
+    public static Field.Wiffle_Pos lastLocation;
+    public static Field.Motif motif;
+    public static Field.Num_shots numShot;
 
-    public ITD_Auton()
+    public Decode_Auton()
     {
         RobotLog.dd(TAG, "PPAuto CTOR");
         alliance = Field.Alliance.valueOf(PreferenceMgr.getAllianceColor());
-        startPos = Field.StartPos.values()[PreferenceMgr.getStartPosition()];
-        parkPos = Field.Parks.values()[PreferenceMgr.getParkPosition()];
+        startPos = values()[PreferenceMgr.getStartPosition()];
+        parkPos = Field.Park_Pos.values()[PreferenceMgr.getParkPosition()];
         delay    = PreferenceMgr.getDelay();
         xOffset  = PreferenceMgr.getXOffset();
         autonDebug  = Field.AutonDebug.values()[PreferenceMgr.getEnableAutonDebug()];
-        firstLocation = Field.FirstLocation.values()[PreferenceMgr.getFirstLoc()];
+        lastLocation = Field.Wiffle_Pos.values()[PreferenceMgr.getFirstLoc()];
         stackToBack = PreferenceMgr.getStackHighwayToBd();
+        motif = PreferenceMgr.getMotif();
+        numShot = PreferenceMgr.getNumShots();
         highways = new Field.Parks[]{PreferenceMgr.getHighway1(), PreferenceMgr.getHighway12(), PreferenceMgr.getHighway2(),PreferenceMgr.getHighway22(), PreferenceMgr.getHighway3(),PreferenceMgr.getHighway32()};
         pixelStacks = new Field.Parks[]{PreferenceMgr.getPixel1(), PreferenceMgr.getPixel2(), PreferenceMgr.getPixel3()};
 
@@ -85,12 +103,85 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         do_main_loop();
     }
 
+    private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
+    private static int DESIRED_TAG_ID = -1;     // Choose the tag you want to approach or set to -1 for ANY tag.
+    private VisionPortal visionPortal;               // Used to manage the video source.
+    private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
+    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+
+
+    private void initAprilTag() {
+        // Create the AprilTag processor by using a builder.
+        aprilTag = new AprilTagProcessor.Builder()
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+                .build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(1);
+
+        // Create the vision portal by using a builder.
+        if (USE_WEBCAM) {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "webcamRIGHT"))
+                    .addProcessor(aprilTag)
+                    .build();
+            setManualExposure(5, 250);  // Use low exposure time to reduce motion blur
+        } else {
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessor(aprilTag)
+                    .build();
+        }
+    }
+
+    private void    setManualExposure(int exposureMS, int gain) {
+        // Wait for the camera to be open, then use the controls
+
+        if (visionPortal == null) {
+            return;
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting");
+            telemetry.update();
+            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                sleep(20);
+            }
+            telemetry.addData("Camera", "Ready");
+            telemetry.update();
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested())
+        {
+            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
+            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+                exposureControl.setMode(ExposureControl.Mode.Manual);
+                sleep(50);
+            }
+            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
+            sleep(20);
+            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
+            gainControl.setGain(gain);
+            if(VERBOSE){RobotLog.dd(TAG, String.format("Min Gain: %d, Max Gain: %d", gainControl.getMinGain(), gainControl.getMaxGain()));}
+            sleep(20);
+        }
+    }
+
+
     //@SuppressWarnings("RedundantThrows")
     @Override
     public void runOpMode() //throws InterruptedException
     {
         RobotLog.dd(TAG, "initCommon");
-        useOpenCv = true;
+        useOpenCv = false;
         initCommon(this);
 
         if(CommonUtil.getInstance().hasCam)
@@ -121,88 +212,95 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
             robot.update();
 
             gpad1.update();
-            double camPos = RobotConstants.CAM_RED_1;
-            if(startPos == START_SPECIMENS)
-            {
-                if(alliance == Field.Alliance.BLUE)
-                    camPos = RobotConstants.CAM_BLU_1;
-            }
-            if(startPos == START_SAMPLES)
-            {
-                camPos = RobotConstants.CAM_RED_2;
-                if(alliance == Field.Alliance.BLUE)
-                    camPos = RobotConstants.CAM_BLU_2;
-            }
+//            double camPos = RobotConstants.CAM_RED_1;
 
-            if(
-                  (gpad1.just_pressed(ManagedGamepad.Button.A)) &&
-                  (!gpad1.pressed(ManagedGamepad.Button.START))
-              )
-            {
-                advTmr.reset();
-                inCamSetup = true;
 
-                if(camera != null)
-                {
-                    /* OpenCV starts the Webcam and starts capturing images
-                    processFrame is called continously until the pipeline is paused
-                    */
-                    RobotLog.dd(TAG, "Setting image processing pipeline");
-                    /* Camera is an OpenCV Camera that instantiated in commonUtil
-                       To use to the camera we need to setPipeline to an OpenCV Pipeline -
-                       Detector is a child OpenCV Pipeline
-                     */
-                    camera.setPipeline(det);
-                    camera.resumeViewport();
-                    det.setPaused(false);
-                }
-            }
 
-            if(gpad1.just_pressed(ManagedGamepad.Button.B) &&
-               !gpad1.pressed(ManagedGamepad.Button.START))
-            {
-                inCamSetup = false;
-                if(camera != null)
-                {
-                    camera.pauseViewport();
-                    camera.setPipeline(null);
-                    det.setPaused(true);
-                }
-            }
-
-            if(inCamSetup)
-            {
-                if(det instanceof ITD_Detector)
-                {
-                    ITD_Detector ffdet = (ITD_Detector)det;
-                    initScanPos = ffdet.getPos();
-                    initNumContours = ffdet.getNumContours();
-
-                    if(advTmr.seconds() > advTime)
-                    {
-                        advTmr.reset();
-                        //ffdet.toggleStage();
-                        ffdet.advanceStage();
-                        if (camera != null) {
-                            camera.showFpsMeterOnViewport(false);
-                        }
-
-//                        boolean pipeLineRaw = ffdet.isPipeLineRaw();
+//            if(startPos == START_SPECIMENS)
+//            {
+//                if(alliance == Field.Alliance.BLUE)
+//                    camPos = RobotConstants.CAM_BLU_1;
+//            }
+//            if(startPos == START_SAMPLES)
+//            {
+//                camPos = RobotConstants.CAM_RED_2;
+//                if(alliance == Field.Alliance.BLUE)
+//                    camPos = RobotConstants.CAM_BLU_2;
+//            }
 //
-//                        if(!pipeLineRaw)
-//                        {
-//                            camera.startStreaming(432, 240, OpenCvCameraRotation.UPRIGHT);
+//            if(
+//                  (gpad1.just_pressed(ManagedGamepad.Button.A)) &&
+//                  (!gpad1.pressed(ManagedGamepad.Button.START))
+//              )
+//            {
+//                advTmr.reset();
+//                inCamSetup = true;
+//
+//                if(camera != null)
+//                {
+//                    /* OpenCV starts the Webcam and starts capturing images
+//                    processFrame is called continously until the pipeline is paused
+//                    */
+//                    RobotLog.dd(TAG, "Setting image processing pipeline");
+//                    /* Camera is an OpenCV Camera that instantiated in commonUtil
+//                       To use to the camera we need to setPipeline to an OpenCV Pipeline -
+//                       Detector is a child OpenCV Pipeline
+//                     */
+//                    camera.setPipeline(det);
+//                    camera.resumeViewport();
+//                    det.setPaused(false);
+//                }
+//            }
+//
+//            if(gpad1.just_pressed(ManagedGamepad.Button.B) &&
+//               !gpad1.pressed(ManagedGamepad.Button.START))
+//            {
+//                inCamSetup = false;
+//                if(camera != null)
+//                {
+//                    camera.pauseViewport();
+//                    camera.setPipeline(null);
+//                    det.setPaused(true);
+//                }
+//            }
+//
+//            if(inCamSetup)
+//            {
+//                if(det instanceof ITD_Detector)
+//                {
+//                    ITD_Detector ffdet = (ITD_Detector)det;
+//                    initScanPos = ffdet.getPos();
+//                    initNumContours = ffdet.getNumContours();
+//
+//                    if(advTmr.seconds() > advTime)
+//                    {
+//                        advTmr.reset();
+//                        //ffdet.toggleStage();
+//                        ffdet.advanceStage();
+//                        if (camera != null) {
+//                            camera.showFpsMeterOnViewport(false);
 //                        }
-//                        else
-//                        {
-//                            camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-//                        }
+//
+////                        boolean pipeLineRaw = ffdet.isPipeLineRaw();
+////
+////                        if(!pipeLineRaw)
+////                        {
+////                            camera.startStreaming(432, 240, OpenCvCameraRotation.UPRIGHT);
+////                        }
+////                        else
+////                        {
+////                            camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+////                        }
+//
+//                    }
+//                }
+//            }
+//            dashboard.displayText(2, "Scan: "+ initScanPos + " " + initNumContours);
 
-                    }
-                }
-            }
-            dashboard.displayText(2, "Scan: "
-                                     + initScanPos + " " + initNumContours);
+            detectAprilTag();
+
+            dashboard.displayText(9, "aprilTag found: " + targetFound + ", value: "+desiredTag.id);
+
 
             if(initCycle % 10 == 0)
             {
@@ -258,10 +356,12 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
 
     private void stopMode()
     {
+
         es.shutdownNow();
 
         if(camera != null)
         {
+            visionPortal.close();
   //          camera.stopStreaming();
    //         camera.closeCameraDevice();
         }
@@ -291,13 +391,11 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
             String.format(Locale.US, "Pref Delay: %.2f", delay));
         dashboard.displayText(7,
                               String.format(Locale.US, "Pref xOffset: %.2f", xOffset));
-		dashboard.displayText(4, "Pref AutonDebug: " + autonDebug);
+		dashboard.displayText(8, "Pref AutonDebug: " + autonDebug);
         logData = true;
         RobotLog.ii(TAG, "SETUP");
 
         dashboard.displayText(0, "INITIALIZING - Please wait");
-        dashboard.displayText(6, "");
-        dashboard.displayText(7, "");
         dashboard.displayText(14, String.format(Locale.US,"SW Ver SC Build 12_8_2022"));
 
         robot = new MecanumBot();
@@ -313,17 +411,11 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
 
         robot.init(this, chas, true);
         try {
-        if(robot.arm != null)
-        {
-
-                robot.initArmMot();
-
-        }
-        }catch (InterruptedException e) {
-            RobotLog.dd(TAG, "Stopped mid init for arm encoder reset");
-        }
-        if(robot.claw != null) {
-            robot.initClaw();
+            if (robot.shooter != null) {
+                robot.initShooter();
+            }
+        }catch(Exception e) {
+            RobotLog.ee(TAG, "Unable to initialize Shooter");
         }
         try {
             initAprilTag();
@@ -340,18 +432,20 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         setupBotComponents();
 
         /* Build our Auton Trajectories */
-        routeMain = new ITD_Route(robot, startPos, parkPos, firstLocation);
+        //For right now, we are setting this to PPG and 3until we get a camera working
+        motif = Field.Motif.SHOOTPPG;       //TODO: remove this when the Preference Mgr is setup for motif
+        numShot = Field.Num_shots.THREE;    //TODO: remove this when the Preference Mgr is setup for motif
 
-        resetBotLocation(routeMain.start);
-        initHdg = routeMain.start.getHeading();
+        routePPG = new Decode_Route(robot, startPos, parkPos, lastLocation,Field.Motif.SHOOTPPG, numShot);
+        routePGP = new Decode_Route(robot, startPos, parkPos, lastLocation,Field.Motif.SHOOTPGP, numShot);
+        routeGPP = new Decode_Route(robot, startPos, parkPos, lastLocation,Field.Motif.SHOOTGPP, numShot);
+
+        resetBotLocation(routePPG.start);
+        initHdg = routePPG.start.getHeading();
         BasicBot.DriveDir startDdir = BasicBot.DriveDir.PUSHER;
         robot.setDriveDir(startDdir);
         robot.setInitHdg(initHdg);
         robot.setAlliance(alliance);
-
-        ePose = robot.drive.getPoseEstimate();
-        robot.setAutonEndPos(new Point2d(ePose.getX(), ePose.getY()));
-        robot.setAutonEndHdg(ePose.getHeading());
 
         dashboard.displayText(0, "GYRO CALIBRATING DO NOT TOUCH OR START");
         if (robot.imu != null)
@@ -510,7 +604,7 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         RobotLog.ii(TAG, "STARTING AT %.2f %.2f", startTimer.seconds(), timer.seconds());
         if (logData)
         {
-            Pose2d spt = routeMain.start;
+            Pose2d spt = routePPG.start;
             dl.addField("START");
             dl.addField(initHdg);
             dl.addField(spt.getX());
@@ -532,30 +626,27 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
 //        RobotLog.ii(TAG, "START CHDG %6.3f", robot.getGyroHdgDeg());
 
         RobotLog.ii(TAG, "Action SCAN_IMAGE");
-        route = routeMain;
-/*
-        doScan();
-
-        if (detectedTeamElementPosition == ITD_Detector.Position.LEFT)
-        {
-            route = routeLeft;
-
+        detectAprilTag();
+        route = routePPG;
+        switch (motif){
+            case SHOOTGPP:
+                route = routeGPP;
+                break;
+            case SHOOTPGP:
+                route = routePGP;
+                break;
+            case SHOOTPPG:
+                route = routePPG;
+                break;
         }
-        else if (detectedTeamElementPosition == ITD_Detector.Position.RIGHT)
-        {
-            route = routeRight;
 
-        }
-        else
-        {
-            route = routeCenter;
 
-        }*/
+
         try {
             int lnum = 8;
             dashboard.displayText(lnum++, "Start:    " + startPos);
             dashboard.displayText(lnum++, "Park Position:  " + parkPos);
-            dashboard.displayText(lnum++, "First Location:  " + firstLocation);
+            dashboard.displayText(lnum++, "Last Location:  " + lastLocation);
 //                dashboard.displayText(lnum++, "Team Element:    " + route.teamElement);
             dashboard.displayText(lnum++, "Curcuit 1 " + highways[0] + "," + pixelStacks[0] + "," + highways[1]);
             dashboard.displayText(lnum++, "Curcuit 2 " + highways[2] + "," + pixelStacks[1] + "," + highways[3]);
@@ -607,6 +698,60 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         robot.setAutonEndPos(new Point2d(ePose.getX(), ePose.getY()));
         robot.setAutonEndHdg(ePose.getHeading());
         RobotLog.dd(TAG, "Exiting auton at %s", ePose.toString());
+    }
+
+    boolean targetFound = false;
+    public boolean       detectAprilTag(){
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        for (AprilTagDetection detection : currentDetections) {
+            // Look to see if we have size info on this tag.
+            if (detection.metadata != null) {
+                //  Check to see if we want to track towards this tag.
+                if ((detection.id == PPG_APRIL_TAG || detection.id == PGP_APRIL_TAG || detection.id == GPP_APRIL_TAG)) {
+                    // Yes, we want to use this tag.
+                    targetFound = true;
+                    desiredTag = detection;
+                    break;  // don't look any further.
+                } else {
+                    // This tag is in the library, but we do not want to track it right now.
+                    telemetry.addData("Skipping", "Tag ID %d is not desired", detection.id);
+                }
+            } else {
+                // This tag is NOT in the library, so we don't have enough information to track to it.
+                telemetry.addData("Unknown", "Tag ID %d is not in TagLibrary", detection.id);
+            }
+        }
+
+
+        if (targetFound) {
+            telemetry.addData("\n>","HOLD Left-Bumper to Drive to Target\n");
+            telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
+            telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
+            telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
+            telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+        } else {
+            telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+        }
+
+
+        // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
+        if (targetFound) {
+            //distanceToTheGoal = desiredTag.ftcPose.range;
+            switch (desiredTag.id){
+                case GPP_APRIL_TAG:
+                    motif = Field.Motif.SHOOTGPP;
+                    break;
+                case PGP_APRIL_TAG:
+                    motif = Field.Motif.SHOOTPGP;
+                    break;
+                case PPG_APRIL_TAG:
+                    motif = Field.Motif.SHOOTPPG;
+                    break;
+            }
+            telemetry.update();
+        }
+        return targetFound;
     }
 
     private void doAutonFromInitTrajectories()
@@ -904,75 +1049,6 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
         return tmpScanPos;
     }
 
-    /**
-     * Initialize the AprilTag processor.
-     */
-    private void initAprilTag() {
-//        // Create the AprilTag processor by using a builder.
-//        aprilTag = new AprilTagProcessor.Builder().build();
-//
-//        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-//        // eg: Some typical detection data using a Logitech C920 WebCam
-//        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-//        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-//        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second
-//        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second
-//        // Note: Decimation can be changed on-the-fly to adapt during a match.
-//        aprilTag.setDecimation(2);
-//
-//        // Create the vision portal by using a builder.
-//        if (USE_WEBCAM) {
-//            visionPortal = new VisionPortal.Builder()
-//                    .setCamera(hardwareMap.get(WebcamName.class, "webcamREAR"))
-//                    .addProcessor(aprilTag)
-//                    .build();
-//            setManualExposure(5, 250);  // Use low exposure time to reduce motion blur
-//        } else {
-//            visionPortal = new VisionPortal.Builder()
-//                    .setCamera(BuiltinCameraDirection.BACK)
-//                    .addProcessor(aprilTag)
-//                    .build();
-//        }
-//    }
-//
-//    /*
-//     Manually set the camera gain and exposure.
-//     This can only be called AFTER calling initAprilTag(), and only works for Webcams;
-//    */
-//    private void    setManualExposure(int exposureMS, int gain) {
-//        // Wait for the camera to be open, then use the controls
-//
-//        if (visionPortal == null) {
-//            return;
-//        }
-//
-//        // Make sure camera is streaming before we try to set the exposure controls
-//        if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-//            telemetry.addData("Camera", "Waiting");
-//            telemetry.update();
-//            while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
-//                sleep(20);
-//            }
-//            telemetry.addData("Camera", "Ready");
-//            telemetry.update();
-//        }
-//
-//        // Set camera controls unless we are stopping.
-//        if (!isStopRequested())
-//        {
-//            ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
-//            if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
-//                exposureControl.setMode(ExposureControl.Mode.Manual);
-//                sleep(50);
-//            }
-//            exposureControl.setExposure((long)exposureMS, TimeUnit.MILLISECONDS);
-//            sleep(20);
-//            GainControl gainControl = visionPortal.getCameraControl(GainControl.class);
-//            gainControl.setGain(gain);
-//            RobotLog.dd(TAG, String.format("Min Gain: %d, Max Gain: %d", gainControl.getMinGain(), gainControl.getMaxGain()));
-//            sleep(20);
-//        }
-    }
 
 
     private void setupLogger()
@@ -1039,10 +1115,10 @@ public class ITD_Auton extends InitLinearOpMode // implements FtcMenu.MenuButton
 
     private final ExecutorService es = Executors.newSingleThreadExecutor();
 
-    private ITD_Route route;
-    private ITD_Route routeMain;
-    private ITD_Route routeLeft;
-    private ITD_Route routeCenter;
+    private Decode_Route route;
+    private Decode_Route routePPG;
+    private Decode_Route routePGP;
+    private Decode_Route routeGPP;
 
 
 

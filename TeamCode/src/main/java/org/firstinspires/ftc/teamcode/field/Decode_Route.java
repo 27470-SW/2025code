@@ -1,34 +1,30 @@
 package org.firstinspires.ftc.teamcode.field;
 
 import static android.os.SystemClock.sleep;
-import static org.firstinspires.ftc.teamcode.field.Route.Heading.HEAD_DEFAULT;
-import static org.firstinspires.ftc.teamcode.field.Route.Heading.HEAD_LINEAR;
-import static org.firstinspires.ftc.teamcode.field.Route.Movement.LINE;
-import static org.firstinspires.ftc.teamcode.field.Route.Movement.SPLINE;
-import static org.firstinspires.ftc.teamcode.field.Route.Movement.START;
+
+import static org.firstinspires.ftc.teamcode.field.Field.Start_Pos.*;
+
+import org.firstinspires.ftc.teamcode.robot.MecanumBot;
+import org.firstinspires.ftc.teamcode.util.CommonUtil;
+import org.firstinspires.ftc.teamcode.util.HalDashboard;
+import org.firstinspires.ftc.teamcode.opModes.Decode_Auton;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.opModes.ITD_Auton;
-import org.firstinspires.ftc.teamcode.robot.MecanumBot;
-import org.firstinspires.ftc.teamcode.util.CommonUtil;
-import org.firstinspires.ftc.teamcode.util.HalDashboard;
-
-public class SpinRoutebasket extends Route
+public class Decode_Route extends Route
 {
-  private static final String TAG = "SJH_PPR";
+  private static final String TAG = "RouteClass";
 
-    public SpinRoutebasket(MecanumBot robot){
-        this(robot, Field.StartPos.values()[0], Field.Parks.values()[0], Field.FirstLocation.values()[0]);
-    }
-
-  public SpinRoutebasket(MecanumBot robot,
-                         Field.StartPos startPos,
-                         Field.Parks parkPos,
-                         Field.FirstLocation firstLocation)
+  public Decode_Route(MecanumBot robot,
+                      PositionOption startPos,
+                      Field.Park_Pos parkPos,
+                      Field.Wiffle_Pos lastLocation,
+                      Field.Motif motif,
+                      Field.Num_shots numshot
+  )
   {
-    super(robot, startPos, parkPos, firstLocation);
+    super(robot, startPos, parkPos, lastLocation,motif,numshot);
   }
 
 
@@ -65,28 +61,78 @@ public class SpinRoutebasket extends Route
         //TODO: add code to make this work
     }
 
-
+    public void pickUpPixels(){
+        pickUpPixel();
+        pickUpPixel();
+    }
 
 
 
    protected void initTrajectories2()
    {
        RobotLog.dd(TAG, "in InitTrajectories2");
+       dashboardConfig();
 
        Pose2d lastPose;
 
 
-       RobotLog.dd(TAG, "making route");
-
-       addLocation(deliverSampleToBasket,START, HEAD_LINEAR, Math.toRadians(90));
-
-       addEvent(Route.Action.TANGENT, Math.toRadians(-110));
-
-       addLocation(positionToPark,SPLINE,HEAD_LINEAR,Math.toRadians(-90));
+//       {
+//           SimpleFarRED t1 = new SimpleFarRED(this);
+//           t1.makeTraj(START_WALL_RED, parkPos, lastLocation);
+//       }
 
 
-      addLocation(park, SPLINE, HEAD_LINEAR, Math.toRadians(180));
+       if( startPos == START_FAR_RED_1AND7)
+       {
+           F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
 
+       else if( startPos == START_FAR_BLUE_1AND7)
+       {
+           F1F3N_Route1and7BLUE t1 = new F1F3N_Route1and7BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_WALL_RED4)
+       {
+           Route4RED t1 = new  Route4RED(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_WALL_BLUE4)
+       {
+           Route4BLUE t1 = new Route4BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_GOAL_RED5)
+       {
+           Route5RED t1 = new  Route5RED(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_GOAL_BLUE5)
+       {
+           Route5BLUE t1 = new  Route5BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_FAR_RED6)
+       {
+           ROUTE6REDT t1 = new  ROUTE6REDT(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }else if( startPos == START_FAR_BLUE6)
+       {
+           ROUTE6BLUET t1 = new ROUTE6BLUET(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if (startPos == START_WALL_BLUE_3){
+           Route3BLUE t1 = new Route3BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+         else if (startPos == START_WALL_RED_3){
+             Route3Red t1 = new Route3Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+
+       MoveToParkPOSDECODE t1 = new MoveToParkPOSDECODE(this);
+       t1.makeTraj(Field.Park_Pos.DEFAULT,alliance);
 
        lastPose = this.getEnd();
 	   
@@ -143,7 +189,7 @@ public class SpinRoutebasket extends Route
 
     }
 */
-    public void runRoute(ITD_Auton opMode){
+    public void runRoute(Decode_Auton opMode){
 
         opMode.doAuton(this);
       //  initExtraMovements(opMode);
@@ -176,7 +222,6 @@ public class SpinRoutebasket extends Route
             int lnum = 8;
             dashboard.displayText(lnum++, "Start:    " + startPos);
             dashboard.displayText(lnum++, "Park Position:  " + parkPos);
-            dashboard.displayText(lnum++, "First Location:  " + firstLocation);
             //dashboard.displayText(lnum++, "Curcuit:    " + curcuit);
             dashboard.displayText(lnum++, "Curcuit 1 " + highways[0] + "," + pixelStacks[0] + "," + highways[1]);
             dashboard.displayText(lnum++, "Curcuit 2 " + highways[2] + "," + pixelStacks[1] + "," + highways[3]);

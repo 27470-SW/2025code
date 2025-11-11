@@ -36,6 +36,8 @@ public class PreferenceMgr
    private static float  xOffset;
    private static int  autonDebug;
    private static int firstLoc;
+   private static Field.Motif motif;
+   private static Field.Num_shots numShots;
    private static int stackHighwayToBackdropVar;
    private static int Highway1Var;
    private static int Highway2Var;
@@ -59,6 +61,8 @@ public class PreferenceMgr
    public static String getClubName() { return CLUBNAME; }
    public static int getParkPosition() { return parkPos; }
    public static int getFirstLoc() { return firstLoc; }
+   public static Field.Motif getMotif() {return motif; }
+   public static Field.Num_shots getNumShots() {return numShots;}
    public static Field.Parks getStackHighwayToBd() { return stackHighwayToBackdrop; }
    public static Field.Parks getPixel1() { return pixel1; }
    public static Field.Parks getPixel2() { return pixel2; }
@@ -77,7 +81,6 @@ public class PreferenceMgr
    public static int getCircuit() { return circuit; }
    public static float getXOffset() { return xOffset; }
    public static int getEnableAutonDebug() { return autonDebug; }
-
    public void setBotName(String botName) { PreferenceMgr.botName = botName; }
    public void setAllianceColor(String allianceColor) { PreferenceMgr.alliance = allianceColor; }
    public void setStartPosition(int startPosition) { PreferenceMgr.startPos = startPosition; }

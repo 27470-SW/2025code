@@ -321,8 +321,8 @@ public class BasicBot
             if(initDirSensor)
             {
                 IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                        RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP));
                 imu.initialize(parameters);
                 RobotLog.dd(TAG, "In BasicBot Initializing imu on Control HUB");
 //                AxesOrder order = AxesOrder.ZYX;

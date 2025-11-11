@@ -38,21 +38,28 @@ public class Route2Red {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         route.addLocation(route.startRedFar, START, HEAD_LINEAR);
+        //Used to position to shoot
         route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.WAIT, 2);
+
+        //Pick up park wiffles
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.WAIT, 0.1);
+        //pick up lever wiffles
         route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect3, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.TANGENT, Math.toRadians(190));
+        //shoot wiffle lever
         route.addLocation(route.shootNear, SPLINE, HEAD_LINEAR, Math.toRadians(90));
         route.addEvent(Route.Action.WAIT, 0.1);
+
         route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
         route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect1, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.TANGENT, Math.toRadians(100));
+
         route.addLocation(route.shootNear2, SPLINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.WAIT, 0.1);
 

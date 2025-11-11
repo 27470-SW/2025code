@@ -3,21 +3,13 @@ package org.firstinspires.ftc.teamcode.robot;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_NUM_LEVS;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_LEVS;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_NUM_LEVS;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD_DWN;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EX_MAX;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EX_MIN;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SLIDECPI;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.WR_SENSE;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -25,7 +17,6 @@ import org.firstinspires.ftc.teamcode.util.CommonUtil;
 
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
@@ -232,7 +223,7 @@ public Shooter shooter =null;
         */
         crAzYIntake.init();
          claw.init();
-        shooter.init();
+        shooter.initShooter();
          arm.init(RobotConstants.ARM_MOT,1);
         arm.setDir(RobotConstants.ARM_DIR);
         //arm.setMode(STOP_AND_RESET_ENCODER);        //TODO: make not happen when comming back from auton;
@@ -349,9 +340,14 @@ public Shooter shooter =null;
         RobotLog.dd(TAG, "claw open init");
     }
 
+    public void initShooter() throws InterruptedException {
+        shooter.initPos();
+    }
+
     public void initSlides() throws InterruptedException {
        slides.initPos();
     }
+
 
     public void setClawPos(double input){
             claw.setClawPos(input * WR_SENSE );

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -14,14 +13,11 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.field.SpinRoute;
-import org.firstinspires.ftc.teamcode.field.SpinRoutebasket;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveLRR;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
@@ -31,6 +27,7 @@ import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
@@ -39,6 +36,7 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
@@ -95,11 +93,16 @@ public class MecanumTeleop extends InitLinearOpMode
                 if (robot.slides != null) {
                     robot.initSlides();
                 }
+
                 if (robot.arm != null) {
                     robot.initArmMot();
                 }
-                robot.shooter.spinShooterW(distanceToTheGoal);
-                robot.shooter.stopWheel();
+                if(robot.shooter != null){
+                    robot.shooter.initPos();
+                    robot.shooter.spinShooterW(distanceToTheGoal);
+                    robot.shooter.stopWheel();
+                }
+
             } catch (Exception e) {
 
             }
@@ -177,7 +180,7 @@ public class MecanumTeleop extends InitLinearOpMode
     {
         robot.update();
 
-        l = 0;
+        l = 1;
 
         cnts=robot.getCnts();
         vels=robot.getVels();
@@ -205,30 +208,27 @@ public class MecanumTeleop extends InitLinearOpMode
         dashboard.displayText(l++, velStr);
        // dashboard.displayText(l++, lStr);
         //dashboard.displayText(l++, aStr);
-        dashboard.displayText(l++, String.format(Locale.US,"L_IN %4.2f L %4.2f", raw_lr, lr));
-        dashboard.displayText(l++, String.format(Locale.US,"R_IN %4.2f R %4.2f", raw_fb, fb));
+        dashboard.displayText(l++, String.format(Locale.US,"LR_IN %4.2f L %4.2f", raw_lr, lr));
+        dashboard.displayText(l++, String.format(Locale.US,"FB_IN %4.2f R %4.2f", raw_fb, fb));
         dashboard.displayText(l++, String.format(Locale.US,"T_IN %4.2f T %4.2f", raw_turn, turn));
 
         dashboard.displayText(l++, String.format(Locale.US,"Mrk Pos %.2f MvRate %.2f ",
                 lastMrkPos, moveAtRate));
         if(null != robot) {
-            if (null != robot.slides) {
-                dashboard.displayText(l++, String.format(Locale.US, "elevator encoding %d", robot.slides.getLiftPos()));
+            if (null != robot.shooter) {
+                dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor mode %s", robot.shooter.moveShooterM.getMode().toString()));
+                dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor current encoder %d", robot.shooter.moveShooterM.getCurrentPosition()));
+                dashboard.displayText(l++, String.format(Locale.US, "Shooter motor velo %f", robot.shooter.getFilteredVelocity()));
             }
             if (null!= robot.rearDistSensor){
 
                 dashboard.displayText(l++, String.format(Locale.US, "rear distance %f", robot.rearDistSensor.getDistance(DistanceUnit.CM)));
             }
+
+                dashboard.displayText(l++, String.format(Locale.US, " Camera Found %b Camera Dist %f", targetFound, distanceToTheGoal));
+
         }
-        try {
-            dashboard.displayText(l++, String.format(Locale.US, "lyftpowr %4.2f", liftSpd));
-            dashboard.displayText(14, String.format(Locale.US, "SW Ver SC Build 12_8_2022"));
-            //dashboard.displayText(l++,String.format(Locale.US, "PixelDistance: %f", robot.colorFindDistance()));
-            dashboard.displayText(l++, String.format(Locale.US, "arm encoder: %d", robot.arm.getCurEnc()));
-            dashboard.displayText(l++, String.format(Locale.US, "arm limit switch value: %b", armButton.isPressed()));
-        } catch (Exception e){
-            System.out.println("something is wrong on line 231");
-        }
+
         if(VERBOSE) RobotLog.dd(TAG, "TEL SHT:%.1f ARM:%.1f INT:%.1f DRV:%.1f",
             spinTime, liftTime, intTime, drvTime);
         if(VERBOSE) RobotLog.dd(TAG, "TEL U:%.1f C:%.1f D:%.1f P:%.1f L:%.1f F:%.1f W:%.1f",
@@ -643,7 +643,7 @@ public class MecanumTeleop extends InitLinearOpMode
         private void initAprilTag() {
             // Create the AprilTag processor by using a builder.
             aprilTag = new AprilTagProcessor.Builder()
-            //        .setTagLibrary()
+             .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                     .build();
 
             // Adjust Image Decimation to trade-off detection-range for detection-rate.
@@ -767,6 +767,8 @@ public class MecanumTeleop extends InitLinearOpMode
 
     }
 
+    boolean stopTrajM = false;
+
     private void processControllerInputs()
     {
 
@@ -782,14 +784,15 @@ public class MecanumTeleop extends InitLinearOpMode
         double leftTrig = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
         boolean xDown = gpad2.just_pressed(ManagedGamepad.Button.X);
         boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
-        boolean autoTrajOn = gpad2.just_pressed(ManagedGamepad.Button.B);
+        boolean ResetTrajEnc = gpad2.just_pressed(ManagedGamepad.Button.B)&& !gpad2.pressed(ManagedGamepad.Button.START);
 
-        if (autoTrajOn){
-            robot.shooter.onAutoTraj();
+        if (ResetTrajEnc){
+            robot.shooter.moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         if (aDown){
             robot.shooter.resetTransition();
         }
+
 
         if(xDown && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(-.01);
             RobotLog.dd(TAG, "moving transition 1 down");
@@ -806,6 +809,18 @@ public class MecanumTeleop extends InitLinearOpMode
             RobotLog.dd(TAG, "moving transition 3 up");}
           if(leftTrig >= 0.3) {
               detectAprilTag();
+              if(xDown){
+                  robot.shooter.defaultFarShooterTraj();
+                  distanceToTheGoal = MAX_SHOOTER_DIST;
+
+                  RobotLog.dd(TAG, "Shooting Far");
+              }
+              if(yUp){
+                  robot.shooter.defaultCloseShooterTraj();
+                  distanceToTheGoal = CLOSE_SHOOTER_DIST;
+
+                  RobotLog.dd(TAG, "Shooting Close");
+              }
               robot.shooter.spinShooterW(distanceToTheGoal);
           }else {
               robot.shooter.stopWheel();
@@ -817,7 +832,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
             if(rightTrig >= 0.3){
                 if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
-                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT);
+                if(dpadLeft) robot.shooter.shoot(LEFT);
                 if(dpadDown || dpadUp) robot.shooter.shoot(CENTER);
 
                 RobotLog.dd(TAG,"Dpad + trigger pressed");
@@ -828,11 +843,14 @@ public class MecanumTeleop extends InitLinearOpMode
 
         if (abs(leftJoyY) >= 0.2){
             robot.shooter.changeShootTraj(leftJoyY);
+            stopTrajM = true;
             RobotLog.dd(TAG,"Shooter Traj Y changed up or down");
 
+
         }
-        else {
+        else if(stopTrajM){
             robot.shooter.changeShootTraj(0);
+            stopTrajM = false;
            // RobotLog.dd(TAG,"ShooterTraj Y is not being moved currently");
 
         }
@@ -889,7 +907,7 @@ public class MecanumTeleop extends InitLinearOpMode
             processSensors();
             processIntakeInputs();
 //            oTimer.reset();
-//            printTelem();
+            printTelem();
 //            p=opTimer.milliseconds();
 //            oTimer.reset();
             doLogging(oTimer.milliseconds());
@@ -934,15 +952,13 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private String lStr = "";
     private String aStr ="";
-    private int l = 0;
+    private int l = 1;
 
     boolean wristRestrictionsOff = false;
     boolean ballfinalclim = false;
     boolean ballfinalclimout = false;
     private int numElem = 0;
 
-    private SpinRoute spinRoute;
-    private SpinRoutebasket spinRoutebasket;
 
 
     private TouchSensor armButton;

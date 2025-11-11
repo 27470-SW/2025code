@@ -28,7 +28,7 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
     private static float xOffset;
     private static Field.AutonDebug autonDebugEnable;
     private static Field.Parks parkPos;
-    private static Field.FirstLocation firstLoc;
+    private static Field.Wiffle_Pos firstLoc;
     private static Field.Parks stackSideHighwayToBackdrop;
     private static Field.Parks Highway1Var;
     private static Field.Parks Pixel1Var;
@@ -131,11 +131,11 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         }
         try
         {
-            firstLoc = Field.FirstLocation.values()[PreferenceMgr.getFirstLoc()];
+            firstLoc = Field.Wiffle_Pos.values()[PreferenceMgr.getFirstLoc()];
         }
         catch(Exception e)
         {
-            firstLoc = Field.FirstLocation.values()[0];
+            firstLoc = Field.Wiffle_Pos.values()[0];
         }
 
             stackSideHighwayToBackdrop = PreferenceMgr.getStackHighwayToBd();
@@ -236,7 +236,7 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
                 = new FtcChoiceMenu<>("AUTON DEBUG:",   xOffsetMenu, this);
         FtcChoiceMenu<Field.Parks> parkPosMenu
                 = new FtcChoiceMenu<>("Park Position:",   autoDebugMenu, this);
-        FtcChoiceMenu<Field.FirstLocation> firstLocationMenu
+        FtcChoiceMenu<Field.Wiffle_Pos> firstLocationMenu
                 = new FtcChoiceMenu<>("First Location:",   parkPosMenu, this);
         FtcChoiceMenu<Field.Parks> stackHighwayToBdMenu
                 = new FtcChoiceMenu<>("Highway To Backdrop:",   firstLocationMenu, this);
@@ -288,7 +288,7 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
             startPosMenu.addChoice(p.toString(), p, p==startPosition, p==Field.StartPos.START_SAMPLES?firstLocationMenu:curcuitMenu);
         }
 
-        for(Field.FirstLocation f : Field.FirstLocation.values())
+        for(Field.Wiffle_Pos f : Field.Wiffle_Pos.values())
         {
             firstLocationMenu.addChoice(f.toString(), f, f == firstLoc, stackHighwayToBdMenu);
         }
@@ -423,8 +423,6 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         xOffset = (float)xOffsetMenu.getCurrentValue();
         autonDebugEnable = autoDebugMenu.getCurrentChoiceObject();
         parkPos = parkPosMenu.getCurrentChoiceObject();
-        if(startPosition == Field.StartPos.START_SPECIMENS) { firstLoc = Field.FirstLocation.BACKDROP; }
-        else { firstLoc = firstLocationMenu.getCurrentChoiceObject(); }
         stackSideHighwayToBackdrop = stackHighwayToBdMenu.getCurrentChoiceObject();
 
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,6 +16,7 @@ import java.util.Locale;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_W_SPEED;
@@ -29,7 +31,6 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_VELOCI
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT1;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT2;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT3;
-import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.*;
 import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.targetVelocity;
 
 import static java.lang.Math.signum;
@@ -44,7 +45,19 @@ public class Shooter
         this.hwMap = map;
     }
 
-    public boolean init()
+    public void initPos() throws InterruptedException
+    {
+        if (moveShooterM != null) {
+            moveShooterM.setMode(RUN_USING_ENCODER);
+            moveShooterM.setPower(.02);
+            Thread.sleep(2000);
+            moveShooterM.setPower(0);
+            moveShooterM.setMode(STOP_AND_RESET_ENCODER);
+            moveShooterM.setMode(RUN_USING_ENCODER);
+            shtmode = RUN_USING_ENCODER;
+        }
+    }
+    public boolean initShooter()
     {
         boolean success = false;
         try
@@ -61,7 +74,6 @@ public class Shooter
             shooterW2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shooterW2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shooterW2.setMode(RUN_USING_ENCODER);
-            shtmode = RUN_USING_ENCODER;
             controlShooterW = new PIDControl(hwMap, "shoot");
             controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
 
@@ -91,11 +103,12 @@ public class Shooter
         try
         {
             moveShooterM = hwMap.get(DcMotorEx.class, "shooterTrajM");
-            moveShooterM.setDirection(DcMotor.Direction.FORWARD);
+            moveShooterM.setDirection(DcMotor.Direction.REVERSE);
             moveShooterM.setPower(0);
             moveShooterM.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             moveShooterM.setMode(RUN_USING_ENCODER);
+            shtmode = RUN_USING_ENCODER;
             vs = hwMap.get(VoltageSensor.class, "Control Hub");
             success = true;
         }
@@ -146,15 +159,7 @@ public class Shooter
             dashTelemetry.update();
         }
         if (engageAutoTraj){
-            int targetpos;
-            int currentpos;
-            targetpos = getTrajEncoderDist();
-            currentpos = moveShooterM.getCurrentPosition();
-
-           moveShooterM.setPower( signum (targetpos - currentpos));
-
-            moveShooterM.setTargetPosition(targetpos);
-
+            setShooterTrajPos(getTrajEncoderDist());
         }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
@@ -167,6 +172,7 @@ public class Shooter
         engageAutoTraj = true;
         moveShooterM.setTargetPosition(getTrajEncoderDist());
         moveShooterM.setMode(RUN_TO_POSITION);
+        shtmode = RUN_TO_POSITION;
     }
     private int getTrajEncoderDist(){
         int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
@@ -217,6 +223,11 @@ public void stopWheel(){
     public double distanceWVelocity( double distance){
         return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
     }
+
+    public void spinShooterAutonFar(){
+        controlShooterW.setWheelVelocity(1550);
+    }
+
     public void spinShooterW(double distance)
     {
         dist = distance;
@@ -237,12 +248,14 @@ public void stopWheel(){
             if (shooterW2 != null) shooterW2.setVelocity(SHOOTER_VELOCITY);
         }
     }
+    public double getFilteredVelocity(){
 
+        return controlShooterW.filteredVelocity;
+    }
     public void setShootMode(DcMotor.RunMode mode)
     {
-        if(shtmode != mode && shooterW != null) shooterW.setMode(mode);
-        if(shtmode != mode && shooterW2 != null) shooterW2.setMode(mode);
-        shtmode = mode;
+        if(shooterW != null) shooterW.setMode(mode);
+        if(shooterW2 != null) shooterW2.setMode(mode);
     }
     public void resetTransition() {
         shooter1.moveToStartPos();
@@ -251,18 +264,52 @@ public void stopWheel(){
         RobotLog.dd(TAG,"reseting transtions");
     }
 
-    public void changeShootTraj(double speed){
+    public void defaultFarShooterTraj(){
+
+        setShooterTrajPos(-1250);
+    }
+    public void defaultCloseShooterTraj(){
+        setShooterTrajPos(-600);
+    }
+
+    //set to a specific encoder count
+    public void setShooterTrajPos(int targetpos){
+        RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, mode = %s, power = %f", targetpos, moveShooterM.getCurrentPosition(), moveShooterM.getMode().toString(), moveShooterM.getPower());
+        moveShooterM.setTargetPosition(targetpos);
+
+        if(shtmode == RUN_USING_ENCODER){
+            moveShooterM.setPower(0);
+            moveShooterM.setMode(RUN_TO_POSITION);
+            shtmode = RUN_TO_POSITION;
+        }
+        int currentpos = moveShooterM.getCurrentPosition();
+
+        moveShooterM.setPower( signum (targetpos - currentpos)*.3);
+
+        RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, signum = %f", targetpos, currentpos, signum(targetpos-currentpos));
+    }
+
+    public void changeShootTraj(double pwr){
         try {
            // if (moveShooter1.getPosition() == 0 && speed < 0) return;
             //if (moveShooter1.getPosition() == 1 && speed > 0) return;
             //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
             //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
-            moveShooterM.setPower(speed);
+            double lftmin = RobotConstants.SHOOTER_MIN_ENCODER;
+            double lftmax =  RobotConstants.SHOOTER_MAX_ENCODER;
+            double trajCounts= moveShooterM.getCurrentPosition();
+            if (trajCounts <= lftmin && pwr < 0.0 ||
+                    trajCounts >= lftmax  && pwr > 0.0) pwr = 0.0;
+
+            if( shtmode != RUN_USING_ENCODER) {
+                moveShooterM.setMode(RUN_USING_ENCODER);
+                shtmode = RUN_USING_ENCODER;
+            }
+
+            moveShooterM.setPower(pwr);
             engageAutoTraj = false;
-            moveShooterM.setMode(RUN_USING_ENCODER);
 
-
-            RobotLog.dd(TAG, "Set power to speed :%f",speed);
+            RobotLog.dd(TAG, "Set power to speed :%f",pwr);
 
         }catch(Exception e){
             RobotLog.dd(TAG, "unable to change Shoot Trajectory");

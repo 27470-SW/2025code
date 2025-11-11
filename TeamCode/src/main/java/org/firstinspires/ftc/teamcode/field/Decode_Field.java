@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.field;
 import org.firstinspires.ftc.teamcode.util.Point2d;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ITD_Field extends Field
+public class Decode_Field extends Field
 {
-    public ITD_Field()
+    public Decode_Field()
     {
         super("PowerPlay");
         setHasVuMarks(false);

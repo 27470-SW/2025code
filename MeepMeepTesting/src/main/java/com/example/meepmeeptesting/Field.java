@@ -106,6 +106,9 @@ public abstract class Field
         START_GOAL_RED,
         START_FAR_RED_1AND7,
         START_FAR_BLUE_1AND7,
+        START_FAR_RED_2,
+        START_FAR_BLUE_2,
+
         START_WALL_BLUE_3,
         START_WALL_RED_3,
         START_WALL_RED4,

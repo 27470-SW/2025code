@@ -70,7 +70,7 @@ public class TestShooter extends InitLinearOpMode
         dbd.setTelemetryTransmissionInterval(25);
 
         shooter = new Shooter(hardwareMap);
-        shooter.init();
+        shooter.initShooter();
 
         shooter.setPIDF(pidf);
 

@@ -212,6 +212,14 @@ public class DECODE_Route extends Route
            ROUTE6BLUET t1 = new ROUTE6BLUET(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
+       else if (startPos == START_FAR_RED_2){
+           Route2Red t1 = new Route2Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if (startPos == START_FAR_BLUE_2){
+           Route2BLUE t1 = new Route2BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
        else if (startPos == START_WALL_BLUE_3){
            Route3BLUE t1 = new Route3BLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);

@@ -202,10 +202,7 @@ public class FtcRobotControllerActivity extends Activity
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-//      if(VERBOSE)
-      {
-        RobotLog.vv(FtcRobotControllerService.TAG, "%s.controllerService=null", TAG);
-      }
+      RobotLog.vv(FtcRobotControllerService.TAG, "%s.controllerService=null", TAG);
       controllerService = null;
     }
   };

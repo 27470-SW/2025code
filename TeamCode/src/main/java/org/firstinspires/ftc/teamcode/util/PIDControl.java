@@ -48,7 +48,7 @@ public class PIDControl {
     double vel3 = 0;
 
 
-    double filteredVelocity = 0;
+    public double filteredVelocity = 0;
     double a = 0.4;
     double b = 0.25;
     double c = 0.2;

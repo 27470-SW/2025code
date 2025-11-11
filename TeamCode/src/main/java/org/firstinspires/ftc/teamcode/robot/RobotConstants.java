@@ -71,23 +71,27 @@ public class RobotConstants
   public static double IN_ACT_DLY = 0.0;
   public static double IN_ACT_DUR = 0.5;
   public static double IN_ACT_DIST = 3.0;
-  public static double TRANSITION_RESTPOINT1 = .35;
-  public static double TRANSITION_RESTPOINT2 = .48;
-  public static double TRANSITION_RESTPOINT3 = .89;
+  public static double TRANSITION_RESTPOINT1 = .43;
+  public static double TRANSITION_RESTPOINT2 = .25;
+  public static double TRANSITION_RESTPOINT3 = .35;
   public static double TRANSITION_MOVEMENT = .15;
   public static  double SHOOTER_KP = 0.03;
   public static  double SHOOTER_KI = 0.000016;
   public static  double SHOOTER_KD = 0.0005;
   public static  double SHOOTER_KF = 0.0003;
-  public static  double SHOOTER_VELOCITY = 1200;
+  public static  double SHOOTER_VELOCITY = 1500;
   public static  double MIN_W_SPEED = 800;
-  public static  double MAX_W_SPEED = 1250;
+  public static  double MAX_W_SPEED = 1675;
   public static  double MIN_SHOOTER_DIST = 0;
   public static  double MAX_SHOOTER_DIST = 135;
-  public static  double MIN_TRAJ_ENCODER = 0;
-  public static  double MAX_TRAJ_ENCODER = 700;
+  public static double CLOSE_SHOOTER_DIST = 82;
+  public static  int MIN_TRAJ_ENCODER = 0;
+  public static  int MAX_TRAJ_ENCODER = 2800;
   public static  double RED_GOAL_APRIL_TAG = 24;
   public static  double BLUE_GOAL_APRIL_TAG = 20;
+  public final static int GPP_APRIL_TAG = 21;
+  public final static int PGP_APRIL_TAG = 22;
+  public final static int PPG_APRIL_TAG = 23;
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
@@ -104,6 +108,8 @@ public class RobotConstants
   public static double[] EX_LEVS;
   public static int EL_MAX_ENCODER;
   public static int EL_MIN_ENCODER = -1000;
+  public static int SHOOTER_MAX_ENCODER = 10;
+  public static int SHOOTER_MIN_ENCODER = -2500;
   public static int EL_NEAR_ZERO = 19;
   public static int EL_MAX_DEVIATION = 30;
 
