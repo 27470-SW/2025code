@@ -73,25 +73,22 @@ public class Route3BLUE {
             route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
             route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
             route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
-            route.addLocation(route.shootNearBlue, SPLINE, HEAD_LINEAR);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            route.shootMotif(2,route.shootNearBlue );
         }else {
             route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
             route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
             route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
-            route.addLocation(route.shootNearBlue, SPLINE, HEAD_LINEAR);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            route.shootMotif(2, route.shootNearBlue);
 
             route.addFunction(route::intakeOn);
             route.addEvent(Route.Action.TANGENT, Math.toRadians(60));
             route.addLocation(route.goNear1Blue, SPLINE, HEAD_LINEAR);
             route.addLocation(route.collect1Blue, LINE, HEAD_LINEAR);
             route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
-            route.addLocation(route.shootNearBlueSpline, SPLINE, HEAD_LINEAR);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            route.shootMotif(2, route.shootNearBlueSpline);
         }
     }
     private double moveArmDelay = 0;

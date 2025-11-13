@@ -74,7 +74,7 @@ public class Route4BLUE {
             route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
 
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
         } else {
             //3rd
             route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
@@ -83,14 +83,14 @@ public class Route4BLUE {
             //Shoot whiffles that are near the gate.
             route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            // route.shootMotif(2, );
 
             //4th
             route.addLocation(route.intakeParkBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.intakeParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+           // route.shootMotif(2, );
         }
         /*route.addEvent(Route.Action.TANGENT, Math.toRadians(185));
         route.addLocation(route.shootGateWhiffles, SPLINE, HEAD_LINEAR);

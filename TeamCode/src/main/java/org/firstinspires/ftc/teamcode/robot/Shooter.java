@@ -77,9 +77,6 @@ public class Shooter
             controlShooterW = new PIDControl(hwMap, "shoot");
             controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
 
-            dashboardShooter = FtcDashboard.getInstance();
-            dashTelemetry = dashboardShooter.getTelemetry();
-
             success = true;
         }
 
@@ -145,6 +142,11 @@ public class Shooter
             curSpd = shooterW2.getVelocity();
         }
         if(usePIDs && controlShooterW != null){
+            if(dashTelemetry == null){
+                dashboardShooter = FtcDashboard.getInstance();
+                dashTelemetry = dashboardShooter.getTelemetry();
+            }
+
            double update = controlShooterW.update();
             shooterW2.setPower(update);
 

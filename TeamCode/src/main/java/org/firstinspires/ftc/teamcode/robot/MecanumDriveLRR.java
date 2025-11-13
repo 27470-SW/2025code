@@ -304,10 +304,10 @@ public class MecanumDriveLRR extends MecanumDrive
         }
     }
 
-//    @Override
-//    public void setPoseEstimate(Pose2d in){
-//        getLocalizer().setPoseEstimate(in);
-//    }
+
+    public void setRealPoseEstimate(Pose2d in){
+        getLocalizer().setPoseEstimate(in);
+    }
 
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(

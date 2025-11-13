@@ -74,14 +74,14 @@ public class Route3Red {
             route.addLocation(route.collect3, LINE, HEAD_LINEAR);
             route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
         } else {
 
             route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR);
             route.addLocation(route.collect3, LINE, HEAD_LINEAR);
             route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+           // route.shootMotif(2, );
 
             route.addFunction(route::intakeOn);
             route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
@@ -90,7 +90,7 @@ public class Route3Red {
             route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
             route.addEvent(Route.Action.WAIT, 0.1);
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
         }
     }
 

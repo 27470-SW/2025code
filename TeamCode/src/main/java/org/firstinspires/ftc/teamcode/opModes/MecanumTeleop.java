@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import static org.firstinspires.ftc.teamcode.field.Field.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_HUMAN_POSE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_BLUE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_RED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
@@ -51,6 +52,7 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCOD
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_HUMAN_POSE;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 import static java.lang.Math.abs;
 
@@ -165,6 +167,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
         mechDrv = (MecanumDriveLRR)(robot.drive);
         mechDrv.setPoseEstimate(startPose);
+        mechDrv.setRealPoseEstimate(startPose);
         mechDrv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         for(String k : robot.motors.keySet())
@@ -340,7 +343,7 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean resetPose = gpad1.just_pressed(ManagedGamepad.Button.D_LEFT) && gpad1.pressed(ManagedGamepad.Button.START);
 
         if(resetPose){
-
+            mechDrv.setRealPoseEstimate(alliance==RED?RED_HUMAN_POSE:BLUE_HUMAN_POSE);
         }
 
         if(raw_lr > .2 || raw_fb > .2 || raw_turn > .2){
@@ -351,24 +354,24 @@ public class MecanumTeleop extends InitLinearOpMode
         //this value never gets used, but the compiler can't figure that out
         Pose2d targetPose = new Pose2d(0,0,0);
 
-        if(driveClose){
-            targetPose = alliance==RED?CLOSE_POSE_RED:CLOSE_POSE_BLUE;
-        }
-        else if(driveFar){
-            targetPose = alliance==RED?FAR_POSE_RED:FAR_POSE_BLUE;
-        }
-        if(driveFar || driveClose) {
-
-            double heading = robot.getPoseEstimate().getHeading();
-            double xError = targetPose.getX() - robot.getPoseEstimate().getX();
-            double yError = targetPose.getY() - robot.getPoseEstimate().getY();
-            double headingError = normalizeAngle(targetPose.getHeading() - heading);
-
-            raw_fb = xError * Math.cos(-heading) - yError * Math.sin(-heading);
-            raw_lr = xError * Math.sin(-heading) + yError * Math.cos(-heading);
-            raw_turn = headingError;
-
-        }
+//        if(driveClose){
+//            targetPose = alliance==RED?CLOSE_POSE_RED:CLOSE_POSE_BLUE;
+//        }
+//        else if(driveFar){
+//            targetPose = alliance==RED?FAR_POSE_RED:FAR_POSE_BLUE;
+//        }
+//        if(driveFar || driveClose) {
+//
+//            double heading = robot.getPoseEstimate().getHeading();
+//            double xError = targetPose.getX() - robot.getPoseEstimate().getX();
+//            double yError = targetPose.getY() - robot.getPoseEstimate().getY();
+//            double headingError = normalizeAngle(targetPose.getHeading() - heading);
+//
+//            raw_fb = xError * Math.cos(-heading) - yError * Math.sin(-heading);
+//            raw_lr = xError * Math.sin(-heading) + yError * Math.cos(-heading);
+//            raw_turn = headingError;
+//
+//        }
 
 
 
@@ -380,7 +383,7 @@ public class MecanumTeleop extends InitLinearOpMode
             if(targetHeading < 0) targetHeading += Math.PI;
             double pass_erf = (targetHeading-robot.getPoseEstimate().getHeading());
             if(pass_erf>Math.PI) pass_erf -= 2*Math.PI;
-            raw_turn = -erf(pass_erf*3);
+            raw_turn = -erf(pass_erf*2.5);
 
             dashboard.displayText(15, String.format("targetHeading = %f, pass_erf = %f, raw_turn = %f, alliance = %s", Math.toDegrees(targetHeading), pass_erf, raw_turn, alliance.toString()));
         }

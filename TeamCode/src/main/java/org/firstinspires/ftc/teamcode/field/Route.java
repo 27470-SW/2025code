@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.Traject
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.TurnSegment;
 import org.firstinspires.ftc.teamcode.trajectorysequence.sequencesegment.WaitSegment;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
@@ -30,11 +29,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.LINE;
 import static org.firstinspires.ftc.teamcode.opModes.Decode_Auton.autonDebug;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TrajEnum.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
@@ -936,27 +935,41 @@ public void moveToPosition4(){
 
 
 
-    protected void shootMotif(int greenPos){
+    private double DRIVE_TO_SHOOT_AMT = 5.6;
+
+    protected void shootMotif(int greenPos, Pose2d pos1){
+        double theta = pos1.getHeading() - Math.toDegrees(90);
+        Pose2d pos2 = new Pose2d(pos1.getX()+Math.cos(theta)*DRIVE_TO_SHOOT_AMT, pos1.getY()+Math.sin(theta)*DRIVE_TO_SHOOT_AMT, pos1.getHeading());
+        Pose2d pos3 = new Pose2d(pos2.getX()+Math.cos(theta)*DRIVE_TO_SHOOT_AMT, pos2.getY()+Math.sin(theta)*DRIVE_TO_SHOOT_AMT, pos2.getHeading());
        switch (motif)
        {
            case SHOOTGPP:
                switch (greenPos){
-                   case 1: addFunction(this::shoot1);
+                   case 1:  addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                            addFunction(this::shoot1);
                             break;
-                   case 2: addFunction(this::shoot2);
+                   case 2: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                            addFunction(this::shoot2);
                             break;
-                   case 3: addFunction(this::shoot3);
+                   case 3: addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                            addFunction(this::shoot3);
                             break;
                }
                addEvent(Route.Action.WAIT, 2.0);
                switch (greenPos){
-                   case 1: addFunction(this::shoot2);
+                   case 1: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
-                   case 2: addFunction(this::shoot1);
+                   case 2:addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
-                   case 3: addFunction(this::shoot1);
+                   case 3: addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
                        break;
                }
@@ -964,27 +977,39 @@ public void moveToPosition4(){
                break;
            case SHOOTPGP:
                switch (greenPos){
-                   case 1: addFunction(this::shoot2);
+                   case 1: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
                        break;
                    case 2:
-                   case 3: addFunction(this::shoot1);
-                       break;
-               }
-               addEvent(Route.Action.WAIT, 2.0);
-               switch (greenPos){
-                   case 1: addFunction(this::shoot1);
-                       break;
-                   case 2: addFunction(this::shoot2);
-                       break;
-                   case 3: addFunction(this::shoot3);
+                   case 3: addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
                        break;
                }
                addEvent(Route.Action.WAIT, 2.0);
                switch (greenPos){
                    case 1:
-                   case 2: addFunction(this::shoot3);
+                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
                        break;
-                   case 3: addFunction(this::shoot2);
+                   case 2:
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
+                       break;
+                   case 3:
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot3);
+                       break;
+               }
+               addEvent(Route.Action.WAIT, 2.0);
+               switch (greenPos){
+                   case 1:
+                   case 2:
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot3);
+                       break;
+                   case 3:
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
                        break;
                }
                addEvent(Route.Action.WAIT, 0.34);
@@ -992,26 +1017,45 @@ public void moveToPosition4(){
                break;
            case SHOOTPPG:
                switch (greenPos){
-                   case 1: addFunction(this::shoot2);
-                       addEvent(Route.Action.WAIT, 3.0);
+                   case 1:
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
+                   addEvent(Route.Action.WAIT, 3.0);
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
-                   case 2: addFunction(this::shoot1);
+                   case 2:
+                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
                        addEvent(Route.Action.WAIT, 3.0);
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
-                   case 3: addFunction(this::shoot1);
+                   case 3:
+                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+
+                       addFunction(this::shoot1);
+
                        addEvent(Route.Action.WAIT, 3.0);
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+
                        addFunction(this::shoot2);
                        break;
                }
                addEvent(Route.Action.WAIT, 3.0);
                switch (greenPos){
-                   case 1: addFunction(this::shoot1);
+                   case 1:
+                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot1);
                        break;
-                   case 2: addFunction(this::shoot2);
+                   case 2:
+                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot2);
                        break;
-                   case 3: addFunction(this::shoot3);
+
+                   case 3:
+                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                       addFunction(this::shoot3);
                        break;
                }
                addEvent(Route.Action.WAIT, 1);

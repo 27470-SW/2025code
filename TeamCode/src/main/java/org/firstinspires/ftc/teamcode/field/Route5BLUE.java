@@ -74,21 +74,21 @@ public class Route5BLUE {
             route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
         }else {
             route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.intakeGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
 
             route.addFunction(route::intakeOn);
             route.addLocation(route.intakeParkBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.intakeParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+           // route.shootMotif(2, );
         }
         /* route.addLocation(route. aroundPartner, LINE, HEAD_LINEAR, Math.toDegrees(0));
         route.addEvent(Route.Action.WAIT, 2.5);

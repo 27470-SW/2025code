@@ -101,6 +101,8 @@ public class RobotConstants
   public static Pose2d FAR_POSE_BLUE = new Pose2d(-8.5, -54, Math.toRadians(110));
   public static Pose2d RED_GOAL_POSE = new Pose2d(68,65,0);
   public static Pose2d BLUE_GOAL_POSE = new Pose2d(-68,65,0);
+  public static Pose2d RED_HUMAN_POSE = new Pose2d(-71.42,-60.36,Math.toRadians(-90));
+  public static Pose2d BLUE_HUMAN_POSE = new Pose2d(63.33,-58.86,Math.toRadians(90));
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;

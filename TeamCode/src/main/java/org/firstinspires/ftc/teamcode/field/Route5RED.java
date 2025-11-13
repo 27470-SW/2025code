@@ -73,21 +73,21 @@ public class Route5RED {
             route.addLocation(route.intakeGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+           // route.shootMotif(2, );
         }else {
 
             route.addLocation(route.intakeGoal, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.intakeGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+           // route.shootMotif(2, );
             route.addFunction(route::intakeOn);
             //Shoot whiffles that are near the goal.
             route.addLocation(route.intakePark, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.intakeParkWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addLocation(route.shootParkWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
             route.addFunction(route::intakeOff);
-            route.shootMotif(2);
+            //route.shootMotif(2, );
         }
         //Shoot whiffles near the parking spot.
 

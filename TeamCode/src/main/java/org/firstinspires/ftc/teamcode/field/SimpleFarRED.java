@@ -43,7 +43,7 @@ public class SimpleFarRED {
         route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
         route.addEvent(Route.Action.WAIT,5);
-        route.shootMotif(1);
+       // route.shootMotif(1, );
         route.addFunction(route::threeTransitionsDown);
         route.addFunction(route::resetTrajAng);
 
