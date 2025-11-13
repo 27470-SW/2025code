@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import static org.firstinspires.ftc.teamcode.field.Field.Wiffle_Pos.*;
-import static org.firstinspires.ftc.teamcode.field.Field.StartPos.*;
 import static org.firstinspires.ftc.teamcode.field.Route.Movement.*;
 import static org.firstinspires.ftc.teamcode.field.Route.Heading.*;
 import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.*;
@@ -42,9 +40,9 @@ public class Route2Red {
 
         route.addLocation(route.startRedFar, START, HEAD_LINEAR);
         // shoot preloaded
-        route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addFunction(route::shootFar);
-        route.addEvent(Route.Action.WAIT, 5);
+        route.addLocation(route.shootfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.WAIT,1);
         route.shootMotif(1);
         route.addFunction(route::threeTransitionsDown);
         route.addFunction(route::resetTrajAng);
@@ -54,12 +52,13 @@ public class Route2Red {
         route.addFunction(route::intakeOn);
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.shootfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addFunction(route::intakeOff);
         //shooting
-        route.addFunction(route::shootWiffleClose);
-        route.addEvent(Route.Action.WAIT, 5);
+        route.addFunction(route::shootFar);
+        route.addEvent(Route.Action.WAIT, .2);
         route.shootMotif(1);
+        route.makeNewTraj();
         route.addFunction(route::threeTransitionsDown);
         route.addFunction(route::resetTrajAng);
         route.addFunction(route::wheelOff);
@@ -69,31 +68,31 @@ public class Route2Red {
         route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect3, LINE, HEAD_LINEAR, Math.toRadians(0));
 
-        switch (lastLocation) {
-            case GOAL4:
+        //switch (lastLocation) {
+        //    case GOAL4:
                 //shoot Lever Artifacts
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(190));
-                route.addLocation(route.shootNear, SPLINE, HEAD_LINEAR, Math.toRadians(90));
-                route.addFunction(route::intakeOff);
+               // route.addEvent(Route.Action.TANGENT, Math.toRadians(190));
+                //route.addLocation(route.shootNear, SPLINE, HEAD_LINEAR, Math.toRadians(90));
+                //route.addFunction(route::intakeOff);
                 //shooting
-                route.addFunction(route::shootWiffleClose);
-                route.addEvent(Route.Action.WAIT, 5);
-                route.shootMotif(1);
-                route.addFunction(route::threeTransitionsDown);
-                route.addFunction(route::resetTrajAng);
-                route.addFunction(route::wheelOff);
-                break;
-            case HUMAN1:
+                //route.addFunction(route::shootWiffleClose);
+                //route.addEvent(Route.Action.WAIT, 5);
+                //route.shootMotif(1);
+                //route.addFunction(route::threeTransitionsDown);
+                //route.addFunction(route::resetTrajAng);
+                //route.addFunction(route::wheelOff);
+                //break;
+            //case HUMAN1:
                 //wont do prob cuz no time
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
-                route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addLocation(route.collect1, LINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(100));
-                route.addLocation(route.shootNear2, SPLINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addEvent(Route.Action.WAIT, 0.1);
-                break;
+              //  route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
+                //route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
+                //route.addLocation(route.collect1, LINE, HEAD_LINEAR, Math.toRadians(0));
+                //route.addEvent(Route.Action.TANGENT, Math.toRadians(100));
+                //route.addLocation(route.shootNear2, SPLINE, HEAD_LINEAR, Math.toRadians(0));
+                //route.addEvent(Route.Action.WAIT, 0.1);
+                //break;
 
-        }
+       // }
     }
 
 

@@ -207,6 +207,7 @@ public class MecanumDriveLRR extends MecanumDrive
 
         // SBHTODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+        setLocalizer(new PinpointLocalizer(hardwareMap));
 
         trajectorySequenceRunner =
             new TrajectorySequenceRunner(follower, HEADING_PID);
@@ -302,6 +303,11 @@ public class MecanumDriveLRR extends MecanumDrive
             if (motor != null) motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
     }
+
+//    @Override
+//    public void setPoseEstimate(Pose2d in){
+//        getLocalizer().setPoseEstimate(in);
+//    }
 
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(

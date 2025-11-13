@@ -48,9 +48,9 @@ public class Shooter
     public void initPos() throws InterruptedException
     {
         if (moveShooterM != null) {
-            moveShooterM.setMode(RUN_USING_ENCODER);
-            moveShooterM.setPower(.02);
-            Thread.sleep(2000);
+//            moveShooterM.setMode(RUN_USING_ENCODER);
+//            moveShooterM.setPower(.02);
+//            Thread.sleep(2000);
             moveShooterM.setPower(0);
             moveShooterM.setMode(STOP_AND_RESET_ENCODER);
             moveShooterM.setMode(RUN_USING_ENCODER);
@@ -288,6 +288,7 @@ public void stopWheel(){
 
         RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, signum = %f", targetpos, currentpos, signum(targetpos-currentpos));
     }
+
 
     public void changeShootTraj(double pwr){
         try {

@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveLRR;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.robot.BasicBot;
 import org.firstinspires.ftc.teamcode.util.Input_Shaper;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.Point2d;
+import org.firstinspires.ftc.teamcode.util.PreferenceMgr;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -35,12 +37,20 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
+import static org.firstinspires.ftc.teamcode.field.Field.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_BLUE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_RED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.FAR_POSE_BLUE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.FAR_POSE_RED;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 import static java.lang.Math.abs;
 
@@ -63,6 +73,8 @@ public class MecanumTeleop extends InitLinearOpMode
         }
         BasicBot.OpModeType prevOpModeType = BasicBot.curOpModeType;
         BasicBot.curOpModeType = BasicBot.OpModeType.TELE;
+        alliance = Field.Alliance.valueOf(PreferenceMgr.getAllianceColor());
+
 
         /* Initialize the hardware variables. */
         if(VERBOSE) {  RobotLog.dd(TAG, "Initialize robot");}
@@ -75,6 +87,9 @@ public class MecanumTeleop extends InitLinearOpMode
         robot.init(this, chas, true);
         robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
         RobotConstants.info();
+
+        driveClose = false;
+        driveFar = false;
 
 
 /*        armButton = hardwareMap.get(TouchSensor .class, "armL0");
@@ -220,10 +235,8 @@ public class MecanumTeleop extends InitLinearOpMode
                 dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor current encoder %d", robot.shooter.moveShooterM.getCurrentPosition()));
                 dashboard.displayText(l++, String.format(Locale.US, "Shooter motor velo %f", robot.shooter.getFilteredVelocity()));
             }
-            if (null!= robot.rearDistSensor){
-
-                dashboard.displayText(l++, String.format(Locale.US, "rear distance %f", robot.rearDistSensor.getDistance(DistanceUnit.CM)));
-            }
+        Pose2d currentPose = robot.getPoseEstimate();
+            dashboard.displayText(l++, String.format(Locale.US, "X: %f, Y: %f, Heading: %f",currentPose.getX(),currentPose.getY(),Math.toDegrees(currentPose.getHeading())));
 
                 dashboard.displayText(l++, String.format(Locale.US, " Camera Found %b Camera Dist %f", targetFound, distanceToTheGoal));
 
@@ -284,6 +297,28 @@ public class MecanumTeleop extends InitLinearOpMode
     double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
     double  turnA            = 0;        // Desired turning power/speed (-1 to +1)
 
+
+    private boolean driveFar;
+    private boolean driveClose;
+
+    private double normalizeAngle(double angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+    }
+
+    //Note this is not a true ERF function, but it works for robot movement, especially turning
+    public double erf(double z) {
+        double power = 1.5;  // Increase for even steeper effect
+        z = Math.signum(z) * Math.pow(Math.abs(z), power);
+
+        double t = 1.0 / (1.0 + 0.47047 * Math.abs(z));
+        double poly = t * (0.3480242 + t * (-0.0958798 + t * (0.7478556)));
+        double ans = 1.0 - poly * Math.exp(-z*z);
+        if (z >= 0) return  ans;
+        else        return -ans;
+    }
+
     private void controlDrive()
     {
 
@@ -300,10 +335,55 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
-        boolean dtrn = gpad1.pressed(ManagedGamepad.Button.X);
         boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
+        boolean autoDriveAngle = gpad1.pressed(ManagedGamepad.Button.B);
+        boolean resetPose = gpad1.just_pressed(ManagedGamepad.Button.D_LEFT) && gpad1.pressed(ManagedGamepad.Button.START);
+
+        if(resetPose){
+
+        }
+
+        if(raw_lr > .2 || raw_fb > .2 || raw_turn > .2){
+            driveFar = false;
+            driveClose = false;
+        }
+
+        //this value never gets used, but the compiler can't figure that out
+        Pose2d targetPose = new Pose2d(0,0,0);
+
+        if(driveClose){
+            targetPose = alliance==RED?CLOSE_POSE_RED:CLOSE_POSE_BLUE;
+        }
+        else if(driveFar){
+            targetPose = alliance==RED?FAR_POSE_RED:FAR_POSE_BLUE;
+        }
+        if(driveFar || driveClose) {
+
+            double heading = robot.getPoseEstimate().getHeading();
+            double xError = targetPose.getX() - robot.getPoseEstimate().getX();
+            double yError = targetPose.getY() - robot.getPoseEstimate().getY();
+            double headingError = normalizeAngle(targetPose.getHeading() - heading);
+
+            raw_fb = xError * Math.cos(-heading) - yError * Math.sin(-heading);
+            raw_lr = xError * Math.sin(-heading) + yError * Math.cos(-heading);
+            raw_turn = headingError;
+
+        }
 
 
+
+        if(autoDriveAngle){
+            Pose2d goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
+            double x_dist = goalLocation.getX() - robot.getPoseEstimate().getX();
+            double y_dist = goalLocation.getY() - robot.getPoseEstimate().getY();
+            double targetHeading = Math.atan(y_dist/x_dist);
+            if(targetHeading < 0) targetHeading += Math.PI;
+            double pass_erf = (targetHeading-robot.getPoseEstimate().getHeading());
+            if(pass_erf>Math.PI) pass_erf -= 2*Math.PI;
+            raw_turn = -erf(pass_erf*3);
+
+            dashboard.displayText(15, String.format("targetHeading = %f, pass_erf = %f, raw_turn = %f, alliance = %s", Math.toDegrees(targetHeading), pass_erf, raw_turn, alliance.toString()));
+        }
 
         lr = ishaper.shape(raw_lr, 0.02);
         fb = ishaper.shape(raw_fb, 0.02);
@@ -744,19 +824,20 @@ public class MecanumTeleop extends InitLinearOpMode
 
     private void processIntakeInputs()
     {
-        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.R_BUMP) || gpad2.pressed(ManagedGamepad.Button.R_BUMP);
-        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.L_BUMP) || gpad2.pressed(ManagedGamepad.Button.L_BUMP);
+        boolean intakeRev = gpad1.pressed(ManagedGamepad.Button.R_BUMP) || gpad2.pressed(ManagedGamepad.Button.R_BUMP);
+        boolean intakeOn = gpad1.pressed(ManagedGamepad.Button.L_BUMP) || gpad2.pressed(ManagedGamepad.Button.L_BUMP);
 
         if (intakeOn)
         {
-            robot.crAzYIntake.setPwr(1);
+            robot.crAzYIntake.setPwr(-1);
+            robot.shooter.resetTransition();
+            robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
             RobotLog.dd(TAG,"intakeon");
-
         }
 
         else if (intakeRev)
         {
-            robot.crAzYIntake.setPwr(-1);
+            robot.crAzYIntake.setPwr(1);
             RobotLog.dd(TAG,"intakereverse");
 
         }
@@ -810,12 +891,14 @@ public class MecanumTeleop extends InitLinearOpMode
           if(leftTrig >= 0.3) {
               detectAprilTag();
               if(xDown){
+                  driveFar = true;
                   robot.shooter.defaultFarShooterTraj();
                   distanceToTheGoal = MAX_SHOOTER_DIST;
 
                   RobotLog.dd(TAG, "Shooting Far");
               }
               if(yUp){
+                  driveClose = true;
                   robot.shooter.defaultCloseShooterTraj();
                   distanceToTheGoal = CLOSE_SHOOTER_DIST;
 

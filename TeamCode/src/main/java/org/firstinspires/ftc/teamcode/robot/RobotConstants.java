@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
@@ -92,6 +93,14 @@ public class RobotConstants
   public final static int GPP_APRIL_TAG = 21;
   public final static int PGP_APRIL_TAG = 22;
   public final static int PPG_APRIL_TAG = 23;
+
+
+  public static Pose2d CLOSE_POSE_RED = new Pose2d(24, 23, Math.toRadians(45));
+  public static Pose2d CLOSE_POSE_BLUE = new Pose2d(-24, 23, Math.toRadians(135));
+  public static Pose2d FAR_POSE_RED = new Pose2d(8.5, -54, Math.toRadians(70));
+  public static Pose2d FAR_POSE_BLUE = new Pose2d(-8.5, -54, Math.toRadians(110));
+  public static Pose2d RED_GOAL_POSE = new Pose2d(68,65,0);
+  public static Pose2d BLUE_GOAL_POSE = new Pose2d(-68,65,0);
 
   //Elev
   public static double INIT_SLIDE_POWER = .15;
@@ -269,7 +278,7 @@ public class RobotConstants
   public static double BORD_SPD = .1;
   public static Chassis bot= Chassis.B7252;
   public static Field.Alliance alliance = Field.Alliance.RED;
-  public static PositionOption startPos = Field.StartPos.START_SPECIMENS;
+  public static PositionOption startPos = Field.Start_Pos.START_FAR_RED2;
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
   public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.FORWARD;
@@ -410,7 +419,7 @@ public class RobotConstants
     bot = chas;
     RobotLog.dd(TAG, "RobotConstants.init() " + chas);
 
-    Field.StartPos sPos = (Field.StartPos)startPos;
+    Field.Start_Pos sPos = (Field.Start_Pos)startPos;
     EL_MIN_ENCODER = 10;
     EL_MAX_ENCODER = 4000;
 

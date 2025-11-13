@@ -141,25 +141,20 @@ public abstract class Field
     }
 
     public enum Start_Pos implements PositionOption{
-        START_GOAL_RED,
         START_FAR_RED_1AND7,
-        START_FAR_BLUE_1AND7,
-        START_WALL_BLUE_3,
+        START_FAR_RED2,
         START_WALL_RED_3,
         START_WALL_RED4,
-        START_WALL_BLUE4,
         START_GOAL_RED5,
-        START_GOAL_BLUE5,
         START_FAR_RED6,
-        START_FAR_BLUE6,
+        START_FAR_BLUE_1AND7,
+        START_FAR_BLUE2,
+        START_WALL_BLUE_3,
+        START_WALL_BLUE4,
+        START_GOAL_BLUE5,
+        START_FAR_BLUE6
 
-        START_FAR_RED,
-        START_WALL_RED,
-        START_GOAL_BLUE,
-        START_FAR_BLUE,
-        START_WALL_BLUE,
-
-    }
+        }
 
     public enum Parks implements PositionOption
     {
@@ -185,10 +180,6 @@ public abstract class Field
         PARK2,
         GATE3,
         GOAL4,
-        HUMAN1BLUE,
-        PARK2BLUE,
-        GATE3BLUE,
-        GOAL4BLUE,
     }
     public enum Park_Pos implements PositionOption
     {

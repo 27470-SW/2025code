@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.firstinspires.ftc.teamcode.field.Field.StartPos.*;
+import static org.firstinspires.ftc.teamcode.field.Field.Start_Pos.*;
 import static org.firstinspires.ftc.teamcode.opModes.MecanumTeleop.VERBOSE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.GPP_APRIL_TAG;
@@ -82,17 +82,15 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
     {
         RobotLog.dd(TAG, "PPAuto CTOR");
         alliance = Field.Alliance.valueOf(PreferenceMgr.getAllianceColor());
-        startPos = values()[PreferenceMgr.getStartPosition()];
+        startPos = Field.Start_Pos.values()[PreferenceMgr.getStartPosition()];
         parkPos = Field.Park_Pos.values()[PreferenceMgr.getParkPosition()];
         delay    = PreferenceMgr.getDelay();
         xOffset  = PreferenceMgr.getXOffset();
         autonDebug  = Field.AutonDebug.values()[PreferenceMgr.getEnableAutonDebug()];
-        lastLocation = Field.Wiffle_Pos.values()[PreferenceMgr.getFirstLoc()];
-        stackToBack = PreferenceMgr.getStackHighwayToBd();
+
+        lastLocation = Field.Wiffle_Pos.values()[PreferenceMgr.getLastLoc()];
         motif = PreferenceMgr.getMotif();
         numShot = PreferenceMgr.getNumShots();
-        highways = new Field.Parks[]{PreferenceMgr.getHighway1(), PreferenceMgr.getHighway12(), PreferenceMgr.getHighway2(),PreferenceMgr.getHighway22(), PreferenceMgr.getHighway3(),PreferenceMgr.getHighway32()};
-        pixelStacks = new Field.Parks[]{PreferenceMgr.getPixel1(), PreferenceMgr.getPixel2(), PreferenceMgr.getPixel3()};
 
         RobotConstants.init(chas, alliance, startPos, xOffset);
     }
@@ -299,7 +297,12 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
 
             detectAprilTag();
 
-            dashboard.displayText(9, "aprilTag found: " + targetFound + ", value: "+desiredTag.id);
+            if(desiredTag != null) {
+                dashboard.displayText(9, "aprilTag found: " + targetFound + ", value: " + desiredTag.id);
+            }
+            else {
+                dashboard.displayText(9, "aprilTag found: false");
+            }
 
 
             if(initCycle % 10 == 0)
@@ -477,8 +480,11 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
     {
         if(autonDebug == Field.AutonDebug.ENABLE)
         {
+
             /* log to the Driver Station dashboard during Auton Debug */
             int lnNum = 5;
+            Pose2d currentPose = robot.getPoseEstimate();
+            dashboard.displayText(3, String.format(Locale.US, "X: %f, Y: %f, Heading: %f",currentPose.getX(),currentPose.getY(),Math.toDegrees(currentPose.getHeading())));
 
             dashboard.displayText(lnNum, String.format(Locale.US, "Traj Seq %s len=%d dur=%.2f",
                     seqName, seq.size(), seq.duration()));
@@ -648,9 +654,7 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
             dashboard.displayText(lnum++, "Park Position:  " + parkPos);
             dashboard.displayText(lnum++, "Last Location:  " + lastLocation);
 //                dashboard.displayText(lnum++, "Team Element:    " + route.teamElement);
-            dashboard.displayText(lnum++, "Curcuit 1 " + highways[0] + "," + pixelStacks[0] + "," + highways[1]);
-            dashboard.displayText(lnum++, "Curcuit 2 " + highways[2] + "," + pixelStacks[1] + "," + highways[3]);
-            dashboard.displayText(lnum++, "Curcuit 3 " + highways[4] + "," + pixelStacks[2] + "," + highways[5]);
+
         }catch (Exception e){
             try{
                 dashboard.displayText(12, "Failure to print information");
@@ -1031,19 +1035,19 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
         dashboard.displayText(2, "scanPos: " + tmpScanPos);
         RobotLog.dd(TAG, "scanPos = %s", tmpScanPos);
         if (tmpScanPos == ITD_Detector.Position.NONE) {
-            if (alliance == Field.Alliance.RED && startPos == START_SPECIMENS || alliance == Field.Alliance.BLUE && startPos == START_SPECIMENS) {
-                    RobotLog.dd(TAG, "No image answer found - defaulting to RIGHT");
-                    tmpScanPos = ITD_Detector.Position.RIGHT;
-                    dashboard.displayText(6, "No image answer found " + tmpScanPos);
-            } else if (alliance == Field.Alliance.BLUE && startPos == START_SAMPLES || alliance == Field.Alliance.RED && startPos == START_SPECIMENS) {
-                    RobotLog.dd(TAG, "No image answer found - defaulting to LEFT");
-                    tmpScanPos = ITD_Detector.Position.LEFT;
-                    dashboard.displayText(6, "No image answer found " + tmpScanPos);
-            } else {
+//            if (alliance == Field.Alliance.RED && startPos == START_SPECIMENS || alliance == Field.Alliance.BLUE && startPos == START_SPECIMENS) {
+//                    RobotLog.dd(TAG, "No image answer found - defaulting to RIGHT");
+//                    tmpScanPos = ITD_Detector.Position.RIGHT;
+//                    dashboard.displayText(6, "No image answer found " + tmpScanPos);
+//            } else if (alliance == Field.Alliance.BLUE && startPos == START_SAMPLES || alliance == Field.Alliance.RED && startPos == START_SPECIMENS) {
+//                    RobotLog.dd(TAG, "No image answer found - defaulting to LEFT");
+//                    tmpScanPos = ITD_Detector.Position.LEFT;
+//                    dashboard.displayText(6, "No image answer found " + tmpScanPos);
+//            } else {
                     RobotLog.dd(TAG, "No image answer found - defaulting to CENTER");
                     tmpScanPos = ITD_Detector.Position.CENTER;
                     dashboard.displayText(6, "No image answer found " + tmpScanPos);
-            }
+//            }
         }
 
         return tmpScanPos;

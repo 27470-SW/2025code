@@ -57,11 +57,8 @@ public abstract class InitLinearOpMode extends LinearOpMode
     }
 
     protected static Field.Alliance alliance;
-    protected static Field.StartPos startPos;
+    protected static Field.Start_Pos startPos;
     protected static Field.Park_Pos parkPos;
-    protected static Field.Parks stackToBack;
-    protected static Field.Parks[] highways;
-    protected static Field.Parks[] pixelStacks;
     protected CommonUtil cmu = CommonUtil.getInstance();
     protected static DataLogger dl;
     protected static boolean logData = false;

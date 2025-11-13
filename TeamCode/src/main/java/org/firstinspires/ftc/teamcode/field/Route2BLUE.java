@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import static org.firstinspires.ftc.teamcode.field.Field.Wiffle_Pos.*;
-import static org.firstinspires.ftc.teamcode.field.Field.StartPos.*;
 import static org.firstinspires.ftc.teamcode.field.Route.Movement.*;
 import static org.firstinspires.ftc.teamcode.field.Route.Heading.*;
 import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.*;
-import static org.firstinspires.ftc.teamcode.field.Field.Parks.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
@@ -41,11 +38,11 @@ public class Route2BLUE {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         route.addLocation(route.startBlueFar, START, HEAD_LINEAR);
-        route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.shootfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.WAIT, 2);
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.backToStart, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.shootfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.WAIT, 0.1);
         route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.collect3, LINE, HEAD_LINEAR, Math.toRadians(0));

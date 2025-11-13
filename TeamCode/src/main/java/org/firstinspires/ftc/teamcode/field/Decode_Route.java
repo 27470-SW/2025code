@@ -93,6 +93,16 @@ public class Decode_Route extends Route
            F1F3N_Route1and7BLUE t1 = new F1F3N_Route1and7BLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
+       else if (startPos == START_FAR_RED2)
+       {
+           Route2Red t1 = new Route2Red(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if (startPos == START_FAR_BLUE2)
+       {
+           Route2BLUE t1 = new Route2BLUE(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
        else if( startPos == START_WALL_RED4)
        {
            Route4RED t1 = new  Route4RED(this);

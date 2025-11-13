@@ -123,6 +123,7 @@ android {
 
 repositories {
     //copied from old SDK
+    mavenCentral()
     flatDir {
         dirs rootProject.file('libs')
     }

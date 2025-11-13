@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.opModes;
 
+import static org.firstinspires.ftc.teamcode.field.Field.Park_Pos.OUTSIDEPRIMARYPARK2RED;
+import static org.firstinspires.ftc.teamcode.field.Field.Start_Pos.START_FAR_RED6;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -21,14 +24,14 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
     private final static String club;
     private static RobotConstants.Chassis bot;
     private static Field.Alliance allianceColor;
-    private static Field.StartPos startPosition;
+    private static Field.Start_Pos startPosition;
     private static Field.Route autonStrategy;
     private static float delay;
     private static int curcuit;
     private static float xOffset;
     private static Field.AutonDebug autonDebugEnable;
-    private static Field.Parks parkPos;
-    private static Field.Wiffle_Pos firstLoc;
+    private static Field.Park_Pos parkPos;
+    private static Field.Wiffle_Pos lastLoc;
     private static Field.Parks stackSideHighwayToBackdrop;
     private static Field.Parks Highway1Var;
     private static Field.Parks Pixel1Var;
@@ -40,6 +43,12 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
     private static Field.Parks Highway2Var;
     private static Field.Parks Highway3Var;
     private static Field.AutonDebug uniqecircuits;
+
+    private static Field.Motif motif;
+    private static Field.Num_shots numShots;
+    private static int motifVar2;
+    private static int numShotsVar2;
+
 
     static
     {
@@ -98,20 +107,28 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
 
         try
         {
-            startPosition = Field.StartPos.values()[PreferenceMgr.getStartPosition()];
+            startPosition = Field.Start_Pos.values()[PreferenceMgr.getStartPosition()];
         }
         catch(Exception e)
         {
-            startPosition = Field.StartPos.values()[0];
+            startPosition = Field.Start_Pos.values()[0];
         }
 
         try
         {
-            autonStrategy = Field.Route.values()[PreferenceMgr.getAutonStrategy()];
+            motif = PreferenceMgr.getMotif();
         }
         catch(Exception e)
         {
-            autonStrategy = Field.Route.values()[0];
+            motif = Field.Motif.values()[0];
+        }
+        try
+        {
+            numShots = PreferenceMgr.getNumShots();
+        }
+        catch(Exception e)
+        {
+            numShots = Field.Num_shots.values()[0];
         }
         try
         {
@@ -123,61 +140,23 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         }
         try
         {
-            parkPos = Field.Parks.values()[PreferenceMgr.getParkPosition()];
+            parkPos = Field.Park_Pos.values()[PreferenceMgr.getParkPosition()];
         }
         catch(Exception e)
         {
-            parkPos = Field.Parks.values()[0];
+            parkPos = Field.Park_Pos.values()[0];
         }
         try
         {
-            firstLoc = Field.Wiffle_Pos.values()[PreferenceMgr.getFirstLoc()];
+            lastLoc = Field.Wiffle_Pos.values()[PreferenceMgr.getLastLoc()];
         }
         catch(Exception e)
         {
-            firstLoc = Field.Wiffle_Pos.values()[0];
+            lastLoc = Field.Wiffle_Pos.values()[0];
         }
-
-            stackSideHighwayToBackdrop = PreferenceMgr.getStackHighwayToBd();
-
-
-            Highway1Var = PreferenceMgr.getHighway1();
-
-
-
-            Highway2Var = PreferenceMgr.getHighway2();
-
-
-
-            Highway3Var = PreferenceMgr.getHighway3();
-
-
-
-            Highway12Var = PreferenceMgr.getHighway12();
-
-
-
-            Highway22Var = PreferenceMgr.getHighway22();
-
-
-          Highway32Var = PreferenceMgr.getHighway32();
-
-
-            Pixel3Var = PreferenceMgr.getPixel3();
-
-
-
-            Pixel2Var = PreferenceMgr.getPixel2();
-
-
-
-            Pixel1Var = PreferenceMgr.getPixel1();
-
-
 
 
         delay         = PreferenceMgr.getDelay();
-        curcuit         = PreferenceMgr.getCircuit();
         xOffset       = PreferenceMgr.getXOffset();
 
         PreferenceMgr.logPrefs();
@@ -211,7 +190,7 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
     @Override
     public boolean isMenuBackButton() { return gamepad1.dpad_left; }
 
-    private static final boolean showBotMenu = true;
+    private static final boolean showBotMenu = false;
     private void doMenus()
     {
         FtcChoiceMenu<RobotConstants.Chassis> botMenu
@@ -222,11 +201,24 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
             = new FtcChoiceMenu<>("Alliance:", allianceParent,      this);
         FtcMenu topMenu = botMenu;
         if(!showBotMenu) topMenu = allianceMenu;
-        FtcChoiceMenu<Field.StartPos> startPosMenu
+
+        FtcChoiceMenu<Field.Start_Pos> startPosMenuRed
             = new FtcChoiceMenu<>("START:", allianceMenu, this);
-        //
+        FtcChoiceMenu<Field.Park_Pos> parkPosMenuRed
+                = new FtcChoiceMenu<>("Park Position:",   startPosMenuRed, this);
+
+        FtcChoiceMenu<Field.Start_Pos> startPosMenuBlue
+                = new FtcChoiceMenu<>("START:", allianceMenu, this);
+        FtcChoiceMenu<Field.Park_Pos> parkPosMenuBlue
+                = new FtcChoiceMenu<>("Park Position:",   startPosMenuBlue, this);
+
+        FtcChoiceMenu<Field.Num_shots> numShotMenu
+                = new FtcChoiceMenu<>("Number of 3-ball shots:",   parkPosMenuRed, this);
+        FtcChoiceMenu<Field.Wiffle_Pos> lastLocationMenu
+                = new FtcChoiceMenu<>("Last Location:",   numShotMenu, this);
+
         FtcValueMenu  delayMenu
-            = new FtcValueMenu("Delay:",       startPosMenu,     this,
+            = new FtcValueMenu("Delay:",       lastLocationMenu,     this,
             0.0, 20.0, 1.0, delay, "%5.2f");
         //
         FtcValueMenu  xOffsetMenu
@@ -234,40 +226,6 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
             0.0, 12.0, 1.0, xOffset, "%5.2f");
         FtcChoiceMenu<Field.AutonDebug> autoDebugMenu
                 = new FtcChoiceMenu<>("AUTON DEBUG:",   xOffsetMenu, this);
-        FtcChoiceMenu<Field.Parks> parkPosMenu
-                = new FtcChoiceMenu<>("Park Position:",   autoDebugMenu, this);
-        FtcChoiceMenu<Field.Wiffle_Pos> firstLocationMenu
-                = new FtcChoiceMenu<>("First Location:",   parkPosMenu, this);
-        FtcChoiceMenu<Field.Parks> stackHighwayToBdMenu
-                = new FtcChoiceMenu<>("Highway To Backdrop:",   firstLocationMenu, this);
-        //
-        FtcValueMenu  curcuitMenu
-                = new FtcValueMenu("Amount of Curcuits:",       stackHighwayToBdMenu,     this,
-                0.0, 3.0, 1.0, curcuit, "%5.2f");
-        //
-        FtcChoiceMenu<Field.Parks> Highway1
-                = new FtcChoiceMenu<>("Highway1 ToPixel:",   curcuitMenu, this);
-        FtcChoiceMenu<Field.Parks> Pixelstack1
-                = new FtcChoiceMenu<>("Pixelstack1:",   Highway1, this);
-        FtcChoiceMenu<Field.Parks> Highway12
-                = new FtcChoiceMenu<>("Highway1 ToBackdrop:",   Pixelstack1, this);
-        FtcChoiceMenu<Field.AutonDebug> sameCurcuitMenu
-                = new FtcChoiceMenu<>("Unique Circuits:",   Highway12, this);
-
-
-
-        FtcChoiceMenu<Field.Parks> Highway2
-                = new FtcChoiceMenu<>("Highway2 ToPixel:",   null, this);
-        FtcChoiceMenu<Field.Parks> Pixelstack2
-                = new FtcChoiceMenu<>("Pixelstack2:",   Highway2, this);
-        FtcChoiceMenu<Field.Parks> Highway22
-                = new FtcChoiceMenu<>("Highway2 ToBackdrop:",   Pixelstack2, this);
-        FtcChoiceMenu<Field.Parks> Highway3
-                = new FtcChoiceMenu<>("Highway3 ToPixel:",   Highway22, this);
-        FtcChoiceMenu<Field.Parks> Pixelstack3
-                = new FtcChoiceMenu<>("Pixelstack3:",   Highway3, this);
-        FtcChoiceMenu<Field.Parks> Highway32
-                = new FtcChoiceMenu<>("Highway3 ToBackdrop:",   Pixelstack3, this);
 
         //
         // remember last saved settings and reorder the menu with last run settings as the defaults
@@ -280,68 +238,44 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
 
         for(Field.Alliance a : Field.Alliance.values())
         {
-            allianceMenu.addChoice(a.toString(), a, a==allianceColor, startPosMenu);
+            allianceMenu.addChoice(a.toString(), a, a==allianceColor, a== Field.Alliance.RED?startPosMenuRed:startPosMenuBlue);
         }
 
-        for(Field.StartPos p : Field.StartPos.values())
+        for(Field.Start_Pos p : Field.Start_Pos.values())
         {
-            startPosMenu.addChoice(p.toString(), p, p==startPosition, p==Field.StartPos.START_SAMPLES?firstLocationMenu:curcuitMenu);
+            if(p.ordinal() <= START_FAR_RED6.ordinal()) {
+                startPosMenuRed.addChoice(p.toString(), p, p == startPosition, parkPosMenuRed);
+            }
+        }
+        for(Field.Start_Pos p : Field.Start_Pos.values())
+        {
+            if(p.ordinal() > START_FAR_RED6.ordinal()) {
+                startPosMenuBlue.addChoice(p.toString(), p, p == startPosition, parkPosMenuBlue);
+            }
         }
 
+
+        for(Field.Park_Pos g : Field.Park_Pos.values())
+        {
+            if(g.ordinal() <= OUTSIDEPRIMARYPARK2RED.ordinal()) {
+                parkPosMenuRed.addChoice(g.toString(), g, g == parkPos, numShotMenu);
+            }
+        }
+        for(Field.Park_Pos g : Field.Park_Pos.values())
+        {
+            if(g.ordinal() > OUTSIDEPRIMARYPARK2RED.ordinal()) {
+                parkPosMenuBlue.addChoice(g.toString(), g, g == parkPos, numShotMenu);
+            }
+        }
+
+        for(Field.Num_shots g : Field.Num_shots.values()){
+            numShotMenu.addChoice(g.toString(), g, g==numShots, lastLocationMenu);
+        }
         for(Field.Wiffle_Pos f : Field.Wiffle_Pos.values())
         {
-            firstLocationMenu.addChoice(f.toString(), f, f == firstLoc, stackHighwayToBdMenu);
-        }
-        for(Field.Parks g : Field.Parks.values())
-        {
-            stackHighwayToBdMenu.addChoice(g.toString(), g, g == stackSideHighwayToBackdrop, curcuitMenu);
-        }
-        curcuitMenu.setChildMenu(null);
-        for(Field.Parks g : Field.Parks.values())
-        {
-            Highway1.addChoice(g.toString(), g, g == Highway1Var, Pixelstack1);
-        }
-        for(Field.Parks h : Field.Parks.values())
-        {
-            Pixelstack1.addChoice(h.toString(), h, h == Pixel1Var, Highway12);
-        }
-        for(Field.Parks i : Field.Parks.values())
-        {
-            Highway12.addChoice(i.toString(), i, i == Highway12Var, null);
-        }
-        for(Field.AutonDebug p : Field.AutonDebug.values())
-        {
-            sameCurcuitMenu.addChoice(p.toString(), p, p == uniqecircuits, null);
-        }
-        for(Field.Parks j : Field.Parks.values())
-        {
-            Highway2.addChoice(j.toString(), j, j == Highway2Var, Pixelstack2);
-        }
-        for(Field.Parks k : Field.Parks.values())
-        {
-            Pixelstack2.addChoice(k.toString(), k, k == Pixel2Var, Highway22);
-        }
-        for(Field.Parks l : Field.Parks.values())
-        {
-            Highway22.addChoice(l.toString(), l, l == Highway22Var, Highway3);
-        }
-        for(Field.Parks m : Field.Parks.values())
-        {
-            Highway3.addChoice(m.toString(), m, m == Highway3Var, Pixelstack3);
-        }
-        for(Field.Parks n : Field.Parks.values())
-        {
-            Pixelstack3.addChoice(n.toString(), n, n == Pixel3Var, Highway32);
-        }
-        for(Field.Parks o : Field.Parks.values())
-        {
-            Highway32.addChoice(o.toString(), o, o == Highway32Var, parkPosMenu);
+            lastLocationMenu.addChoice(f.toString(), f, f == lastLoc, delayMenu);
         }
 
-        for(Field.Parks e : Field.Parks.values())
-        {
-            parkPosMenu.addChoice(e.toString(), e, e == parkPos, delayMenu);
-        }
 
         delayMenu.setChildMenu(xOffsetMenu);
         xOffsetMenu.setChildMenu(autoDebugMenu);
@@ -369,61 +303,21 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
             bot = botMenu.getCurrentChoiceObject();
         }
 
-        curcuit =(int)curcuitMenu.getCurrentValue();
-        if(curcuit > 0){
-            FtcMenu.walkMenuTree(Highway1, this);
-
-        }
-        if(curcuit > 1){
-            FtcMenu.walkMenuTree(sameCurcuitMenu, this);
-
-
-            uniqecircuits = sameCurcuitMenu.getCurrentChoiceObject();
-
-            if (uniqecircuits == Field.AutonDebug.ENABLE){
-                FtcMenu.walkMenuTree(Highway2, this);
-                Highway2Var = Highway2.getCurrentChoiceObject();
-                Highway3Var = Highway3.getCurrentChoiceObject();
-                Highway22Var = Highway22.getCurrentChoiceObject();
-                Highway32Var = Highway3.getCurrentChoiceObject();
-                Highway12Var = Highway12.getCurrentChoiceObject();
-                Highway1Var = Highway1.getCurrentChoiceObject();
-            }
-            else {
-                Highway12Var = Highway12.getCurrentChoiceObject();
-                Highway1Var = Highway1.getCurrentChoiceObject();
-                Highway2Var = Highway1Var;
-                Highway3Var = Highway1Var;
-                Highway22Var = Highway12Var;
-                Highway32Var = Highway12Var;
-
-                Pixelstack2.removeAllChoices();
-                Pixelstack3.removeAllChoices();
-                for (Field.Parks k : Field.Parks.values()) {
-                    Pixelstack2.addChoice(k.toString(), k, k == Pixel2Var, Pixelstack3);
-                }
-                for (Field.Parks n : Field.Parks.values()) {
-                    Pixelstack3.addChoice(n.toString(), n, n == Pixel3Var, parkPosMenu);
-                }
-                FtcMenu.walkMenuTree(Pixelstack2, this);
-
-
-            }
-        }else{
-            FtcMenu.walkMenuTree(parkPosMenu, this);
-        }
-        Highway12Var = Highway12.getCurrentChoiceObject();
-        Highway1Var = Highway1.getCurrentChoiceObject();
-        Pixel1Var = Pixelstack1.getCurrentChoiceObject();
-        Pixel2Var = Pixelstack2.getCurrentChoiceObject();
-        Pixel3Var = Pixelstack3.getCurrentChoiceObject();
-        startPosition = startPosMenu.getCurrentChoiceObject();
         allianceColor = allianceMenu.getCurrentChoiceObject();
+
+        if(allianceColor == Field.Alliance.RED) {
+            startPosition = startPosMenuRed.getCurrentChoiceObject();
+        }else {
+            startPosition = startPosMenuBlue.getCurrentChoiceObject();
+        }
+
+        parkPos = allianceColor == Field.Alliance.RED?parkPosMenuRed.getCurrentChoiceObject():parkPosMenuBlue.getCurrentChoiceObject();
+
         delay = (float)delayMenu.getCurrentValue();
         xOffset = (float)xOffsetMenu.getCurrentValue();
         autonDebugEnable = autoDebugMenu.getCurrentChoiceObject();
-        parkPos = parkPosMenu.getCurrentChoiceObject();
-        stackSideHighwayToBackdrop = stackHighwayToBdMenu.getCurrentChoiceObject();
+        numShots = numShotMenu.getCurrentChoiceObject();
+        lastLoc = lastLocationMenu.getCurrentChoiceObject();
 
 
 
@@ -441,18 +335,10 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         prfMgr.setDelay(delay);
         prfMgr.setXOffset(xOffset);
         prfMgr.setEnableAutonDebug(autonDebugEnable.ordinal());
-        prfMgr.setFirstLoc(firstLoc.ordinal());
-        prfMgr.setStackHighwayToBackdrop(stackSideHighwayToBackdrop.ordinal());
-        prfMgr.setCircuit(curcuit);
-        prfMgr.setHighway1(Highway1Var.ordinal());
-        prfMgr.setHighway2(Highway2Var.ordinal());
-        prfMgr.setHighway3(Highway3Var.ordinal());
-        prfMgr.setPixel1(Pixel1Var.ordinal());
-        prfMgr.setPixel2(Pixel2Var.ordinal());
-        prfMgr.setPixel3(Pixel3Var.ordinal());
-        prfMgr.setHighway12(Highway12Var.ordinal());
-        prfMgr.setHighway22(Highway22Var.ordinal());
-        prfMgr.setHighway32(Highway32Var.ordinal());
+        prfMgr.setLastLoc(lastLoc.ordinal());
+        prfMgr.setNumShots(numShots);
+
+
 
         //write the options to sharedpreferences
         PreferenceMgr.writePrefs();
@@ -466,15 +352,12 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         dashboard.displayText(lnum++, "Bot:      " + bot);
         dashboard.displayText(lnum++, "Alliance: " + allianceColor);
         dashboard.displayText(lnum++, "Start:    " + startPosition);
+        dashboard.displayText(lnum++, "Num Shots:" + numShots);
+        dashboard.displayText(lnum++, "Last Location:  " + lastLoc);
+        dashboard.displayText(lnum++, "Park Position:  " + parkPos);
         dashboard.displayText(lnum++, "Delay:    " + delay);
         dashboard.displayText(lnum++, "xOffset:  " + xOffset);
         dashboard.displayText(lnum++, "Auton Debug:  " + autonDebugEnable);
-        dashboard.displayText(lnum++, "Park Position:  " + parkPos);
-        dashboard.displayText(lnum++, "First Location:  " + firstLoc + " : " + stackSideHighwayToBackdrop );
-        dashboard.displayText(lnum++, "Curcuit:    " + curcuit);
-        dashboard.displayText(lnum++, "Curcuit 1 " + Highway1Var +"," + Pixel1Var +"," + Highway12Var);
-        dashboard.displayText(lnum++, "Curcuit 2 " + Highway2Var +"," + Pixel2Var +"," + Highway22Var);
-        dashboard.displayText(lnum++, "Curcuit 3 " + Highway3Var +"," + Pixel3Var +"," + Highway32Var);
     }
 
     public void printConfigToLog()
@@ -487,19 +370,9 @@ public class AutonConfig extends InitLinearOpMode implements FtcMenu.MenuButtons
         RobotLog.dd(TAG, "delay:    %4.1f", delay);
         RobotLog.dd(TAG, "xOffset:  %4.1f", xOffset);
         RobotLog.dd(TAG, "auton Debug:  %s", autonDebugEnable);
-        RobotLog.dd(TAG, "unique circuits:  %s", uniqecircuits);
-        RobotLog.dd(TAG, "First Location:  %s", firstLoc);
-        RobotLog.dd(TAG, "stackHighwayToBd:  %s", stackSideHighwayToBackdrop);
-        RobotLog.dd(TAG, "circuit:    %d", curcuit);
-        RobotLog.dd(TAG, "Highway1:  %s", Highway1Var);
-        RobotLog.dd(TAG, "Highway2:  %s", Highway2Var);
-        RobotLog.dd(TAG, "Highway3:  %s", Highway3Var);
-        RobotLog.dd(TAG, "Pixel1:  %s", Pixel1Var);
-        RobotLog.dd(TAG, "Pixel2:  %s", Pixel2Var);
-        RobotLog.dd(TAG, "Pixel3:  %s", Pixel3Var);
-        RobotLog.dd(TAG, "Highway1 2:  %s", Highway12Var);
-        RobotLog.dd(TAG, "Highway2 2:  %s", Highway22Var);
-        RobotLog.dd(TAG, "Highway3 2:  %s", Highway32Var);
+        RobotLog.dd(TAG, "Last Location:  %s", lastLoc);
+        RobotLog.dd(TAG, "Num Shots:  %s", numShots);
+
     }
 
 }

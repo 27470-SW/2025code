@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.EL_SPD_DWN;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.WR_SENSE;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -113,6 +114,8 @@ public Shooter shooter =null;
 //
 //        capMap.put("sensor", clrGood && super.imuGood && dist1Good);
     }
+
+
 
     @Override
     protected void initDriveMotors()
@@ -290,6 +293,10 @@ public Shooter shooter =null;
 
 //        if(VERBOSE) { RobotLog.dd(TAG, "UPD BOT:%.2f LFT:%.2f CLW:%.2f", botTime, lftTime, clawTime); }
         ledUpdate();
+    }
+
+    public Pose2d getPoseEstimate(){
+        return drive.getPoseEstimate();
     }
 
     public void ledUpdate(){

@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static org.firstinspires.ftc.teamcode.field.Field.StartPos.*;
 import static org.firstinspires.ftc.teamcode.opModes.Decode_Auton.autonDebug;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TrajEnum.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
@@ -72,7 +72,7 @@ public class Route
         this(copyRoute.robot, copyRoute.startPos, copyRoute.parkPos, copyRoute.lastLocation, copyRoute.motif, copyRoute.numshot);
     }
     public Route(MecanumBot robot){
-       this(robot, Field.StartPos.values()[0], Field.Park_Pos.values()[0], Field.Wiffle_Pos.values()[0], Field.Motif.values()[0], Field.Num_shots.values()[0]);
+       this(robot, Field.Start_Pos.values()[0], Field.Park_Pos.values()[0], Field.Wiffle_Pos.values()[0], Field.Motif.values()[0], Field.Num_shots.values()[0]);
 
     }
 
@@ -121,16 +121,9 @@ public class Route
              sf = 0;
              sx = -1;
              flip = Math.toRadians(180);
-             if (startPos == START_SAMPLES)
-			 {
-                 /* Blue Right quadrant II */
-                 sf = 1;
-                 sr = 1;
-             }
-			 else
-			 {
+
                  sr = 0;
-             }
+
          }
 		 else
 		 {
@@ -142,28 +135,18 @@ public class Route
              sf = -1;
              sx =1;
              flip = Math.toRadians(0);
-             if (startPos == START_SPECIMENS)
-			 {
-                 /* Red Right quadrant IV */
-                 sf = 0;
-                 sr = 1;
-             }
-		     else
-		     {
+
+
                  /* Red Left quadrant III */
                  sr = 0;
 
-             }
+
          }
 
-         if (startPos == START_SAMPLES)
-         {
-             strtY = 0.5 * Decode_Field.tileWidth;
-          }
-         else
-         {
+
+
              strtY = -1.5 * Decode_Field.tileWidth;
-         }
+
 
          strtX =  3.0f * Decode_Field.tileWidth - botBackToCtr;
 
@@ -259,9 +242,9 @@ public class Route
         tempParkBlue = new Pose2d(sx * -30,-40,flip +sh*Math.toRadians(50));
 
         startRedFar = new Pose2d(sx * 20, -60, flip + sh*Math.toRadians(90));
-        moveToPark = new Pose2d (sx * 25, -40, flip + sh*Math.toRadians(90));
-        collect2 = new Pose2d (sx * 60, -40, flip + sh*Math.toRadians(90));
-        backToStart = new Pose2d (sx * 20, -55, flip + sh*Math.toRadians(70));
+        moveToPark = new Pose2d (sx * 25, -37, flip + sh*Math.toRadians(90));
+        collect2 = new Pose2d (sx * 60, -37, flip + sh*Math.toRadians(90));
+        shootfaronred = new Pose2d (sx * 20, -52, flip + sh*Math.toRadians(60));
         nearLeaver = new Pose2d (sx * 17, -15, flip + sh*Math.toRadians(90));
         collect3 = new Pose2d (sx * 54, -15, flip + sh*Math.toRadians(90));
         shootNear = new Pose2d (sx * 15, 37, flip + sh*Math.toRadians(25));
@@ -912,7 +895,7 @@ public void moveToPosition4(){
          RobotLog.dd(TAG, "Turn on wheel");
     }
     protected void wheelOff(){
-        robot.shooter.spinShooterW(0);
+        robot.shooter.stopWheel();
     }
      protected void shootWiffleClose(){
          robot.shooter.defaultCloseShooterTraj();
@@ -927,8 +910,7 @@ public void moveToPosition4(){
          robot.shooter.resetTransition();
      }
      protected void resetTrajAng(){
-        robot.shooter.moveShooterM.setTargetPosition(MIN_TRAJ_ENCODER);
-         robot.shooter.moveShooterM.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
      }
      protected void intakeOn(){
          robot.crAzYIntake.setPwr(1);
@@ -1240,7 +1222,7 @@ public void moveToPosition4(){
     protected Pose2d getDropRightPixelBlue;
     protected Pose2d startRedFar;
     protected Pose2d startRedWall;
-    protected Pose2d backToStart;
+    protected Pose2d shootfaronred;
     protected Pose2d startBlueFar;
     protected Pose2d moveToPark;
     protected Pose2d collect2;
