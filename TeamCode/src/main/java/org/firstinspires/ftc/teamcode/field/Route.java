@@ -905,9 +905,10 @@ public void moveToPosition4(){
          RobotLog.dd(TAG, "Transition Up ALL");
      }
 
-     protected void threeTransitionsDown(){
+     protected void intakeonandthreeTransitionsDown(){
+         robot.crAzYIntake.setPwr(-1);
          robot.shooter.resetTransition();
-     }
+         robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);     }
      protected void resetTrajAng(){
         robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
      }

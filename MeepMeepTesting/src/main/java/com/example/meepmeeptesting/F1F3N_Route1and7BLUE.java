@@ -48,11 +48,8 @@ public class F1F3N_Route1and7BLUE {
         route.addFunction(route::transitonDown);
 
         //intake wiffles human
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
-        route.addFunction(route::intakeOn);
-        route.addLocation(route.PrepPosIntake1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUEDONE, LINE, HEAD_LINEAR);
+        route.addLocation(route.intakeParkBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.intakeParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
 
         //shoot human wiffles
 
@@ -65,11 +62,11 @@ public class F1F3N_Route1and7BLUE {
         route.addFunction(route::intakeOn);
 
         // go to pos lever wiffles
-        route.addLocation(route.preleverwiffle, LINE, HEAD_LINEAR);
-        route.addLocation(route.intakewifflelever, LINE, HEAD_LINEAR);
-        route.addLocation(route.hitlever, LINE, HEAD_LINEAR);
-        route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
-        route.addFunction(route::intakeOff);
+        route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.intakeGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        //Shoot whiffles that are near the gate.
+        route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
         //SHOOT  WIFFLES
         route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
         route.addEvent(Route.Action.WAIT, 0.2);

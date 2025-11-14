@@ -38,30 +38,25 @@ public class F1F3N_Route1and7Red {
        //  qualifierRoute(startPos,parkPos,firstLocation);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
-
-        //shoot pre loaded wiffles
+        route.addLocation(route.startRedFar, START, HEAD_LINEAR);
+        // shoot preloaded
         route.addFunction(route::shootFar);
-        route.addLocation(route.shootFarPos, SPLINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.WAIT, 2.0);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.35);
-       // route.addFunction(route::transitonDown);
+        route.addEvent(Route.Action.WAIT,1);
+        route.shootMotif(1,route.shootfaronred );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
 
         //intake wiffles human
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
-        route.addFunction(route::intakeOn);
-        route.addLocation(route.PrepPosIntake1, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1, LINE, HEAD_LINEAR);
-        //shoot human wiffles
-
-        route.addLocation(route.shootFarPos, LINE, HEAD_LINEAR);
+        route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addFunction(route::intakeOff);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        //route.addFunction(route::transitonDown);
-        route.addFunction(route::intakeOn);
+        //shoot human wiffles
+        route.addFunction(route::intakeOff);
+        route.addFunction(route::shootFar);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.shootMotif(1,route.shootFarPos );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
 
         // go to pos lever wiffles
         route.addLocation(route.preleverwiffle, LINE, HEAD_LINEAR);
@@ -70,25 +65,26 @@ public class F1F3N_Route1and7Red {
         route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
         route.addFunction(route::intakeOff);
         //SHOOT  WIFFLES
-        route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        //route.addFunction(route::transitonDown);
+        route.addFunction(route::shootWiffleClose);
+        route.addEvent(Route.Action.WAIT, 1);
+        route.shootMotif(1,route.nearpos );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
 
         switch (lastLocation){
             case GOAL4 :
                 route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOn);
                 route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
                 route.addFunction(route::intakeOff);
                 //SHOOT  WIFFLES
-                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::shootWiffleClose);
+                route.addEvent(Route.Action.WAIT, 1);
+                route.shootMotif(1,route.nearpos );
+                route.addFunction(route::intakeonandthreeTransitionsDown);
                 route.addFunction(route::intakeOff);
-                route.addFunction(route::transitonUp);
-                route.addEvent(Route.Action.WAIT, 0.2);
-               // route.addFunction(route::transitonDown);
+                route.addFunction(route::wheelOff);
+
+                // route.addFunction(route::transitonDown);
 
 
                 break;

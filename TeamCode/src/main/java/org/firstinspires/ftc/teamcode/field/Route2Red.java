@@ -43,7 +43,7 @@ public class Route2Red {
         route.addFunction(route::shootFar);
         route.addEvent(Route.Action.WAIT,1);
         route.shootMotif(1,route.shootfaronred );
-        route.addFunction(route::threeTransitionsDown);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::resetTrajAng);
         route.addFunction(route::wheelOff);
 
@@ -57,7 +57,7 @@ public class Route2Red {
         route.addEvent(Route.Action.WAIT, .2);
         route.shootMotif(1, route.shootfaronred);
         route.makeNewTraj();
-        route.addFunction(route::threeTransitionsDown);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::resetTrajAng);
         route.addFunction(route::wheelOff);
 
@@ -77,7 +77,7 @@ public class Route2Red {
                 route.addEvent(Route.Action.WAIT, 3);
                 route.shootMotif(1,route.shootNear);
 
-                route.addFunction(route::threeTransitionsDown);
+                route.addFunction(route::intakeonandthreeTransitionsDown);
                 route.addFunction(route::resetTrajAng);
                 route.addFunction(route::wheelOff);
                 break;

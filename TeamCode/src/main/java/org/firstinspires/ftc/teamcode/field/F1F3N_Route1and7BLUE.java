@@ -46,7 +46,6 @@ public class F1F3N_Route1and7BLUE {
         route.addEvent(Route.Action.WAIT, 2.0);
         route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.35);
-        //route.addFunction(route::transitonDown);
 
         //intake wiffles human
         route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
@@ -62,7 +61,6 @@ public class F1F3N_Route1and7BLUE {
         route.addEvent(Route.Action.WAIT, 0.2);
         route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.2);
-        //route.addFunction(route::transitonDown);
         route.addFunction(route::intakeOn);
 
         // go to pos lever wiffles
@@ -76,7 +74,6 @@ public class F1F3N_Route1and7BLUE {
         route.addEvent(Route.Action.WAIT, 0.2);
         route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.2);
-        //route.addFunction(route::transitonDown);
 
         switch (lastLocation){
             case GOAL4 :
@@ -90,7 +87,6 @@ public class F1F3N_Route1and7BLUE {
                 route.addFunction(route::intakeOff);
                 route.addFunction(route::transitonUp);
                 route.addEvent(Route.Action.WAIT, 0.2);
-                //route.addFunction(route::transitonDown);
 
 
                 break;
@@ -105,7 +101,6 @@ public class F1F3N_Route1and7BLUE {
                 route.addEvent(Route.Action.WAIT, 0.2);
                 route.addFunction(route::transitonUp);
                 route.addEvent(Route.Action.WAIT, 0.2);
-                //route.addFunction(route::transitonDown);
 
                 break;
         }
