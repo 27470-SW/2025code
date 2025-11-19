@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.field.Field;
 import org.firstinspires.ftc.teamcode.robot.MecanumBot;
 import org.firstinspires.ftc.teamcode.robot.MecanumDriveLRR;
@@ -38,21 +37,7 @@ import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import static org.firstinspires.ftc.teamcode.field.Field.Alliance.RED;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_APRIL_TAG;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_POSE;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_HUMAN_POSE;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_BLUE;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_POSE_RED;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.FAR_POSE_BLUE;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.FAR_POSE_RED;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.POSE_EQUAL;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_APRIL_TAG;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_POSE;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_HUMAN_POSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 import static java.lang.Math.abs;
 
@@ -141,10 +126,7 @@ public class MecanumTeleop extends InitLinearOpMode
         }
 
 
-
-
-
-
+        goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
 
 
         /* Opportunity for a telop assist using Trajectory sequences */
@@ -242,6 +224,7 @@ public class MecanumTeleop extends InitLinearOpMode
             dashboard.displayText(l++, String.format(Locale.US, "X: %f, Y: %f, Heading: %f",currentPose.getX(),currentPose.getY(),Math.toDegrees(currentPose.getHeading())));
 
                 dashboard.displayText(l++, String.format(Locale.US, " Camera Found %b Camera Dist %f", targetFound, distanceToTheGoal));
+            dashboard.displayText(l++, String.format(Locale.US, " intergral sum = %f", robot.shooter.controlShooterW.getIntegralSum()));
 
         }
 
@@ -376,7 +359,6 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
         if(autoDriveAngle){
-            Pose2d goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
             double x_dist = goalLocation.getX() - robot.getPoseEstimate().getX();
             double y_dist = goalLocation.getY() - robot.getPoseEstimate().getY();
             double targetHeading = Math.atan(y_dist/x_dist);
@@ -835,6 +817,7 @@ public class MecanumTeleop extends InitLinearOpMode
             robot.crAzYIntake.setPwr(-1);
             robot.shooter.resetTransition();
             robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
+            robot.shooter.disengageAutoTraj();
             RobotLog.dd(TAG,"intakeon");
         }
 
@@ -851,7 +834,15 @@ public class MecanumTeleop extends InitLinearOpMode
 
     }
 
+    private double calcDistanceToGoal(){
+        double x = goalLocation.getX() - robot.getPoseEstimate().getX();
+        double y = goalLocation.getY() - robot.getPoseEstimate().getY();
+
+        return Math.sqrt(x*x + y*y);
+    }
+
     boolean stopTrajM = false;
+    boolean autoTrajEngaged = false;
 
     private void processControllerInputs()
     {
@@ -864,17 +855,19 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean dpadDown= gpad2.pressed(ManagedGamepad.Button.D_DOWN);
         double rightTrig = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
         double leftJoyY = gpad2.value(ManagedGamepad.AnalogInput.L_STICK_Y);
-        boolean aDown = gpad2.just_pressed(ManagedGamepad.Button.A);
+        boolean engageAutoTraj = gpad2.just_pressed(ManagedGamepad.Button.B) && !gpad2.pressed(ManagedGamepad.Button.START);
         double leftTrig = gpad2.value(ManagedGamepad.AnalogInput.L_TRIGGER_VAL);
         boolean xDown = gpad2.just_pressed(ManagedGamepad.Button.X);
         boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
-        boolean ResetTrajEnc = gpad2.just_pressed(ManagedGamepad.Button.B)&& !gpad2.pressed(ManagedGamepad.Button.START);
+        boolean trajLimitBreaker = gpad2.pressed(ManagedGamepad.Button.A)&& !gpad2.pressed(ManagedGamepad.Button.START);
+        boolean ResetTrajEnc = gpad2.just_released(ManagedGamepad.Button.A) && (Math.abs(leftJoyY) > 0.2);
 
         if (ResetTrajEnc){
             robot.shooter.moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        if (aDown){
-            robot.shooter.resetTransition();
+        if (engageAutoTraj){
+            autoTrajEngaged = true;
+            robot.shooter.onAutoTraj();
         }
 
 
@@ -892,8 +885,14 @@ public class MecanumTeleop extends InitLinearOpMode
         if(yUp && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(.01);
             RobotLog.dd(TAG, "moving transition 3 up");}
           if(leftTrig >= 0.3) {
-              detectAprilTag();
+              if(autoTrajEngaged) {
+                  distanceToTheGoal = calcDistanceToGoal();
+
+              }
+
               if(xDown){
+                  autoTrajEngaged = false;
+                  robot.shooter.disengageAutoTraj();
                   driveFar = true;
                   robot.shooter.defaultFarShooterTraj();
                   distanceToTheGoal = MAX_SHOOTER_DIST;
@@ -901,6 +900,8 @@ public class MecanumTeleop extends InitLinearOpMode
                   RobotLog.dd(TAG, "Shooting Far");
               }
               if(yUp){
+                  autoTrajEngaged = false;
+                  robot.shooter.disengageAutoTraj();
                   driveClose = true;
                   robot.shooter.defaultCloseShooterTraj();
                   distanceToTheGoal = CLOSE_SHOOTER_DIST;
@@ -908,6 +909,7 @@ public class MecanumTeleop extends InitLinearOpMode
                   RobotLog.dd(TAG, "Shooting Close");
               }
               robot.shooter.spinShooterW(distanceToTheGoal);
+
           }else {
               robot.shooter.stopWheel();
           }
@@ -918,7 +920,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
             if(rightTrig >= 0.3){
                 if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
-                if(dpadLeft) robot.shooter.shoot(LEFT);
+                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT);
                 if(dpadDown || dpadUp) robot.shooter.shoot(CENTER);
 
                 RobotLog.dd(TAG,"Dpad + trigger pressed");
@@ -928,14 +930,15 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
         if (abs(leftJoyY) >= 0.2){
-            robot.shooter.changeShootTraj(leftJoyY);
+            autoTrajEngaged = false;
+            robot.shooter.changeShootTraj(leftJoyY, trajLimitBreaker);
             stopTrajM = true;
             RobotLog.dd(TAG,"Shooter Traj Y changed up or down");
 
 
         }
         else if(stopTrajM){
-            robot.shooter.changeShootTraj(0);
+            robot.shooter.changeShootTraj(0, false);
             stopTrajM = false;
            // RobotLog.dd(TAG,"ShooterTraj Y is not being moved currently");
 
@@ -1022,6 +1025,7 @@ public class MecanumTeleop extends InitLinearOpMode
     private boolean useField = false;
     private final MecanumBot robot = new MecanumBot();
     private MecanumDriveLRR  mechDrv;
+    Pose2d goalLocation;
 
     double raw_lr;
     double raw_fb;

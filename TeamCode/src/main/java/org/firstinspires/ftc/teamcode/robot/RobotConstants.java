@@ -80,11 +80,10 @@ public class RobotConstants
   public static  double SHOOTER_KI = 0.000016;
   public static  double SHOOTER_KD = 0.0005;
   public static  double SHOOTER_KF = 0.0003;
-  public static  double SHOOTER_VELOCITY = 1500;
   public static  double MIN_W_SPEED = 800;
   public static  double MAX_W_SPEED = 1675;
   public static  double MIN_SHOOTER_DIST = 0;
-  public static  double MAX_SHOOTER_DIST = 135;
+  public static  double MAX_SHOOTER_DIST = 120;
   public static double CLOSE_SHOOTER_DIST = 82;
   public static  int MIN_TRAJ_ENCODER = 0;
   public static  int MAX_TRAJ_ENCODER = 2800;
@@ -93,6 +92,15 @@ public class RobotConstants
   public final static int GPP_APRIL_TAG = 21;
   public final static int PGP_APRIL_TAG = 22;
   public final static int PPG_APRIL_TAG = 23;
+  public static  double SHOOTER_VELOCITY = 1250;
+  public static int SHOOT_CLOSE_TRAJ = -400;
+  public static int SHOOT_FAR_TRAJ = -1250;
+  public static double DWV_M = 4.25;
+  public static double DWV_K = 340;
+  public static double DWV_B = -570;
+  public static double TED_M = 8.54;
+  public static double TED_K = 52.1;
+  public static double TED_B = -403;
 
 
   public static Pose2d CLOSE_POSE_RED = new Pose2d(24, 23, Math.toRadians(45));
@@ -119,7 +127,7 @@ public class RobotConstants
   public static double[] EX_LEVS;
   public static int EL_MAX_ENCODER;
   public static int EL_MIN_ENCODER = -1000;
-  public static int SHOOTER_MAX_ENCODER = 10;
+  public static int SHOOTER_MAX_ENCODER = 100;
   public static int SHOOTER_MIN_ENCODER = -2500;
   public static int EL_NEAR_ZERO = 19;
   public static int EL_MAX_DEVIATION = 30;

@@ -75,11 +75,28 @@ public class Decode_Route extends Route
 
        Pose2d lastPose;
 
+       if( startPos == START_FAR_RED_SIMPLE)
+       {
+           SimpleFarRED t1 = new SimpleFarRED(this);
+           t1.makeTraj(START_FAR_RED_SIMPLE, parkPos, lastLocation);
+       }
+        else if (startPos==START_FAR_BLUE_SIMPLE)
+       {
+           SimpleFarBlue t1 = new SimpleFarBlue(this);
+           t1.makeTraj(START_FAR_RED_SIMPLE, parkPos, lastLocation);
+       }
+       else if (startPos==START_FARFAR_RED_SIMPLE)
+       {
+           COMPLEXFarRED t1 = new COMPLEXFarRED(this);
+           t1.makeTraj(START_FAR_RED_SIMPLE, parkPos, lastLocation);
+       }
+       else if (startPos==START_FARFAR_BLUE_SIMPLE)
+       {
+           ComplexFarBlue t1 = new ComplexFarBlue(this);
+           t1.makeTraj(START_FAR_RED_SIMPLE, parkPos, lastLocation);
+       }
 
-//       {
-//           SimpleFarRED t1 = new SimpleFarRED(this);
-//           t1.makeTraj(START_WALL_RED, parkPos, lastLocation);
-//       }
+
 
 
        if( startPos == START_FAR_RED_1AND7)
@@ -142,7 +159,7 @@ public class Decode_Route extends Route
        }
 
        MoveToParkPOSDECODE t1 = new MoveToParkPOSDECODE(this);
-       t1.makeTraj(Field.Park_Pos.DEFAULT,alliance);
+       t1.makeTraj(parkPos,alliance);
 
        lastPose = this.getEnd();
 	   

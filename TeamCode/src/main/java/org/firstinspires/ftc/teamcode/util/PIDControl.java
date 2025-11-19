@@ -68,6 +68,7 @@ public class PIDControl {
 
        timer.reset();
        return power;
+
     }
 
     public double getFilteredVelocity(){
@@ -84,12 +85,14 @@ public class PIDControl {
         return true;
     }
 
-
-
+    public double getIntegralSum (){
+       return integralSum;
+    }
 
 
     public double PIDControlVoltage(double reference, double state) {
         double error = reference - state;
+        if(Math.signum(error) != Math.signum(lastError)) integralSum = 0;
         integralSum += error * timer.seconds();
         double derivative = (error - lastError) / timer.seconds();
         lastError = error;

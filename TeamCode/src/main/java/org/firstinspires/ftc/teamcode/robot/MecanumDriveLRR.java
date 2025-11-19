@@ -204,11 +204,17 @@ public class MecanumDriveLRR extends MecanumDrive
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
+        
 
         // SBHTODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new PinpointLocalizer(hardwareMap));
-
+        try {
+            setLocalizer(new PinpointLocalizer(hardwareMap));
+        }
+        catch(Exception e)
+        {
+            RobotLog.ww(TAG, "No Pinpoint Localizer");
+        }
         trajectorySequenceRunner =
             new TrajectorySequenceRunner(follower, HEADING_PID);
     }

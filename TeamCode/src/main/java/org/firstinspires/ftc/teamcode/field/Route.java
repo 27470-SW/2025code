@@ -29,12 +29,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static org.firstinspires.ftc.teamcode.field.Field.Alliance.RED;
 import static org.firstinspires.ftc.teamcode.field.Route.Movement.LINE;
 import static org.firstinspires.ftc.teamcode.opModes.Decode_Auton.autonDebug;
 
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TrajEnum.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 
@@ -104,6 +107,7 @@ public class Route
 
          totalDur = 0;
 
+        goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
          /* All points of interests will be based off of quadrant I - positive x, positive y */
          /* Reflection over the x-axis will be done for the alliance side */
          /* Reflection over the y-axis will be done on which side you line up */
@@ -166,7 +170,7 @@ public class Route
 
         intakeGoal = new Pose2d(sx * 31.3, 8, flip + sh*Math.toRadians(90));
         intakeGoalWhiffles = new Pose2d(sx * 55 , 8, flip + sh*Math.toRadians(90));
-        shootGoalWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
+        shootGoalWhiffles = new Pose2d(sx * 60, 30, flip + sh*Math.toRadians(0));
         intakeGate = new Pose2d(sx * 31.3, -14, flip + sh*Math.toRadians(90));
         intakeGateWhiffles = new Pose2d(sx * 52, -14, flip + sh*Math.toRadians(90));
         shootGateWhiffles = new Pose2d(sx * 24, 43.1, flip + sh*Math.toRadians(30));
@@ -182,8 +186,8 @@ public class Route
         shootGateWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
         aroundWhiffles = new Pose2d(sx * -13, -5, flip + sh*Math.toRadians(150));
         intakeGoalBlue = new Pose2d(sx * -13, 17.3, flip + sh*Math.toRadians(270));
-        shootGoalWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
-        intakeGoalWhifflesBlue = new Pose2d(sx * -54 , 17.3, flip + sh*Math.toRadians(270));
+        shootGoalWhifflesBlue = new Pose2d(sx * -30, 48.5, flip + sh*Math.toRadians(150));
+        intakeGoalWhifflesBlue = new Pose2d(sx * -54 , 12.3, flip + sh*Math.toRadians(270));
         intakeParkBlue = new Pose2d(sx * -13, -29.4, flip + sh*Math.toRadians(270));
         intakeParkWhifflesBlue = new Pose2d(sx * -51, -29.4, flip + sh*Math.toRadians(270));
         shootParkWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
@@ -192,7 +196,7 @@ public class Route
         simpleShootFar = new Pose2d(sx * 17, -56, flip + sh*Math.toRadians(70));
 
         startSmallTriBlue = new Pose2d(sx * -15, -61, flip + sh*Math.toRadians(90));
-        shootFarPosBLUE = new Pose2d(sx * -15, -56, flip + sh*Math.toRadians(110));
+        shootFarPosBLUE = new Pose2d(sx * -20, -51, flip + sh*Math.toRadians(110));
 
         shootFarPos = new Pose2d (sx * 15, -58, flip + sh*Math.toRadians(70));
         shootFarPosB = new Pose2d (sx * -16, -58, flip + sh*Math.toRadians(290));
@@ -241,9 +245,26 @@ public class Route
         tempParkBlue = new Pose2d(sx * -30,-40,flip +sh*Math.toRadians(50));
 
         startRedFar = new Pose2d(sx * 20, -60, flip + sh*Math.toRadians(90));
-        moveToPark = new Pose2d (sx * 25, -37, flip + sh*Math.toRadians(90));
-        collect2 = new Pose2d (sx * 60, -37, flip + sh*Math.toRadians(90));
-        shootfaronred = new Pose2d (sx * 20, -52, flip + sh*Math.toRadians(60));
+
+        moveToPark = new Pose2d (sx * 40, -39, flip + sh*Math.toRadians(70));
+        collect2 = new Pose2d (sx * 56, -46, flip + sh*Math.toRadians(67));
+        helpcollect5 = new Pose2d (sx * 76, -49, flip + sh*Math.toRadians(65));
+        helpcollect4 = new Pose2d (sx * 68, -48, flip + sh*Math.toRadians(65));
+        helpcollect3 = new Pose2d (sx * 62, -47, flip + sh*Math.toRadians(66));
+        helpcollect2= new Pose2d (sx * 50, -45, flip + sh*Math.toRadians(68));
+
+        moveToParkBlue = new Pose2d (sx * -40, -35, flip + sh*Math.toRadians(270));
+        collect2Blue = new Pose2d (sx * -56, -41, flip + sh*Math.toRadians(267));
+        helpcollect5Blue = new Pose2d (sx * -76, -41, flip + sh*Math.toRadians(265));
+        helpcollect4Blue = new Pose2d (sx * -68, -41, flip + sh*Math.toRadians(265));
+        helpcollect3Blue = new Pose2d (sx * -62, -41, flip + sh*Math.toRadians(266));
+        helpcollect2Blue= new Pose2d (sx * -50, -41, flip + sh*Math.toRadians(268));
+
+
+
+        shootfaronred = new Pose2d (sx * 30, -60, flip + sh*Math.toRadians(47.5));
+        shootfarfaronred = new Pose2d (sx * 30, -60, flip + sh*Math.toRadians(47.5));
+
         nearLeaver = new Pose2d (sx * 17, -15, flip + sh*Math.toRadians(90));
         collect3 = new Pose2d (sx * 54, -15, flip + sh*Math.toRadians(90));
         shootNear = new Pose2d (sx * 15, 37, flip + sh*Math.toRadians(25));
@@ -291,7 +312,6 @@ public class Route
         startBlueWall = new Pose2d(sx * -30, 62, flip + sh*Math.toRadians(270));
         shootNearBlue = new Pose2d(sx * -25, 50, flip + sh*Math.toRadians(150));
         goNear2Blue = new Pose2d(sx * -25, -30, flip + sh*Math.toRadians(270));
-        collect2Blue = new Pose2d(sx * -55, -30, flip + sh*Math.toRadians(270));
         goNear3Blue = new Pose2d(sx * -25, -5, flip + sh*Math.toRadians(270));
         collect3Blue = new Pose2d(sx * -55, -5, flip + sh*Math.toRadians(270));
         goNear1Blue = new Pose2d(sx * -61, -43, flip + sh*Math.toRadians(180));
@@ -889,17 +909,33 @@ public void moveToPosition4(){
          RobotLog.dd(TAG, "Shoot Balls Far from small triangle");
      }
     protected void shootFar(){
+        shootingFar = true;
         robot.shooter.defaultFarShooterTraj();
-        robot.shooter.spinShooterW(MAX_SHOOTER_DIST);
+        robot.shooter.controlShooterW.setWheelVelocity(1375);
          RobotLog.dd(TAG, "Turn on wheel");
+    }
+    Pose2d goalLocation;
+    double distanceToTheGoal;
+
+    private double calcDistanceToGoal(){
+        double x = goalLocation.getX() - robot.getPoseEstimate().getX();
+        double y = goalLocation.getY() - robot.getPoseEstimate().getY();
+
+        return Math.sqrt(x*x + y*y);
+    }
+    protected void autoTrajShooter_wheel(){
+        distanceToTheGoal = calcDistanceToGoal();
+        robot.shooter.spinShooterW(distanceToTheGoal);
+        robot.shooter.onAutoTraj();
+
     }
     protected void wheelOff(){
         robot.shooter.stopWheel();
     }
      protected void shootWiffleClose(){
          robot.shooter.defaultCloseShooterTraj();
-         robot.shooter.spinShooterW(CLOSE_SHOOTER_DIST);
-        RobotLog.dd(TAG, "Shoot Balls Close");
+         robot.shooter.controlShooterW.setWheelVelocity(1050);
+         RobotLog.dd(TAG, "Shoot Balls Close");
      }
      protected void transitonUp(){
          RobotLog.dd(TAG, "Transition Up ALL");
@@ -920,6 +956,9 @@ public void moveToPosition4(){
          robot.crAzYIntake.setPwr(0);
         RobotLog.dd(TAG, "Intake Off");
      }
+     protected void wheel1350(){
+         robot.shooter.controlShooterW.setWheelVelocity(1350);
+     }
      protected void doPark()
      {
          if(VERBOSE) { RobotLog.dd(TAG, "Parking bot"); }
@@ -935,8 +974,9 @@ public void moveToPosition4(){
         RobotLog.dd(TAG, "Shoot Transition 3");}
 
 
+    public boolean shootingFar = false;
 
-    private double DRIVE_TO_SHOOT_AMT = 5.6;
+    private double DRIVE_TO_SHOOT_AMT = 3;  //Was 5.6
 
     protected void shootMotif(int greenPos, Pose2d pos1){
         double theta = pos1.getHeading() - Math.toDegrees(90);
@@ -1201,6 +1241,7 @@ public void moveToPosition4(){
     protected Pose2d intakeGoalBlue;
     protected Pose2d intakeGoalWhiffles;
     protected Pose2d shootGoalWhiffles;
+
     protected Pose2d intakeGate;
     protected Pose2d intakeGateBlue;
     protected Pose2d intakeGateWhiffles;
@@ -1268,9 +1309,23 @@ public void moveToPosition4(){
     protected Pose2d startRedFar;
     protected Pose2d startRedWall;
     protected Pose2d shootfaronred;
+    protected Pose2d shootfarfaronred;
     protected Pose2d startBlueFar;
     protected Pose2d moveToPark;
     protected Pose2d collect2;
+    protected Pose2d helpcollect2;
+    protected Pose2d helpcollect3;
+    protected Pose2d helpcollect4;
+    protected Pose2d helpcollect5;
+
+
+    protected Pose2d moveToParkBlue;
+    protected Pose2d collect2Blue;
+    protected Pose2d helpcollect2Blue;
+    protected Pose2d helpcollect3Blue;
+    protected Pose2d helpcollect4Blue;
+    protected Pose2d helpcollect5Blue;
+
     protected Pose2d nearLeaver;
     protected Pose2d collect3;
     protected Pose2d shootNear;
@@ -1282,7 +1337,6 @@ public void moveToPosition4(){
     protected Pose2d goNear1Blue;
     protected Pose2d shootNearBlueSpline;
     protected Pose2d collect1Blue;
-    protected Pose2d collect2Blue;
     protected Pose2d collect3Blue;
     protected Pose2d moveToHumanPlayerZone;
     protected Pose2d collect1;

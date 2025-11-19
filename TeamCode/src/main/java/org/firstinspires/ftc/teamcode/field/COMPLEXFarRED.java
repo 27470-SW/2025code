@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import static org.firstinspires.ftc.teamcode.field.Route.Movement.*;
-import static org.firstinspires.ftc.teamcode.field.Route.Heading.*;
-import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.*;
-import static org.firstinspires.ftc.teamcode.field.Field.Parks.*;
+import static org.firstinspires.ftc.teamcode.field.Field.Parks.WALL;
+import static org.firstinspires.ftc.teamcode.field.Route.Heading.HEAD_LINEAR;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.LINE;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.SPLINE;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.START;
+import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.RIGHT;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
-
-public class SimpleFarRED {
+public class COMPLEXFarRED {
     String TAG = "SAMPLE_ROUTE";
     Route route;
     private Field.Parks stackToBack;
@@ -18,7 +19,7 @@ public class SimpleFarRED {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public SimpleFarRED(Route constructorRoute) {
+    public COMPLEXFarRED(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -56,10 +57,10 @@ public class SimpleFarRED {
 
 
         route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
-        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addLocation(route.shootfarfaronred, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shootWiffleClose);
-        route.shootMotif(1,route.shootGoalWhiffles );
+        route.addFunction(route::shootFar);
+        route.shootMotif(1,route.shootfarfaronred );
 
     }
     private double moveArmDelay = 0;

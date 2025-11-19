@@ -33,9 +33,17 @@ public class MoveToParkPOSDECODE {
             route.addLocation(route.parkInside2Blue, LINE, HEAD_LINEAR);
         } else if (parkPos == OUTSIDEPRIMARYPARK1BLUE){
             route.addLocation(route.parkOutside1Blue, LINE, HEAD_LINEAR);
-        }else if (parkPos == OUTSIDEPRIMARYPARK2BLUE){
+        }else if (parkPos == OUTSIDEPRIMARYPARK2BLUE) {
             route.addLocation(route.parkOutside2BLUE, LINE, HEAD_LINEAR);
-        }else {
+
+        }
+        else if (parkPos == NOPARKRED ){
+
+        }
+        else if (parkPos == N0PARKBLUE){
+
+        }
+        else {
             if(alliance == Field.Alliance.RED)
                 route.addLocation(route.tempParkRed, LINE, HEAD_CONSTANT);
             else

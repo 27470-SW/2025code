@@ -47,16 +47,15 @@ public class F1F3N_Route1and7BLUE {
         route.addFunction(route::transitonUp);
         route.addEvent(Route.Action.WAIT, 0.35);
 
-        //intake wiffles human
+        //intake wiffles park
         route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
         route.addFunction(route::intakeOn);
-        route.addLocation(route.PrepPosIntake1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUE, LINE, HEAD_LINEAR);
-        route.addLocation(route.intookpos1BLUEDONE, LINE, HEAD_LINEAR);
+        route.addLocation(route.intakeParkBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.intakeParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
 
-        //shoot human wiffles
+        //shoot shootpark wiffles
 
-        route.addLocation(route.shootFarPosBLUE, LINE, HEAD_LINEAR);
+        route.addLocation(route.shootParkWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
         route.addFunction(route::intakeOff);
         route.addEvent(Route.Action.WAIT, 0.2);
         route.addFunction(route::transitonUp);
@@ -64,29 +63,24 @@ public class F1F3N_Route1and7BLUE {
         route.addFunction(route::intakeOn);
 
         // go to pos lever wiffles
-        route.addLocation(route.preleverwiffle, LINE, HEAD_LINEAR);
-        route.addLocation(route.intakewifflelever, LINE, HEAD_LINEAR);
-        route.addLocation(route.hitlever, LINE, HEAD_LINEAR);
-        route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
-        route.addFunction(route::intakeOff);
-        //SHOOT  WIFFLES
-        route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.WAIT, 0.2);
-        route.addFunction(route::transitonUp);
-        route.addEvent(Route.Action.WAIT, 0.2);
+        route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.intakeGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        //Shoot whiffles that are near the gate.
+        route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(90));
+        route.addFunction(route::intakeOn);
+
 
         switch (lastLocation){
             case GOAL4 :
-                route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOn);
-                route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOff);
+
+
+                route.addLocation(route.intakeGoalBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
+                route.addLocation(route.intakeGoalWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
                 //SHOOT  WIFFLES
-                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
-                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addLocation(route.shootGoalWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(0));
                 route.addFunction(route::intakeOff);
-                route.addFunction(route::transitonUp);
-                route.addEvent(Route.Action.WAIT, 0.2);
+
 
 
                 break;

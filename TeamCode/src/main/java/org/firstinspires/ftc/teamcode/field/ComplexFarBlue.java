@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import static org.firstinspires.ftc.teamcode.field.Route.Movement.*;
-import static org.firstinspires.ftc.teamcode.field.Route.Heading.*;
-import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.*;
-import static org.firstinspires.ftc.teamcode.field.Field.Parks.*;
+import static org.firstinspires.ftc.teamcode.field.Field.Parks.WALL;
+import static org.firstinspires.ftc.teamcode.field.Route.Heading.HEAD_LINEAR;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.LINE;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.SPLINE;
+import static org.firstinspires.ftc.teamcode.field.Route.Movement.START;
+import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.RIGHT;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
-
-public class SimpleFarRED {
+public class ComplexFarBlue {
     String TAG = "SAMPLE_ROUTE";
     Route route;
     private Field.Parks stackToBack;
@@ -18,7 +19,7 @@ public class SimpleFarRED {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public SimpleFarRED(Route constructorRoute) {
+    public ComplexFarBlue(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -40,26 +41,30 @@ public class SimpleFarRED {
 
 
         //shoot pre loaded wiffles
-        route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
+
+        //shoot pre loaded wiffles
+
+
+        route.addLocation(route.startSmallTriBlue, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
         route.addEvent(Route.Action.WAIT,2);
-        route.shootMotif(1,route.shootfaronred );
+        route.shootMotif(1,route.shootFarPosBLUE );
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);
 
-        route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect3, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect4, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect5, LINE, HEAD_LINEAR, Math.toRadians(0));
+       route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpcollect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.collect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpcollect3Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpcollect4Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
 
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
-        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
+        route.addLocation(route.shootGoalWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toDegrees(270));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shootWiffleClose);
-        route.shootMotif(1,route.shootGoalWhiffles );
+        route.addFunction(route::shootFar);
+        route.shootMotif(1,route.shootFarPosBLUE );
 
     }
     private double moveArmDelay = 0;

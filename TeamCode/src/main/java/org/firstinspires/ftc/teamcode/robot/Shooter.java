@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,20 +16,7 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_TRAJ_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_W_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_SHOOTER_DIST;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_W_SPEED;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KD;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KF;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KI;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_KP;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.SHOOTER_VELOCITY;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT1;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT2;
-import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TRANSITION_RESTPOINT3;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.*;
 import static org.firstinspires.ftc.teamcode.test.TestPIDshooter.targetVelocity;
 
 import static java.lang.Math.signum;
@@ -142,10 +128,10 @@ public class Shooter
             curSpd = shooterW2.getVelocity();
         }
         if(usePIDs && controlShooterW != null){
-            if(dashTelemetry == null){
-                dashboardShooter = FtcDashboard.getInstance();
-                dashTelemetry = dashboardShooter.getTelemetry();
-            }
+////            if(dashTelemetry == null){
+////                dashboardShooter = FtcDashboard.getInstance();
+////               // dashTelemetry = dashboardShooter.getTelemetry();
+//            }
 
            double update = controlShooterW.update();
             shooterW2.setPower(update);
@@ -153,12 +139,12 @@ public class Shooter
             double currentVelocity = controlShooterW.getVelocity();
             double error = targetVelocity - currentVelocity;
 
-            dashTelemetry.addData("targetVelocity", targetVelocity);
-            dashTelemetry.addData("currentVelocity", currentVelocity);
-            dashTelemetry.addData("error", error);
-            dashTelemetry.addData("Power", update);
-            dashTelemetry.addData("filteredVelocity", controlShooterW.getFilteredVelocity());
-            dashTelemetry.update();
+//            dashTelemetry.addData("targetVelocity", targetVelocity);
+//            dashTelemetry.addData("currentVelocity", currentVelocity);
+//            dashTelemetry.addData("error", error);
+//            dashTelemetry.addData("Power", update);
+//            dashTelemetry.addData("filteredVelocity", controlShooterW.getFilteredVelocity());
+//            dashTelemetry.update();
         }
         if (engageAutoTraj){
             setShooterTrajPos(getTrajEncoderDist());
@@ -177,7 +163,8 @@ public class Shooter
         shtmode = RUN_TO_POSITION;
     }
     private int getTrajEncoderDist(){
-        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
+        int value = (int) -(TED_M*(TED_K+dist) + TED_B);
+        //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
         RobotLog.dd(TAG, "Traj encoder dist = %d", value);
         return value;
     }
@@ -223,7 +210,8 @@ public void stopWheel(){
     boolean usePIDs = true;
     boolean useDistance = true;
     public double distanceWVelocity( double distance){
-        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
+        return DWV_M * (distance + DWV_K) + DWV_B;
+        //        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
     }
 
     public void spinShooterAutonFar(){
@@ -268,10 +256,10 @@ public void stopWheel(){
 
     public void defaultFarShooterTraj(){
 
-        setShooterTrajPos(-1250);
+        setShooterTrajPos(SHOOT_FAR_TRAJ);
     }
     public void defaultCloseShooterTraj(){
-        setShooterTrajPos(-600);
+        setShooterTrajPos(SHOOT_CLOSE_TRAJ);
     }
 
     //set to a specific encoder count
@@ -291,8 +279,12 @@ public void stopWheel(){
         RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, signum = %f", targetpos, currentpos, signum(targetpos-currentpos));
     }
 
+    public void disengageAutoTraj(){
+        engageAutoTraj = false;
+    }
 
-    public void changeShootTraj(double pwr){
+
+    public void changeShootTraj(double pwr, boolean limitBreaker){
         try {
            // if (moveShooter1.getPosition() == 0 && speed < 0) return;
             //if (moveShooter1.getPosition() == 1 && speed > 0) return;
@@ -301,15 +293,20 @@ public void stopWheel(){
             double lftmin = RobotConstants.SHOOTER_MIN_ENCODER;
             double lftmax =  RobotConstants.SHOOTER_MAX_ENCODER;
             double trajCounts= moveShooterM.getCurrentPosition();
-            if (trajCounts <= lftmin && pwr < 0.0 ||
-                    trajCounts >= lftmax  && pwr > 0.0) pwr = 0.0;
 
             if( shtmode != RUN_USING_ENCODER) {
                 moveShooterM.setMode(RUN_USING_ENCODER);
                 shtmode = RUN_USING_ENCODER;
             }
 
-            moveShooterM.setPower(pwr);
+            if(!limitBreaker) {
+                if (trajCounts <= lftmin && pwr < 0.0 ||
+                        trajCounts >= lftmax  && pwr > 0.0) pwr = 0.0;
+                moveShooterM.setPower(pwr);
+            }
+            else {
+                moveShooterM.setPower(pwr*0.3);
+            }
             engageAutoTraj = false;
 
             RobotLog.dd(TAG, "Set power to speed :%f",pwr);
@@ -375,7 +372,7 @@ public void stopWheel(){
     protected HardwareMap hwMap;
     public DcMotorEx shooterW = null;
     public DcMotorEx shooterW2 = null;
-    private PIDControl controlShooterW = null;
+    public PIDControl controlShooterW = null;
 
     public DcMotorEx moveShooterM = null;
     private VoltageSensor vs;

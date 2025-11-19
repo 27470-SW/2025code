@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.CENTER;
+import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.LEFT;
+import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.RIGHT;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.config.Config;
@@ -7,6 +11,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -14,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.opModes.InitLinearOpMode;
 import org.firstinspires.ftc.teamcode.robot.RobotConstants;
 import org.firstinspires.ftc.teamcode.robot.Shooter;
+import org.firstinspires.ftc.teamcode.robot.Transition;
 import org.firstinspires.ftc.teamcode.util.ManagedGamepad;
 import org.firstinspires.ftc.teamcode.util.PIDControl;
 
@@ -32,20 +38,24 @@ public class TestPIDshooter extends InitLinearOpMode
     public static double kV = 0.0003; // Velocity feedforward (start small!)
     public static double kA = 0.0;   // Acceleration feedforward
 
-    public static double targetVelocity = -2000; // ticks per second
+    public static double targetVelocity = -1200; // ticks per second
 
     private PIDControl shooterMotor;
-    private PIDControl shooterMotor2;
+    private DcMotorEx shooterMotor2;
 
     @Override
     public void runOpMode() {
         // Initialize motor
         shooterMotor = new PIDControl(hardwareMap, "shoot");
-        shooterMotor2 = new PIDControl(hardwareMap, "shoot2");
+        shooterMotor2 = hardwareMap.get(DcMotorEx.class, "shoot2");
+        shooter1 = new Transition("shooter1", hardwareMap);
+        shooter2 = new Transition("shooter2", hardwareMap);
+        shooter3 = new Transition("shooter3", hardwareMap);
+
+        gpad2 = new ManagedGamepad(gamepad2);
 
         // Set initial coefficients
         shooterMotor.init(kP, kI, kD, kV);
-        shooterMotor2.init(kP, kI, kD, kV);
 
         telemetry.addLine("Connect to FTC Dashboard:");
         telemetry.addLine("192.168.49.1:8080/dash (phone)");
@@ -61,15 +71,36 @@ public class TestPIDshooter extends InitLinearOpMode
         while (opModeIsActive()) {
             // Update coefficients from Dashboard in real-time
             shooterMotor.init(kP, kI, kD, kV);
-            shooterMotor2.init(kP, kI,kD,kV);
             double update = shooterMotor.update();
-            double update2 = shooterMotor2.update();
+            shooterMotor2.setPower(update);
 
             // Control motor
             if (gamepad1.a) {
                 shooterMotor.setWheelVelocity(targetVelocity);
             } else if (gamepad1.b) {
                 shooterMotor.setWheelVelocity(0);
+            }
+
+            gpad2.update();
+            boolean dpadUp= gpad2.pressed(ManagedGamepad.Button.D_UP);
+            boolean dpadLeft= gpad2.pressed(ManagedGamepad.Button.D_LEFT);
+            boolean dpadRight= gpad2.pressed(ManagedGamepad.Button.D_RIGHT);
+            boolean dpadDown= gpad2.pressed(ManagedGamepad.Button.D_DOWN);
+            double rightTrig = gpad2.value(ManagedGamepad.AnalogInput.R_TRIGGER_VAL);
+
+
+            if (dpadDown ||dpadUp||dpadRight||dpadLeft){
+                RobotLog.dd("TEST PID SHOOTER","Dpad pressed");
+
+
+                if(rightTrig >= 0.3){
+                    if(dpadDown || dpadRight) shoot(RIGHT);
+                    if(dpadLeft) shoot(LEFT);
+                    if(dpadDown || dpadUp) shoot(CENTER);
+
+                    RobotLog.dd("TEST PID SHOOTER","Dpad + trigger pressed");
+
+                }
             }
 
 
@@ -96,8 +127,28 @@ public class TestPIDshooter extends InitLinearOpMode
             telemetry.addData("Error", "%.1f", error);
             telemetry.addLine("\nTune values in Dashboard!");
             telemetry.update();
+
+            sleep(20);
         }
     }
+
+    public void shoot(Shooter.BALL_CHOICE ball){
+        switch (ball){
+            case LEFT:
+                shooter1.startTransition();
+                break;
+            case CENTER:
+                shooter2.startTransition();
+                break;
+            case RIGHT:
+                shooter3.startTransition();
+                break;
+        }
+    }
+
+    public Transition shooter1 = null;
+    public Transition shooter2 = null;
+    public Transition shooter3 = null;
 }
 /*{
     private static final double INCREMENT = 3.0;     // amount to step motor each CYCLE_MS cycle
