@@ -73,10 +73,10 @@ public class Shooter
         }
         try
         {
-            //moveShooter1 = hwMap.get(Servo.class, "shooterTraj1");
-            //moveShooter1.setPosition(0);
-            //moveShooter2 = hwMap.get(Servo.class, "shooterTraj2");
-            //moveShooter2.setPosition(0);
+            moveShooter1 = hwMap.get(Servo.class, "shooterTraj1");
+            moveShooter1.setPosition(0.5);
+            moveShooter2 = hwMap.get(Servo.class, "shooterTraj2");
+            moveShooter2.setPosition(0.5);
             success = true;
         }
         catch (Exception e)
@@ -92,7 +92,6 @@ public class Shooter
             moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             moveShooterM.setMode(RUN_USING_ENCODER);
             shtmode = RUN_USING_ENCODER;
-            vs = hwMap.get(VoltageSensor.class, "Control Hub");
             success = true;
         }
         catch (Exception e)
@@ -101,6 +100,8 @@ public class Shooter
 
         }
 
+
+        vs = hwMap.get(VoltageSensor.class, "Control Hub");
         shooter1 = new Transition("shooter1", hwMap);
         shooter2 = new Transition("shooter2", hwMap);
         shooter3 = new Transition("shooter3", hwMap);
@@ -147,7 +148,8 @@ public class Shooter
 //            dashTelemetry.update();
         }
         if (engageAutoTraj){
-            setShooterTrajPos(getTrajEncoderDist());
+            if(moveShooterM !=null) setShooterTrajPos(getTrajEncoderDist());
+            if(moveShooter1 != null) setShooterTrajPos(getTrajServoVal());
         }
         if(shooter1 != null) shooter1.update();
         if(shooter2 != null) shooter2.update();
@@ -158,12 +160,26 @@ public class Shooter
     }
     public void onAutoTraj(){
         engageAutoTraj = true;
-        moveShooterM.setTargetPosition(getTrajEncoderDist());
-        moveShooterM.setMode(RUN_TO_POSITION);
-        shtmode = RUN_TO_POSITION;
+
+        if(moveShooterM != null) {
+            moveShooterM.setTargetPosition((int) getTrajEncoderDist());
+            moveShooterM.setMode(RUN_TO_POSITION);
+            shtmode = RUN_TO_POSITION;
+        }
+
+        if(moveShooter1 != null){
+            setShooterTrajPos(getTrajServoVal());
+        }
     }
-    private int getTrajEncoderDist(){
-        int value = (int) -(TED_M*(TED_K+dist) + TED_B);
+
+    private double getTrajServoVal(){
+        double value = -(STED_M*(STED_K+dist) + STED_B);
+        //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
+        RobotLog.dd(TAG, "Traj servo val = %f", value);
+        return value;
+    }
+    private double getTrajEncoderDist(){
+        double value = -(TED_M*(TED_K+dist) + TED_B);
         //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
         RobotLog.dd(TAG, "Traj encoder dist = %d", value);
         return value;
@@ -181,8 +197,8 @@ public class Shooter
         if(shooterW != null) shooterW.setVelocity(cps);
         if(shooterW2 != null) shooterW2.setVelocity(cps);
 
-        //if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
-        //if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
+        if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
+        if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
         if(moveShooterM != null) moveShooterM.setVelocity(cps);
         shooter1.stop();
         shooter2.stop();
@@ -256,27 +272,38 @@ public void stopWheel(){
 
     public void defaultFarShooterTraj(){
 
-        setShooterTrajPos(SHOOT_FAR_TRAJ);
+        if(null != moveShooterM) setShooterTrajPos(SHOOT_FAR_TRAJ);
+        if(null != moveShooter1) setShooterTrajPos(SHOOT_SERVO_FAR);
     }
     public void defaultCloseShooterTraj(){
-        setShooterTrajPos(SHOOT_CLOSE_TRAJ);
+        if(null != moveShooterM) setShooterTrajPos(SHOOT_CLOSE_TRAJ);
+        if(null != moveShooter1) setShooterTrajPos(SHOOT_SERVO_CLOSE);
     }
 
     //set to a specific encoder count
-    public void setShooterTrajPos(int targetpos){
-        RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, mode = %s, power = %f", targetpos, moveShooterM.getCurrentPosition(), moveShooterM.getMode().toString(), moveShooterM.getPower());
-        moveShooterM.setTargetPosition(targetpos);
+    public void setShooterTrajPos(double targetPos) {
+        if (moveShooterM != null) {
+            int targetpos = (int) targetPos;
+            RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, mode = %s, power = %f", targetpos, moveShooterM.getCurrentPosition(), moveShooterM.getMode().toString(), moveShooterM.getPower());
+            moveShooterM.setTargetPosition(targetpos);
 
-        if(shtmode == RUN_USING_ENCODER){
-            moveShooterM.setPower(0);
-            moveShooterM.setMode(RUN_TO_POSITION);
-            shtmode = RUN_TO_POSITION;
+            if (shtmode == RUN_USING_ENCODER) {
+                moveShooterM.setPower(0);
+                moveShooterM.setMode(RUN_TO_POSITION);
+                shtmode = RUN_TO_POSITION;
+            }
+            int currentpos = moveShooterM.getCurrentPosition();
+
+            moveShooterM.setPower(signum(targetpos - currentpos) * .3);
+
+            RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, signum = %f", targetpos, currentpos, signum(targetpos - currentpos));
         }
-        int currentpos = moveShooterM.getCurrentPosition();
 
-        moveShooterM.setPower( signum (targetpos - currentpos)*.3);
-
-        RobotLog.dd(TAG, "targetPos = %d, currentPos = %d, signum = %f", targetpos, currentpos, signum(targetpos-currentpos));
+        if(moveShooter1 != null){
+            moveShooter1.setPosition(targetPos);
+            moveShooter2.setPosition(targetPos);
+            RobotLog.dd(TAG, "targetPos = %f, currentPos = %f",targetPos, moveShooter1.getPosition());
+        }
     }
 
     public void disengageAutoTraj(){
@@ -285,11 +312,19 @@ public void stopWheel(){
 
 
     public void changeShootTraj(double pwr, boolean limitBreaker){
+        engageAutoTraj = false;
+
         try {
-           // if (moveShooter1.getPosition() == 0 && speed < 0) return;
-            //if (moveShooter1.getPosition() == 1 && speed > 0) return;
-            //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
-            //moveShooter1.setPosition(speed / 100 + moveShooter1.getPosition());
+            if (!limitBreaker && moveShooter1.getPosition() == 0 && pwr < 0) return;
+            if (!limitBreaker && moveShooter1.getPosition() == 1 && pwr > 0) return;
+            moveShooter1.setPosition(pwr / 100 + moveShooter1.getPosition());
+            moveShooter2.setPosition(pwr / 100 + moveShooter2.getPosition());
+        }catch(Exception e) {
+            if(null != moveShooter1) RobotLog.dd(TAG, "unable to change Shoot Servo Trajectory");
+        }
+
+        try{
+
             double lftmin = RobotConstants.SHOOTER_MIN_ENCODER;
             double lftmax =  RobotConstants.SHOOTER_MAX_ENCODER;
             double trajCounts= moveShooterM.getCurrentPosition();
@@ -307,12 +342,10 @@ public void stopWheel(){
             else {
                 moveShooterM.setPower(pwr*0.3);
             }
-            engageAutoTraj = false;
-
             RobotLog.dd(TAG, "Set power to speed :%f",pwr);
 
         }catch(Exception e){
-            RobotLog.dd(TAG, "unable to change Shoot Trajectory");
+            if(null != moveShooterM)    RobotLog.dd(TAG, "unable to change Shoot Motor Trajectory");
         }
     }
 

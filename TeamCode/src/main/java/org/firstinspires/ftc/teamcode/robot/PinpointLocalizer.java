@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.util.GoBildaPinpointDriver;
 
 public class PinpointLocalizer implements Localizer {
+    private static final String TAG = "pinpoint";
     private final GoBildaPinpointDriver pinpoint;
     private Pose2d poseEstimate;
     private Pose2d poseVelocity;
@@ -75,11 +78,13 @@ public class PinpointLocalizer implements Localizer {
 
         poseEstimate = new Pose2d(x, y, heading);
 
+
         // Get velocity from Pinpoint
         double vx = pinpoint.getVelX(DistanceUnit.INCH);
         double vy = pinpoint.getVelY(DistanceUnit.INCH);
         double headingVel = pinpoint.getHeadingVelocity();
 
         poseVelocity = new Pose2d(vx, vy, headingVel);
+
     }
 }

@@ -253,9 +253,15 @@ public Shooter shooter =null;
     public void update()
     {
         updTimer.reset();
+        RobotLog.dd(TAG, "pose(7) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         super.update();
+        RobotLog.dd(TAG, "pose(8) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         double botTime = updTimer.milliseconds();
         updTimer.reset();
+        RobotLog.dd(TAG, "pose(9) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         if(claw != null)
         {
             claw.update();
@@ -264,6 +270,7 @@ public Shooter shooter =null;
         {
             shooter.update();
         }
+        RobotLog.dd(TAG, "pose(10) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         if(servoIntake != null)
         {
@@ -283,6 +290,7 @@ public Shooter shooter =null;
         }
         double lftTime = updTimer.milliseconds();
         updTimer.reset();
+        RobotLog.dd(TAG, "pose(11) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         double clawTime;
 //        if(claw != null)
@@ -290,6 +298,7 @@ public Shooter shooter =null;
 //            claw.update();
 //        }
         updTimer.reset();
+        RobotLog.dd(TAG, "pose(12) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
 //        if(VERBOSE) { RobotLog.dd(TAG, "UPD BOT:%.2f LFT:%.2f CLW:%.2f", botTime, lftTime, clawTime); }
         ledUpdate();

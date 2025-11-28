@@ -603,6 +603,8 @@ public class BasicBot
     public void update()
     {
         cmu.setTelemetryPacket(new TelemetryPacket());
+        RobotLog.dd(TAG, "pose(13) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         botTimer.reset();
         if(bulkCachingMode == LynxModule.BulkCachingMode.MANUAL)
         {
@@ -611,16 +613,25 @@ public class BasicBot
                 module.clearBulkCache();
             }
         }
+        RobotLog.dd(TAG, "pose(14) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         cbcTime = botTimer.milliseconds();
         botTimer.reset();
 
         if (drive != null && !inInit)
         {
-            if (drive instanceof MecanumDriveLRR) ((MecanumDriveLRR)drive).update();
+            RobotLog.dd(TAG, "pose(15) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+            if (drive instanceof MecanumDriveLRR) {
+                ((MecanumDriveLRR) drive).update();
+                RobotLog.dd(TAG, "pose(16) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+            }
             else drive.updatePoseEstimate();
         }
+        RobotLog.dd(TAG, "pose(17) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
         lrrTime = botTimer.milliseconds();
         botTimer.reset();
+        RobotLog.dd(TAG, "pose(18) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         int c = 0;
         for(String s : motorTags)
@@ -632,6 +643,8 @@ public class BasicBot
                 vels[c++] = m.getVelocity();
             }
         }
+        RobotLog.dd(TAG, "pose(19) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
 
         encTime = botTimer.milliseconds();
         botTimer.reset();
@@ -655,6 +668,8 @@ public class BasicBot
         }
 */
         ++updateFrame;
+        RobotLog.dd(TAG, "pose(20) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+
     }
 
     public void finishFrame()

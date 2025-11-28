@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.CENTER;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.LEFT;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.RIGHT;
@@ -29,6 +30,7 @@ import java.util.List;
 @TeleOp(name = "TestPidShooter", group = "Test")
 public class TestPIDshooter extends InitLinearOpMode
 {
+    private static final String TAG = "TestPIDShooter";
     // These can be tuned in FTC Dashboard
     public static double kP = 0.03;  // Start with calculated values
     public static double kI = 0.000016;
@@ -47,10 +49,24 @@ public class TestPIDshooter extends InitLinearOpMode
     public void runOpMode() {
         // Initialize motor
         shooterMotor = new PIDControl(hardwareMap, "shoot");
-        shooterMotor2 = hardwareMap.get(DcMotorEx.class, "shoot2");
-        shooter1 = new Transition("shooter1", hardwareMap);
-        shooter2 = new Transition("shooter2", hardwareMap);
-        shooter3 = new Transition("shooter3", hardwareMap);
+        try {
+            shooterMotor2 = hardwareMap.get(DcMotorEx.class, "shoot2");
+        }catch (Exception e){RobotLog.ww(TAG, "shoot2 not found");}
+
+        try {
+            shooter1 = new Transition("shooter1", hardwareMap);
+            shooter1.init(TRANSITION_RESTPOINT1+.1,true);
+        }catch (Exception e){RobotLog.ww(TAG, "shooter1 Transition not found");}
+
+        try {
+            shooter2 = new Transition("shooter2", hardwareMap);
+            shooter2.init(TRANSITION_RESTPOINT2, true);
+        }catch (Exception e){RobotLog.ww(TAG, "shooter2 Transition not found");}
+
+        try {
+            shooter3 = new Transition("shooter3", hardwareMap);
+            shooter3.init(TRANSITION_RESTPOINT3, true);
+        }catch (Exception e){RobotLog.ww(TAG, "shooter3 Transition not found");}
 
         gpad2 = new ManagedGamepad(gamepad2);
 
@@ -72,16 +88,19 @@ public class TestPIDshooter extends InitLinearOpMode
             // Update coefficients from Dashboard in real-time
             shooterMotor.init(kP, kI, kD, kV);
             double update = shooterMotor.update();
-            shooterMotor2.setPower(update);
+            if(null != shooterMotor2) shooterMotor2.setPower(update);
 
+            gpad2.update();
             // Control motor
-            if (gamepad1.a) {
+            if (gpad2.just_pressed(ManagedGamepad.Button.A)) {
                 shooterMotor.setWheelVelocity(targetVelocity);
-            } else if (gamepad1.b) {
+                if(null != shooter1) shooter1.moveToStartPos();
+                if(null != shooter2) shooter2.moveToStartPos();
+                if(null != shooter3) shooter3.moveToStartPos();
+            } else if (gpad2.just_pressed(ManagedGamepad.Button.B)) {
                 shooterMotor.setWheelVelocity(0);
             }
 
-            gpad2.update();
             boolean dpadUp= gpad2.pressed(ManagedGamepad.Button.D_UP);
             boolean dpadLeft= gpad2.pressed(ManagedGamepad.Button.D_LEFT);
             boolean dpadRight= gpad2.pressed(ManagedGamepad.Button.D_RIGHT);
@@ -135,13 +154,13 @@ public class TestPIDshooter extends InitLinearOpMode
     public void shoot(Shooter.BALL_CHOICE ball){
         switch (ball){
             case LEFT:
-                shooter1.startTransition();
+                if(null!=shooter1)shooter1.startTransition();
                 break;
             case CENTER:
-                shooter2.startTransition();
+                if(null!=shooter2)shooter2.startTransition();
                 break;
             case RIGHT:
-                shooter3.startTransition();
+                if(null!=shooter3)shooter3.startTransition();
                 break;
         }
     }

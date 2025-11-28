@@ -49,6 +49,9 @@ public class MecanumTeleop extends InitLinearOpMode
 {
     private static final String TAG = "SJH_MTD";
 
+    Pose2d startPose;
+
+
     public void initPreStart() throws InterruptedException
     {
         // Initialize the Apriltag Detection process
@@ -71,9 +74,6 @@ public class MecanumTeleop extends InitLinearOpMode
         /* Always initialize the sensors like the IMU and color sensors,
          *  even if you are Auto transitioning from another OpMode
         */
-        robot.init(this, chas, true);
-        robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
-        RobotConstants.info();
 
         driveClose = false;
         driveFar = false;
@@ -87,7 +87,11 @@ public class MecanumTeleop extends InitLinearOpMode
 //            /* keep the claw Open in case we have a cone in our grasp */
 //            robot.claw.openClaw();
 //        }
-        Pose2d startPose = new Pose2d();
+
+        robot.init(this, chas, true);
+        robot.setBcm(LynxModule.BulkCachingMode.MANUAL);
+        RobotConstants.info();
+
         if(prevOpModeType != BasicBot.OpModeType.AUTO)
         {
             startPose = new Pose2d(0,0,Math.toRadians(90));
@@ -122,7 +126,8 @@ public class MecanumTeleop extends InitLinearOpMode
             double autonEndHdg = robot.getAutonEndHdg();
             startPose = new Pose2d(autonEndPos.getX(), autonEndPos.getY(), autonEndHdg);
             if(VERBOSE) {  RobotLog.dd(TAG, "Start Aend fHdg %.2f", Math.toDegrees(autonEndHdg));
-            RobotLog.dd(TAG, "Start Pos %s", autonEndPos.toString());}
+            RobotLog.dd(TAG, "Start Pos %s", autonEndPos.toString());
+            RobotLog.dd(TAG, "startPose = %s", startPose.toString());}
         }
 
 
@@ -148,9 +153,11 @@ public class MecanumTeleop extends InitLinearOpMode
 */
 
         mechDrv = (MecanumDriveLRR)(robot.drive);
-        mechDrv.setPoseEstimate(startPose);
-        mechDrv.setRealPoseEstimate(startPose);
+//        mechDrv.setPoseEstimate(startPose);
+//        mechDrv.setRealPoseEstimate(startPose);
         mechDrv.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        RobotLog.dd(TAG, "starting pose is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
 
         for(String k : robot.motors.keySet())
         {
@@ -180,13 +187,16 @@ public class MecanumTeleop extends InitLinearOpMode
     {
         robot.update();
 
+
         l = 1;
 
         cnts=robot.getCnts();
         vels=robot.getVels();
 //        hdg=robot.getHdg();
 
-        poseEstimate = robot.drive.getPoseEstimate();
+        poseEstimate = mechDrv.getPoseEstimate();
+
+
         processSensors();
 
     }
@@ -216,14 +226,16 @@ public class MecanumTeleop extends InitLinearOpMode
                 lastMrkPos, moveAtRate));
         if(null != robot) {
             if (null != robot.shooter) {
-                dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor mode %s", robot.shooter.moveShooterM.getMode().toString()));
-                dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor current encoder %d", robot.shooter.moveShooterM.getCurrentPosition()));
+                if(null != robot.shooter.moveShooterM) {
+                    dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor mode %s", robot.shooter.moveShooterM.getMode().toString()));
+                    dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor current encoder %d", robot.shooter.moveShooterM.getCurrentPosition()));
+                }
                 dashboard.displayText(l++, String.format(Locale.US, "Shooter motor velo %f", robot.shooter.getFilteredVelocity()));
             }
-        Pose2d currentPose = robot.getPoseEstimate();
+        Pose2d currentPose = mechDrv.getRealPoseEstimate();
             dashboard.displayText(l++, String.format(Locale.US, "X: %f, Y: %f, Heading: %f",currentPose.getX(),currentPose.getY(),Math.toDegrees(currentPose.getHeading())));
-
-                dashboard.displayText(l++, String.format(Locale.US, " Camera Found %b Camera Dist %f", targetFound, distanceToTheGoal));
+            dashboard.displayText(l++, String.format(Locale.US, "Localizer, %s", mechDrv.getLocalizer().getClass().getSimpleName()));
+            dashboard.displayText(l++, String.format(Locale.US, " Camera Found %b Camera Dist %f", targetFound, distanceToTheGoal));
             dashboard.displayText(l++, String.format(Locale.US, " intergral sum = %f", robot.shooter.controlShooterW.getIntegralSum()));
 
         }
@@ -963,6 +975,8 @@ public class MecanumTeleop extends InitLinearOpMode
         RobotLog.dd(TAG,"RUNNING INIT IN MecanumTeleop");
 
         initPreStart();
+        RobotLog.dd(TAG, "pose(1) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
+
 
         dashboard.displayText(0, robot.getName() + " is ready");
 
@@ -974,7 +988,14 @@ public class MecanumTeleop extends InitLinearOpMode
             doLogging(0);
             robot.finishFrame();
             robot.waitForTick(20);
+
         }
+
+        //something in update() is setting the pose to 0,0,0, so reset it to the correct startPose
+        mechDrv.setPoseEstimate(startPose);
+        mechDrv.setRealPoseEstimate(startPose);
+
+        RobotLog.dd(TAG, "pose(4) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
 
         RobotLog.dd(TAG, "Mecanum_Driver starting");
 

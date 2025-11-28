@@ -95,12 +95,17 @@ public class RobotConstants
   public static  double SHOOTER_VELOCITY = 1250;
   public static int SHOOT_CLOSE_TRAJ = -400;
   public static int SHOOT_FAR_TRAJ = -1250;
+    public static double SHOOT_SERVO_FAR = 0.8;
+    public static double SHOOT_SERVO_CLOSE = 0.15;
   public static double DWV_M = 4.25;
   public static double DWV_K = 340;
   public static double DWV_B = -570;
   public static double TED_M = 8.54;
   public static double TED_K = 52.1;
   public static double TED_B = -403;
+    public static double STED_M = .0057;
+    public static double STED_K = .035;
+    public static double STED_B = -.27;
 
 
   public static Pose2d CLOSE_POSE_RED = new Pose2d(24, 23, Math.toRadians(45));

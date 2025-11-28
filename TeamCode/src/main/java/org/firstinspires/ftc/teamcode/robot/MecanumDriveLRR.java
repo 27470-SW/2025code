@@ -315,6 +315,10 @@ public class MecanumDriveLRR extends MecanumDrive
         getLocalizer().setPoseEstimate(in);
     }
 
+    public Pose2d getRealPoseEstimate(){
+        return getLocalizer().getPoseEstimate();
+    }
+
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
         PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
                 coefficients.p, coefficients.i, coefficients.d,
@@ -489,7 +493,7 @@ public class MecanumDriveLRR extends MecanumDrive
 
 
     public void cancelFollowing() {
-        trajectorySequenceRunner.cancelFollowing();
+        if(trajectorySequenceRunner.isBusy()) trajectorySequenceRunner.cancelFollowing();
     }
 
     public void drawRoute() {

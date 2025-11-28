@@ -485,6 +485,7 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
             int lnNum = 5;
             Pose2d currentPose = robot.getPoseEstimate();
             dashboard.displayText(3, String.format(Locale.US, "X: %f, Y: %f, Heading: %f",currentPose.getX(),currentPose.getY(),Math.toDegrees(currentPose.getHeading())));
+            dashboard.displayText(4, String.format(Locale.US, "Localizer, %s", mechDrv.getLocalizer().getClass().getSimpleName()));
 
             dashboard.displayText(lnNum, String.format(Locale.US, "Traj Seq %s len=%d dur=%.2f",
                     seqName, seq.size(), seq.duration()));
@@ -704,6 +705,8 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
         RobotLog.dd(TAG, "Exiting auton at %s", ePose.toString());
     }
 
+boolean    printOnce = true;
+
     boolean targetFound = false;
     public boolean       detectAprilTag(){
 
@@ -735,7 +738,10 @@ public class Decode_Auton extends InitLinearOpMode // implements FtcMenu.MenuBut
             telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
             telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
         } else {
-            telemetry.addData("\n>","Drive using joysticks to find valid target\n");
+            if(printOnce) {
+                telemetry.addData("\n>", "Drive using joysticks to find valid target\n");
+                printOnce = false;
+            }
         }
 
 
