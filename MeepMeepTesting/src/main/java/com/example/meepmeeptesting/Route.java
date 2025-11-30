@@ -78,6 +78,7 @@ public abstract class Route
 
          totalDur = 0;
 
+        goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
          /* All points of interests will be based off of quadrant I - positive x, positive y */
          /* Reflection over the x-axis will be done for the alliance side */
          /* Reflection over the y-axis will be done on which side you line up */
@@ -94,16 +95,9 @@ public abstract class Route
              sf = 0;
              sx = -1;
              flip = Math.toRadians(180);
-             if (startPos == START_SAMPLES)
-			 {
-                 /* Blue Right quadrant II */
-                 sf = 1;
-                 sr = 1;
-             }
-			 else
-			 {
+
                  sr = 0;
-             }
+
          }
 		 else
 		 {
@@ -115,30 +109,20 @@ public abstract class Route
              sf = -1;
              sx =1;
              flip = Math.toRadians(0);
-             if (startPos == START_SPECIMENS)
-			 {
-                 /* Red Right quadrant IV */
-                 sf = 0;
-                 sr = 1;
-             }
-		     else
-		     {
+
+
                  /* Red Left quadrant III */
                  sr = 0;
 
-             }
+
          }
 
-         if (startPos == START_SAMPLES)
-         {
-             strtY = 0.5 * ITD_Field.tileWidth;
-          }
-         else
-         {
-             strtY = -1.5 * ITD_Field.tileWidth;
-         }
 
-         strtX =  3.0f * ITD_Field.tileWidth - botBackToCtr;
+
+             strtY = -1.5 * Decode_Field.tileWidth;
+
+
+         strtX =  3.0f * Decode_Field.tileWidth - botBackToCtr;
 
          strtH = Math.toRadians(180.0);
 
@@ -1348,7 +1332,8 @@ public void slidesUpOne(){
      public enum Action
      {
           WAIT,
-          TANGENT
+          TANGENT,
+          SLOW
      }
 
      public enum TeamElement
@@ -1691,6 +1676,32 @@ public void slidesUpOne(){
                   newTraj = false;
                   traj.setTangent(value);
                   break;
+              case SLOW:
+                  try{  //Need to make a new traj in order to make this one slow
+                      makeNewTraj();
+                  }catch (Exception e){}    //error if that traj didn't have anything in it yet
+//                  RobotLog.dd(TAG, "Setting traj as SLOW");
+                  if(value <= 0) {
+                      traj = new TrajectorySequenceBuilder(
+                              lastPose,
+                              slwVelLim, slwAccelLim,
+                              RobotConstants.SLW_ANG_VEL, RobotConstants.SLW_ANG_ACCEL);
+                  }
+                  else
+                  {
+                      TrajectoryVelocityConstraint vc =
+                              new MinVelocityConstraint(Arrays.asList(
+                                      new AngularVelocityConstraint(value/MAX_VEL*MAX_ANG_VEL),
+                                      new MecanumVelocityConstraint(value, DT_TRACK_WIDTH)
+                              ));
+                      TrajectoryAccelerationConstraint ac = new ProfileAccelerationConstraint(value/MAX_VEL*MAX_ACCEL);
+                      traj = new TrajectorySequenceBuilder(
+                              lastPose,
+                              vc, ac,
+                              value, value/MAX_VEL*RobotConstants.MAX_ANG_ACCEL);
+                  }
+                  break;
+
           }
      }
 
