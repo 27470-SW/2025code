@@ -28,7 +28,7 @@ public class MoveToParkPOSDECODE {
         } else if (parkPos == OUTSIDEPRIMARYPARK2RED) {
             route.addLocation(route.parkOutside2Red, LINE, HEAD_LINEAR);
         } else if (parkPos == INSIDEPRIMARYPARK1BLUE){
-            route.addLocation(route.parkInside1Blue, LINE, HEAD_LINEAR);
+            route.addLocation(route.parkInside1Blue, LINE, HEAD_LINEAR,Math.toRadians(270));
         } else if (parkPos == INSIDEPRIMARYPARK2BLUE){
             route.addLocation(route.parkInside2Blue, LINE, HEAD_LINEAR);
         } else if (parkPos == OUTSIDEPRIMARYPARK1BLUE){

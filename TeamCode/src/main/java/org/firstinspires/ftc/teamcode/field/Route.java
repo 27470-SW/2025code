@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.field;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
@@ -24,6 +28,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Timer;
@@ -35,9 +40,11 @@ import static org.firstinspires.ftc.teamcode.opModes.Decode_Auton.autonDebug;
 
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.BLUE_GOAL_POSE;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.CLOSE_SHOOTER_DIST;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.DT_TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MAX_SHOOTER_DIST;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.MIN_TRAJ_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.RED_GOAL_POSE;
+import static org.firstinspires.ftc.teamcode.robot.RobotConstants.*;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.TrajEnum.*;
 import static org.firstinspires.ftc.teamcode.robot.Shooter.BALL_CHOICE.*;
 
@@ -53,9 +60,9 @@ public class Route
      protected static TrajectoryAccelerationConstraint defAccelLim =
        RobotConstants.defAccelConstraint;
 
-     protected static TrajectoryVelocityConstraint wobVelLim =
+     protected static TrajectoryVelocityConstraint slwVelLim =
        RobotConstants.slwVelConstraint;
-     protected static TrajectoryAccelerationConstraint wobAccelLim =
+     protected static TrajectoryAccelerationConstraint slwAccelLim =
        RobotConstants.slwAccelConstraint;
 
     protected static final boolean strafeDropX = false;
@@ -181,22 +188,23 @@ public class Route
         blueGoal = new Pose2d(sx * -43.8, 57.5, flip + sh*Math.toRadians(143));
         blueWall  = new Pose2d(sx * -36, 62, flip + sh*Math.toRadians(270));
         aroundPartnerBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
-        intakeGateBlue = new Pose2d(sx * -13, -5, flip + sh*Math.toRadians(270));
-        intakeGateWhifflesBlue = new Pose2d(sx * -53, -5, flip + sh*Math.toRadians(270));
-        shootGateWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
-        aroundWhiffles = new Pose2d(sx * -13, -5, flip + sh*Math.toRadians(150));
-        intakeGoalBlue = new Pose2d(sx * -13, 17.3, flip + sh*Math.toRadians(270));
+        intakeGateBlue = new Pose2d(sx * -35, -16, flip + sh*Math.toRadians(270));
+        intakeGateWhifflesBlue = new Pose2d(sx * -66, -15, flip + sh*Math.toRadians(270));
+        shootGateWhifflesBlue = new Pose2d(sx * -30, 43.1, flip + sh*Math.toRadians(150));
+        aroundWhiffles = new Pose2d(sx * -28, -5, flip + sh*Math.toRadians(150));
+        intakeGoalBlue = new Pose2d(sx * -40, 7, flip + sh*Math.toRadians(270));
         shootGoalWhifflesBlue = new Pose2d(sx * -30, 48.5, flip + sh*Math.toRadians(150));
-        intakeGoalWhifflesBlue = new Pose2d(sx * -54 , 12.3, flip + sh*Math.toRadians(270));
+        intakeGoalWhifflesBlue = new Pose2d(sx * -60 , 8.5, flip + sh*Math.toRadians(270));
         intakeParkBlue = new Pose2d(sx * -13, -29.4, flip + sh*Math.toRadians(270));
         intakeParkWhifflesBlue = new Pose2d(sx * -51, -29.4, flip + sh*Math.toRadians(270));
         shootParkWhifflesBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
         //ITD poses
-        startSmallTri = new Pose2d(sx * 15, -61, flip + sh*Math.toRadians(70));
+        startSmallTri = new Pose2d(sx * 10, -65, flip + sh*Math.toRadians(90));
         simpleShootFar = new Pose2d(sx * 17, -56, flip + sh*Math.toRadians(70));
 
-        startSmallTriBlue = new Pose2d(sx * -15, -61, flip + sh*Math.toRadians(90));
-        shootFarPosBLUE = new Pose2d(sx * -20, -51, flip + sh*Math.toRadians(110));
+        startSmallTriBlue = new Pose2d(sx * -10, -60, flip + sh*Math.toRadians(90));
+        shootFarPosBLUE = new Pose2d(sx * -20, -53, flip + sh*Math.toRadians(110));
+        shootFarfarPosBLUE = new Pose2d(sx * -20, -48, flip + sh*Math.toRadians(110));
 
         shootFarPos = new Pose2d (sx * 15, -58, flip + sh*Math.toRadians(70));
         shootFarPosB = new Pose2d (sx * -16, -58, flip + sh*Math.toRadians(290));
@@ -228,10 +236,10 @@ public class Route
         pregotoparkwiffle = new Pose2d (sx * 15,-40,flip +sh*Math.toRadians(90));
         gotoparkwiffle = new Pose2d (sx * 50,-40,flip +sh*Math.toRadians(90));
         pregotogoalwiffles= new Pose2d (sx * 17,6,flip +sh*Math.toRadians(90));
-        gotogoalwiffles= new Pose2d (sx * 50,6,flip +sh*Math.toRadians(90));
+        gotogoalwiffles= new Pose2d (sx * 45,6,flip +sh*Math.toRadians(90));
 
         parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
-        parkInside1Blue = new Pose2d(sx * -17,37,flip +sh*Math.toRadians(90));
+        parkInside1Blue = new Pose2d(sx * -16,38,flip +sh*Math.toRadians(90));
 
         parkInside2Red = new Pose2d(sx * 15,-18,flip +sh*Math.toRadians(90));
         parkInside2Blue = new Pose2d(sx * -15,-18,flip +sh*Math.toRadians(90));
@@ -246,16 +254,27 @@ public class Route
 
         startRedFar = new Pose2d(sx * 20, -60, flip + sh*Math.toRadians(90));
 
-        moveToPark = new Pose2d (sx * 40, -39, flip + sh*Math.toRadians(70));
+        moveToPark = new Pose2d (sx * 40, -41.75, flip + sh*Math.toRadians(70));
         collect2 = new Pose2d (sx * 56, -46, flip + sh*Math.toRadians(67));
-        helpcollect5 = new Pose2d (sx * 76, -49, flip + sh*Math.toRadians(65));
+        helpcollect5 = new Pose2d (sx * 76, -48, flip + sh*Math.toRadians(65));
         helpcollect4 = new Pose2d (sx * 68, -48, flip + sh*Math.toRadians(65));
         helpcollect3 = new Pose2d (sx * 62, -47, flip + sh*Math.toRadians(66));
         helpcollect2= new Pose2d (sx * 50, -45, flip + sh*Math.toRadians(68));
 
-        moveToParkBlue = new Pose2d (sx * -40, -35, flip + sh*Math.toRadians(270));
+
+        moveToLever = new Pose2d (sx * 50, -17, flip + sh*Math.toRadians(70));
+        collect3 = new Pose2d (sx * 56, -20, flip + sh*Math.toRadians(67));
+        helpCollectLever2= new Pose2d (sx * 50, -19, flip + sh*Math.toRadians(68));
+        helpCollectLever3 = new Pose2d (sx * 62, -21, flip + sh*Math.toRadians(66));
+        helpCollectLever4 = new Pose2d (sx * 68, -22, flip + sh*Math.toRadians(65));
+        helpCollectLever5 = new Pose2d (sx * 76, -27, flip + sh*Math.toRadians(65));
+
+
+
+
+        moveToParkBlue = new Pose2d (sx * -23, -40, flip + sh*Math.toRadians(270));
         collect2Blue = new Pose2d (sx * -56, -41, flip + sh*Math.toRadians(267));
-        helpcollect5Blue = new Pose2d (sx * -76, -41, flip + sh*Math.toRadians(265));
+        helpcollect5Blue = new Pose2d (sx * -71, -40, flip + sh*Math.toRadians(265));
         helpcollect4Blue = new Pose2d (sx * -68, -41, flip + sh*Math.toRadians(265));
         helpcollect3Blue = new Pose2d (sx * -62, -41, flip + sh*Math.toRadians(266));
         helpcollect2Blue= new Pose2d (sx * -50, -41, flip + sh*Math.toRadians(268));
@@ -266,7 +285,6 @@ public class Route
         shootfarfaronred = new Pose2d (sx * 30, -60, flip + sh*Math.toRadians(47.5));
 
         nearLeaver = new Pose2d (sx * 17, -15, flip + sh*Math.toRadians(90));
-        collect3 = new Pose2d (sx * 54, -15, flip + sh*Math.toRadians(90));
         shootNear = new Pose2d (sx * 15, 37, flip + sh*Math.toRadians(25));
         shootNearForSpline = new Pose2d (sx * 30, 37, flip + sh*Math.toRadians(30));
         moveToHumanPlayerZone = new Pose2d (sx * 61, -40, flip + sh*Math.toRadians(360));
@@ -388,6 +406,17 @@ public class Route
         center = new Pose2d(sx*6,3,flip + sh*Math.toRadians(270));
         back_drop = new Pose2d(sx*30, 56,flip + sh*Math.toRadians(270));
         red_side =new Pose2d(sx*58,3,flip + sh*Math.toRadians(270));
+
+
+        shootfaronred = new Pose2d ( 15, -58, Math.toRadians(70));
+        shootfarfaronred = new Pose2d (15, -58,Math.toRadians(70));
+        moveToPark = new Pose2d( 15,-40,Math.toRadians(90));
+        helpcollect5 = new Pose2d(53,-41,Math.toRadians(90));
+        moveToLever = new Pose2d(15, -17 ,Math.toRadians(90));
+        helpCollectLever5 = new Pose2d(63, -16 ,Math.toRadians(90));
+        shootGoalWhiffles = new Pose2d(15,37,Math.toRadians(35));
+
+
 
         /* Qualifier Route Points */
         if(RobotConstants.bot == RobotConstants.Chassis.B7252) {
@@ -978,6 +1007,41 @@ public void moveToPosition4(){
 
     private double DRIVE_TO_SHOOT_AMT = 3;  //Was 5.6
 
+    private Timer mTimerIntake;
+    private TimerTask mTtIntake;
+
+    protected void shootAllThree(){
+        shoot1();
+        shoot2();
+        shoot3();
+
+        mTimerIntake = new Timer();
+        mTtIntake = new TimerTask() {
+            public void run() {
+                intakeonandthreeTransitionsDown();
+                wheelOff();
+            }
+        };
+
+        mTimerShoot3.schedule(mTtIntake, 1000);
+    }
+
+    private Timer mTimerShoot3;
+    private TimerTask mTtShoot3;
+
+    protected void shoot3Wiffles(){
+        intakeOff();
+        shootFar();
+
+        mTimerShoot3 = new Timer();
+        mTtShoot3 = new TimerTask() {
+            public void run() {
+                shootAllThree();
+            }
+        };
+
+        mTimerShoot3.schedule(mTtShoot3, 2000);
+    }
     protected void shootMotif(int greenPos, Pose2d pos1){
         double theta = pos1.getHeading() - Math.toDegrees(90);
         Pose2d pos2 = new Pose2d(pos1.getX()+Math.cos(theta)*DRIVE_TO_SHOOT_AMT, pos1.getY()+Math.sin(theta)*DRIVE_TO_SHOOT_AMT, pos1.getHeading());
@@ -1179,6 +1243,7 @@ public void moveToPosition4(){
 
     protected Pose2d startSmallTriBlue;
     protected Pose2d shootFarPosBLUE;
+    protected Pose2d shootFarfarPosBLUE;
     protected Pose2d PrepPosIntake1;
     protected Pose2d PrepPosIntake1BLUE;
 
@@ -1317,7 +1382,12 @@ public void moveToPosition4(){
     protected Pose2d helpcollect3;
     protected Pose2d helpcollect4;
     protected Pose2d helpcollect5;
-
+    protected  Pose2d moveToLever;
+    protected  Pose2d collect3;
+    protected  Pose2d helpCollectLever2;
+    protected  Pose2d helpCollectLever3;
+    protected  Pose2d helpCollectLever4;
+    protected  Pose2d helpCollectLever5;
 
     protected Pose2d moveToParkBlue;
     protected Pose2d collect2Blue;
@@ -1327,7 +1397,6 @@ public void moveToPosition4(){
     protected Pose2d helpcollect5Blue;
 
     protected Pose2d nearLeaver;
-    protected Pose2d collect3;
     protected Pose2d shootNear;
     protected Pose2d shootNearForSpline;
     protected Pose2d startBlueWall;
@@ -1617,7 +1686,8 @@ public void moveToPosition4(){
      public enum Action
      {
           WAIT,
-          TANGENT
+          TANGENT,
+          SLOW
      }
 
      public enum TeamElement
@@ -1700,6 +1770,7 @@ public void moveToPosition4(){
 
     private boolean newTraj = false;
 
+
     public void makeNewTraj()
     {
         try {
@@ -1712,7 +1783,7 @@ public void moveToPosition4(){
                     RobotConstants.MAX_ANG_VEL, RobotConstants.MAX_ANG_ACCEL);
         }catch(Exception e){
 			RobotLog.ww(TAG, "Error in makeNewTraj...not sure why.");
-    }
+        }
     }
 
     public void addParkPosition(ITD_Detector.Position parkEnum, Pose2d loc, Movement move, Heading head)
@@ -1767,7 +1838,8 @@ public void moveToPosition4(){
 	         {
 	             newTraj = false;
 		         //when not in debug, default to false unless something set it to true;
-	         }                                  
+	         }
+
 
              switch(move)
   	         {
@@ -1775,10 +1847,10 @@ public void moveToPosition4(){
                       //acts as a restart; should not normally be used
                       firstPose = loc;
                       justStarted = true;
-                      traj = new TrajectorySequenceBuilder(
-                              firstPose,
-                              defVelLim, defAccelLim,
-                              RobotConstants.MAX_ANG_VEL, RobotConstants.MAX_ANG_ACCEL);
+                          traj = new TrajectorySequenceBuilder(
+                                  firstPose,
+                                  defVelLim, defAccelLim,
+                                  RobotConstants.MAX_ANG_VEL, RobotConstants.MAX_ANG_ACCEL);
                       break;
                   case LINE:
                       switch (head)
@@ -2029,6 +2101,32 @@ public void moveToPosition4(){
                   newTraj = false;
                   traj.setTangent(value);
                   break;
+              case SLOW:
+                  try{  //Need to make a new traj in order to make this one slow
+                      makeNewTraj();
+                  }catch (Exception e){}    //error if that traj didn't have anything in it yet
+                  RobotLog.dd(TAG, "Setting traj as SLOW");
+                  if(value <= 0) {
+                      traj = new TrajectorySequenceBuilder(
+                              lastPose,
+                              slwVelLim, slwAccelLim,
+                              RobotConstants.SLW_ANG_VEL, RobotConstants.SLW_ANG_ACCEL);
+                  }
+                  else
+                  {
+                      TrajectoryVelocityConstraint vc =
+                              new MinVelocityConstraint(Arrays.asList(
+                                      new AngularVelocityConstraint(value/MAX_VEL*MAX_ANG_VEL),
+                                      new MecanumVelocityConstraint(value, DT_TRACK_WIDTH)
+                              ));
+                      TrajectoryAccelerationConstraint ac = new ProfileAccelerationConstraint(value/MAX_VEL*MAX_ACCEL);
+                      traj = new TrajectorySequenceBuilder(
+                              lastPose,
+                              vc, ac,
+                              value, value/MAX_VEL*RobotConstants.MAX_ANG_ACCEL);
+                  }
+                  break;
+
           }
      }
 

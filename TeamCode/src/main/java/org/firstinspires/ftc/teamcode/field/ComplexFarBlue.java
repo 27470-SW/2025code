@@ -61,7 +61,7 @@ public class ComplexFarBlue {
 
 
         route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
-        route.addLocation(route.shootGoalWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toDegrees(270));
+        route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR, Math.toDegrees(270));
         route.addFunction(route::intakeOff);
         route.addFunction(route::shootFar);
         route.shootMotif(1,route.shootFarPosBLUE );

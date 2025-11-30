@@ -53,10 +53,11 @@ public class SimpleFarBlue {
         route.addFunction(route::wheelOff);
 
        route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.collect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect3Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.helpcollect4Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.helpcollect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.collect2Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.helpcollect3Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.helpcollect4Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.SLOW, 10);
         route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
 

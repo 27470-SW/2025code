@@ -206,7 +206,7 @@ public class Shooter
     }
 public void stopWheel(){
         cps = 0.0;
-    if(shooterW != null) shooterW.setVelocity(cps);
+    if(shooterW != null) controlShooterW.setWheelVelocity(cps);
     if(shooterW2 != null) shooterW2.setVelocity(cps);
 
 }

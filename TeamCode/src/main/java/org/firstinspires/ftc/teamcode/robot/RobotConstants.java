@@ -355,8 +355,8 @@ public class RobotConstants
    */
 
 
-  public static double MAX_VEL = 60; //RR tune  maxVel 59.96
-  public static double MAX_ACCEL = 35;
+  public static double MAX_VEL = 80; //RR tune  maxVel 59.96
+  public static double MAX_ACCEL = 40;
   public static double MAX_ANG_VEL = Math.toRadians(180);
   public static double MAX_ANG_ACCEL = Math.toRadians(180);
 //old 2024
@@ -366,10 +366,10 @@ public class RobotConstants
 //  public static double MAX_ANG_VEL = Math.toRadians(180);
 //  public static double MAX_ANG_ACCEL = Math.toRadians(270);
 
-  public static double SLW_VEL = 35;
-  public static double SLW_ACCEL = 30;
-  public static double SLW_ANG_VEL = Math.toRadians(180);
-  //public static double SLW_ANG_ACCEL = Math.toRadians(120);
+  public static double SLW_VEL = 15;
+  public static double SLW_ACCEL = 15;
+  public static double SLW_ANG_VEL = Math.toRadians(90);
+  public static double SLW_ANG_ACCEL = Math.toRadians(90);
 
   public static TrajectoryVelocityConstraint defVelConstraint =
       new MinVelocityConstraint(Arrays.asList(
