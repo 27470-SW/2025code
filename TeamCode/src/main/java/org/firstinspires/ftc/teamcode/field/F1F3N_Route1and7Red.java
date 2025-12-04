@@ -41,11 +41,9 @@ public class F1F3N_Route1and7Red {
 
         //shoot pre loaded wiffles
         route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
-        route.addFunction(route::shootFar);
-        route.addEvent(Route.Action.WAIT,2);
-        route.shootMotif(1,route.shootfaronred );
-        route.addFunction(route::intakeonandthreeTransitionsDown);
-        route.addFunction(route::wheelOff);
+        route.addLocation(route.shootfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shoot3Wiffles);
+        route.addEvent(Route.Action.WAIT,3);
 
         //intake park human
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
@@ -68,10 +66,6 @@ public class F1F3N_Route1and7Red {
         // go to pos lever wiffles
         route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addEvent(Route.Action.SLOW,10);
-//        route.addLocation(route.helpCollectLever2, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.collect3, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.helpCollectLever3, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.helpCollectLever4, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
         //SHOOT  WIFFLES
         route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
@@ -85,8 +79,8 @@ public class F1F3N_Route1and7Red {
         switch (lastLocation){
             case GOAL4 :
                 route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
+                route.addEvent(Route.Action.SLOW,10);
                 route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addFunction(route::intakeOff);
                 //SHOOT  WIFFLES
                 route.addFunction(route::shootWiffleClose);
                 route.addEvent(Route.Action.WAIT, 1);

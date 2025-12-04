@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -44,7 +45,6 @@ public CrAzYintake crAzYIntake =null;
 public Lifter slides=null;
 public MotorComponent arm=null;
 public Shooter shooter =null;
-
     public double logIntakeCurSpd = 0.0;
 
     public MecanumBot()
@@ -288,6 +288,7 @@ public Shooter shooter =null;
         {
             arm.update();
         }
+
         double lftTime = updTimer.milliseconds();
         updTimer.reset();
         RobotLog.dd(TAG, "pose(11) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
@@ -399,6 +400,7 @@ public Shooter shooter =null;
 
 public  int armLevel;
 public  int slideLevel;
+
 
     //TODO: combine arm and slide together into a single level concept
     public void armLevelUp(){

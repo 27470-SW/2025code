@@ -184,7 +184,7 @@ public class Route
         intakePark = new Pose2d(sx * 31.3, -37, flip + sh*Math.toRadians(90));
         intakeParkWhiffles = new Pose2d(sx * 52, -37, flip + sh*Math.toRadians(90));
         shootParkWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
-        redGoal = new Pose2d(sx * 43.8, 57.5, flip + sh*Math.toRadians(217));
+        redGoal = new Pose2d(sx * 43.8, 57.5, flip + sh*Math.toRadians(39));
         blueGoal = new Pose2d(sx * -43.8, 57.5, flip + sh*Math.toRadians(143));
         blueWall  = new Pose2d(sx * -36, 62, flip + sh*Math.toRadians(270));
         aroundPartnerBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
@@ -1041,6 +1041,24 @@ public void moveToPosition4(){
         };
 
         mTimerShoot3.schedule(mTtShoot3, 2000);
+    }
+
+
+    private Timer mTimerShoot3close;
+    private TimerTask mTtShoot3close;
+
+    protected void shoot3WifflesClose(){
+        intakeOff();
+        shootWiffleClose();
+
+        mTimerShoot3close = new Timer();
+        mTtShoot3close = new TimerTask() {
+            public void run() {
+                shootAllThree();
+            }
+        };
+
+        mTimerShoot3close.schedule(mTtShoot3close, 2000);
     }
     protected void shootMotif(int greenPos, Pose2d pos1){
         double theta = pos1.getHeading() - Math.toDegrees(90);

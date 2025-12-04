@@ -830,6 +830,7 @@ public class MecanumTeleop extends InitLinearOpMode
             robot.shooter.resetTransition();
             robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
             robot.shooter.disengageAutoTraj();
+            robot.shooter.wheelGuardsDown();
             RobotLog.dd(TAG,"intakeon");
         }
 

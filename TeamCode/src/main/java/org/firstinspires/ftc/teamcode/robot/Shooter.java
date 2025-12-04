@@ -46,6 +46,10 @@ public class Shooter
     public boolean initShooter()
     {
         boolean success = false;
+        try{
+            wheelGuards = hwMap.get(Servo.class, "wheelguards");
+        }
+        catch (Exception e){}
         try
         {
             shooterW = hwMap.get(DcMotorEx.class, "shoot");
@@ -364,8 +368,19 @@ public void stopWheel(){
         if(shooterW2 != null) shooterW2.setVelocity(cps);
 
     }
+    public void wheelGuardsUp(){
+        if(wheelGuards != null){
+            wheelGuards.setPosition(WHEEL_GUARDS_OFF);
+        }
+    }
+    public void wheelGuardsDown(){
+        if (wheelGuards != null){
+            wheelGuards.setPosition(WHEEL_GUARDS_ON);
+        }
+    }
 
     public void shoot(BALL_CHOICE ball){
+        wheelGuardsUp();
         switch (ball){
             case LEFT:
                 shooter1.startTransition();
@@ -419,6 +434,7 @@ public void stopWheel(){
     private double cps = 0;
     private double v0 = 0.0;
     public boolean engageAutoTraj = false;
+    public Servo wheelGuards =null;
 
     private DcMotor.RunMode shtmode = RUN_USING_ENCODER;
 

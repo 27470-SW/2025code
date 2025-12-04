@@ -351,6 +351,67 @@ public class MecanumDriveLRR extends MecanumDrive
 
     public List<DcMotorEx> getMotors() {return motors;}
 
+
+    // Stall detection configuration
+    public static boolean ENABLE_STALL_PROTECTION = true;
+    public static double STALL_VELOCITY_THRESHOLD = 2.0; // inches/sec - velocity below this is considered stalled
+    public static double STALL_POWER_THRESHOLD = 0.15;   // Motor power above this will trigger stall check
+    public static double STALL_DETECTION_TIME_MS = 150;  // Milliseconds before triggering stall protection
+    
+    // Stall detection state
+    private long stallDetectionStartTime = 0;
+    private boolean isStalled = false;
+    private double lastCommandedPowerMagnitude = 0;
+    /**
+     * Check if the robot appears to be stalled based on wheel velocities.
+     * Returns true if 2 or more wheels are moving very slowly despite commanded power.
+     * This protects against the 20A fuse blowing (2 stalled motors = ~20A).
+     */
+    private boolean checkIfStalled(double commandedPowerMagnitude) {
+        if (!ENABLE_STALL_PROTECTION) {
+            return false;
+        }
+        
+        // Only check for stalls when significant power is commanded
+        if (commandedPowerMagnitude < STALL_POWER_THRESHOLD) {
+            stallDetectionStartTime = 0;
+            return false;
+        }
+        
+        // Get current wheel velocities (in inches/sec)
+        List<Double> velocities = getWheelVelocities();
+        
+        // Count how many wheels are stalled
+        int stalledWheelCount = 0;
+        for (Double velocity : velocities) {
+            if (Math.abs(velocity) <= STALL_VELOCITY_THRESHOLD) {
+                stalledWheelCount++;
+            }
+        }
+        
+        // Consider it a dangerous stall if 2 or more motors are stalled
+        // (2 motors at 10A each = 20A fuse limit)
+        boolean isDangerousStall = (stalledWheelCount >= 2);
+        
+        if (isDangerousStall) {
+            // Start timing if this is the first detection
+            if (stallDetectionStartTime == 0) {
+                stallDetectionStartTime = System.currentTimeMillis();
+            }
+            
+            // Check if we've been stalled long enough
+            long stalledDuration = System.currentTimeMillis() - stallDetectionStartTime;
+            if (stalledDuration >= STALL_DETECTION_TIME_MS) {
+                return true;
+            }
+        } else {
+            // Reset the timer if not enough wheels are stalled
+            stallDetectionStartTime = 0;
+        }
+        
+        return false;
+    }
+
     //@NonNull
     @Override
     public List<Double> getWheelPositions() {
@@ -372,9 +433,49 @@ public class MecanumDriveLRR extends MecanumDrive
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
+
+        if(ENABLE_STALL_PROTECTION) {
+            // Calculate magnitude of commanded power
+            double commandedPowerMagnitude = Math.sqrt(v * v + v1 * v1 + v2 * v2 + v3 * v3) / 2.0; // Divide by 2 since there are 4 motors
+
+            // Check if driver is reversing direction (opposite from what caused stall)
+            boolean isReversingDirection = false;
+            if (isStalled && lastCommandedPowerMagnitude > STALL_POWER_THRESHOLD) {
+                // Calculate dot product to see if new direction is opposite to previous
+                // Simple heuristic: if magnitude is similar but signs flipped, it's likely a reversal
+                double powerSignSum = Math.signum(v) + Math.signum(v1) + Math.signum(v2) + Math.signum(v3);
+                if (Math.abs(powerSignSum) < 2.0) { // Most motors changed direction
+                    isReversingDirection = true;
+                }
+            }
+
+            // Check for stall condition
+            if (checkIfStalled(commandedPowerMagnitude) && !isReversingDirection) {
+                if (!isStalled) {
+                    // First detection of stall
+                    RobotLog.ww(TAG, "STALL DETECTED - Cutting drive power to protect fuse!");
+                    isStalled = true;
+                }
+
+                // Cut power to zero to protect the fuse
+                v = 0;
+                v1 = 0;
+                v2 = 0;
+                v3 = 0;
+            } else if (isStalled && (isReversingDirection || commandedPowerMagnitude < STALL_POWER_THRESHOLD)) {
+                // Clear stall state if driver changed direction or reduced power
+                RobotLog.dd(TAG, "Stall cleared - resuming normal operation");
+                isStalled = false;
+                stallDetectionStartTime = 0;
+            }
+
+            // Store the commanded power for next iteration
+            lastCommandedPowerMagnitude = commandedPowerMagnitude;
+        }
+        // Apply motor powers
         if (leftFront  != null) leftFront.setPower(v);
         if (leftRear   != null) leftRear.setPower(v1);
-        if (leftRear   != null) rightRear.setPower(v2);
+        if (rightRear  != null) rightRear.setPower(v2);
         if (rightFront != null) rightFront.setPower(v3);
     }
 

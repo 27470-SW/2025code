@@ -4,11 +4,16 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
+import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.example.meepmeeptesting.Field.StartPos.*;
+import static com.example.meepmeeptesting.RobotConstants.*;
 import static com.example.meepmeeptesting.RobotConstants.TrajEnum.*;
 
 import org.rowlandhall.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
@@ -34,15 +40,15 @@ public abstract class Route
     public final static TrajectoryVelocityConstraint defVelLim;
     public final static TrajectoryAccelerationConstraint defAccelLim;
 
-    public final static TrajectoryVelocityConstraint wobVelLim;
-    public final static TrajectoryAccelerationConstraint wobAccelLim;
+    public final static TrajectoryVelocityConstraint slwVelLim;
+    public final static TrajectoryAccelerationConstraint slwAccelLim;
 
     static
 	{
         defVelLim = RobotConstants.defVelConstraint;
         defAccelLim = RobotConstants.defAccelConstraint;
-        wobVelLim = RobotConstants.slwVelConstraint;
-        wobAccelLim = RobotConstants.slwAccelConstraint;
+        slwVelLim = RobotConstants.slwVelConstraint;
+        slwAccelLim = RobotConstants.slwAccelConstraint;
         System.out.println("Init static block");
      }
 
@@ -78,7 +84,7 @@ public abstract class Route
 
          totalDur = 0;
 
-        goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
+        //goalLocation = alliance==RED?RED_GOAL_POSE:BLUE_GOAL_POSE;
          /* All points of interests will be based off of quadrant I - positive x, positive y */
          /* Reflection over the x-axis will be done for the alliance side */
          /* Reflection over the y-axis will be done on which side you line up */
@@ -95,9 +101,16 @@ public abstract class Route
              sf = 0;
              sx = -1;
              flip = Math.toRadians(180);
-
+             if (startPos == START_SAMPLES)
+			 {
+                 /* Blue Right quadrant II */
+                 sf = 1;
+                 sr = 1;
+             }
+			 else
+			 {
                  sr = 0;
-
+             }
          }
 		 else
 		 {
@@ -109,20 +122,30 @@ public abstract class Route
              sf = -1;
              sx =1;
              flip = Math.toRadians(0);
-
-
+             if (startPos == START_SPECIMENS)
+			 {
+                 /* Red Right quadrant IV */
+                 sf = 0;
+                 sr = 1;
+             }
+		     else
+		     {
                  /* Red Left quadrant III */
                  sr = 0;
 
-
+             }
          }
 
+         if (startPos == START_SAMPLES)
+         {
+             strtY = 0.5 * ITD_Field.tileWidth;
+          }
+         else
+         {
+             strtY = -1.5 * ITD_Field.tileWidth;
+         }
 
-
-             strtY = -1.5 * Decode_Field.tileWidth;
-
-
-         strtX =  3.0f * Decode_Field.tileWidth - botBackToCtr;
+         strtX =  3.0f * ITD_Field.tileWidth - botBackToCtr;
 
          strtH = Math.toRadians(180.0);
 

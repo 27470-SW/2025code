@@ -97,6 +97,8 @@ public class RobotConstants
   public static int SHOOT_FAR_TRAJ = -1250;
     public static double SHOOT_SERVO_FAR = 0.8;
     public static double SHOOT_SERVO_CLOSE = 0.15;
+    public static double WHEEL_GUARDS_ON = 0.75;
+    public static double WHEEL_GUARDS_OFF = 0.25;
   public static double DWV_M = 4.25;
   public static double DWV_K = 340;
   public static double DWV_B = -570;

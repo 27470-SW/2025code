@@ -2,9 +2,9 @@ package com.example.meepmeeptesting;
 
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ITD_Field extends Field
+public class Decode_Field extends Field
 {
-    public ITD_Field()
+    public Decode_Field()
     {
         super("PowerPlay");
         setHasVuMarks(false);

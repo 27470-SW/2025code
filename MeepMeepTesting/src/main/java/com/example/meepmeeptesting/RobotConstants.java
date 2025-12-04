@@ -16,7 +16,8 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class RobotConstants
 {
-  //Indicates whether to use InitTrajectories, InitTrajectories2, or Both for the Auton route
+    public static final double SLW_ANG_ACCEL = Math.toRadians(90);
+    //Indicates whether to use InitTrajectories, InitTrajectories2, or Both for the Auton route
   public static TrajEnum trajType = TrajEnum.INIT_TRAJ_2;
 
   //params map is WIP
