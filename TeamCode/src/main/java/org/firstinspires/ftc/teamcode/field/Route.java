@@ -177,23 +177,27 @@ public class Route
 
         intakeGoal = new Pose2d(sx * 31.3, 8, flip + sh*Math.toRadians(90));
         intakeGoalWhiffles = new Pose2d(sx * 55 , 8, flip + sh*Math.toRadians(90));
-        shootGoalWhiffles = new Pose2d(sx * 60, 30, flip + sh*Math.toRadians(0));
         intakeGate = new Pose2d(sx * 31.3, -14, flip + sh*Math.toRadians(90));
         intakeGateWhiffles = new Pose2d(sx * 52, -14, flip + sh*Math.toRadians(90));
         shootGateWhiffles = new Pose2d(sx * 24, 43.1, flip + sh*Math.toRadians(30));
         intakePark = new Pose2d(sx * 31.3, -37, flip + sh*Math.toRadians(90));
         intakeParkWhiffles = new Pose2d(sx * 52, -37, flip + sh*Math.toRadians(90));
         shootParkWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
-        redGoal = new Pose2d(sx * 43.8, 57.5, flip + sh*Math.toRadians(39));
-        blueGoal = new Pose2d(sx * -43.8, 57.5, flip + sh*Math.toRadians(143));
+        redGoal = new Pose2d(sx * 48.41, 47.94, flip + sh*Math.toRadians(38.5));
+        blueGoal = new Pose2d(sx * -48.41, 47.94, flip + sh*Math.toRadians(128.5));
         blueWall  = new Pose2d(sx * -36, 62, flip + sh*Math.toRadians(270));
         aroundPartnerBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
-        intakeGateBlue = new Pose2d(sx * -35, -16, flip + sh*Math.toRadians(270));
-        intakeGateWhifflesBlue = new Pose2d(sx * -66, -15, flip + sh*Math.toRadians(270));
-        shootGateWhifflesBlue = new Pose2d(sx * -30, 43.1, flip + sh*Math.toRadians(150));
+
+
+        moveToLever = new Pose2d(17.25, -22.40 ,Math.toRadians(104.35));
+        helpCollectLever5 = new Pose2d(56.36, -14,Math.toRadians(104.49));
+
+        intakeGateBlue = new Pose2d(sx * -20.25, -26.40, flip + sh*Math.toRadians(-75.65));
+        intakeGateWhifflesBlue = new Pose2d(sx * -56.36, -14, flip + sh*Math.toRadians(-75.51));
+        shootGateWhifflesBlue = new Pose2d(sx * -20.03,10.72,flip + sh*Math.toRadians(130.37));
         aroundWhiffles = new Pose2d(sx * -28, -5, flip + sh*Math.toRadians(150));
         intakeGoalBlue = new Pose2d(sx * -40, 7, flip + sh*Math.toRadians(270));
-        shootGoalWhifflesBlue = new Pose2d(sx * -30, 48.5, flip + sh*Math.toRadians(150));
+        shootGoalWhifflesBlue = new Pose2d(sx * -20.03, 10.72, flip + sh*Math.toRadians(130.37));
         intakeGoalWhifflesBlue = new Pose2d(sx * -60 , 8.5, flip + sh*Math.toRadians(270));
         intakeParkBlue = new Pose2d(sx * -13, -29.4, flip + sh*Math.toRadians(270));
         intakeParkWhifflesBlue = new Pose2d(sx * -51, -29.4, flip + sh*Math.toRadians(270));
@@ -230,13 +234,15 @@ public class Route
         intakeloading4 = new Pose2d(sx * 50, 7 , flip + sh*Math.toRadians(90));
         preleverwiffle= new Pose2d(sx * 15, -17 , flip + sh*Math.toRadians(90));
         intakewifflelever = new Pose2d(sx * 52, -16 , flip + sh*Math.toRadians(90));
-        hitlever = new Pose2d(sx * 54, -11 , flip + sh*Math.toRadians(90));
+        hitlever = new Pose2d(sx * 56, -6.65 , flip + sh*Math.toRadians(90));
+        prehitlever = new Pose2d(sx * 42, -6.65 , flip + sh*Math.toRadians(90));
+
         prenearpos = new Pose2d (sx * 17,-10,flip +sh*Math.toRadians(40));
         nearpos = new Pose2d (sx * 15,37,flip +sh*Math.toRadians(35));
         pregotoparkwiffle = new Pose2d (sx * 15,-40,flip +sh*Math.toRadians(90));
         gotoparkwiffle = new Pose2d (sx * 50,-40,flip +sh*Math.toRadians(90));
-        pregotogoalwiffles= new Pose2d (sx * 17,6,flip +sh*Math.toRadians(90));
-        gotogoalwiffles= new Pose2d (sx * 45,6,flip +sh*Math.toRadians(90));
+        pregotogoalwiffles= new Pose2d (sx * 31,7,flip +sh*Math.toRadians(90));
+        gotogoalwiffles= new Pose2d (sx * 53,7,flip +sh*Math.toRadians(90));
 
         parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
         parkInside1Blue = new Pose2d(sx * -16,38,flip +sh*Math.toRadians(90));
@@ -256,18 +262,15 @@ public class Route
 
         moveToPark = new Pose2d (sx * 40, -41.75, flip + sh*Math.toRadians(70));
         collect2 = new Pose2d (sx * 56, -46, flip + sh*Math.toRadians(67));
-        helpcollect5 = new Pose2d (sx * 76, -48, flip + sh*Math.toRadians(65));
         helpcollect4 = new Pose2d (sx * 68, -48, flip + sh*Math.toRadians(65));
         helpcollect3 = new Pose2d (sx * 62, -47, flip + sh*Math.toRadians(66));
         helpcollect2= new Pose2d (sx * 50, -45, flip + sh*Math.toRadians(68));
 
 
-        moveToLever = new Pose2d (sx * 50, -17, flip + sh*Math.toRadians(70));
         collect3 = new Pose2d (sx * 56, -20, flip + sh*Math.toRadians(67));
         helpCollectLever2= new Pose2d (sx * 50, -19, flip + sh*Math.toRadians(68));
         helpCollectLever3 = new Pose2d (sx * 62, -21, flip + sh*Math.toRadians(66));
         helpCollectLever4 = new Pose2d (sx * 68, -22, flip + sh*Math.toRadians(65));
-        helpCollectLever5 = new Pose2d (sx * 76, -27, flip + sh*Math.toRadians(65));
 
 
 
@@ -281,8 +284,6 @@ public class Route
 
 
 
-        shootfaronred = new Pose2d (sx * 30, -60, flip + sh*Math.toRadians(47.5));
-        shootfarfaronred = new Pose2d (sx * 30, -60, flip + sh*Math.toRadians(47.5));
 
         nearLeaver = new Pose2d (sx * 17, -15, flip + sh*Math.toRadians(90));
         shootNear = new Pose2d (sx * 15, 37, flip + sh*Math.toRadians(25));
@@ -407,14 +408,19 @@ public class Route
         back_drop = new Pose2d(sx*30, 56,flip + sh*Math.toRadians(270));
         red_side =new Pose2d(sx*58,3,flip + sh*Math.toRadians(270));
 
-
+        shootfaronredpre = new Pose2d ( 15, -60, Math.toRadians(70));
         shootfaronred = new Pose2d ( 15, -58, Math.toRadians(70));
-        shootfarfaronred = new Pose2d (15, -58,Math.toRadians(70));
-        moveToPark = new Pose2d( 15,-40,Math.toRadians(90));
-        helpcollect5 = new Pose2d(53,-41,Math.toRadians(90));
-        moveToLever = new Pose2d(15, -17 ,Math.toRadians(90));
-        helpCollectLever5 = new Pose2d(63, -16 ,Math.toRadians(90));
-        shootGoalWhiffles = new Pose2d(15,37,Math.toRadians(35));
+        shootfarfaronred = new Pose2d (16, -57,Math.toRadians(70));
+        shootfarfarfaronred = new Pose2d (15, -57,Math.toRadians(70));
+        shootfarfarfarfaronred = new Pose2d (15, -58,Math.toRadians(70));
+        moveToPark = new Pose2d( 26,-42,Math.toRadians(90));
+        helpcollect5 = new Pose2d(53,-42,Math.toRadians(90));
+
+
+        moveToLever = new Pose2d(17.25, -22.40 ,Math.toRadians(104.35));
+        helpCollectLever5 = new Pose2d(56.36, -14,Math.toRadians(104.49));
+        shootGoalWhiffles = new Pose2d(-20.03,10.72,Math.toRadians(49.63));
+        route5movementfromstart= new Pose2d(25,37,Math.toRadians(35));
 
 
 
@@ -1064,35 +1070,36 @@ public void moveToPosition4(){
         double theta = pos1.getHeading() - Math.toDegrees(90);
         Pose2d pos2 = new Pose2d(pos1.getX()+Math.cos(theta)*DRIVE_TO_SHOOT_AMT, pos1.getY()+Math.sin(theta)*DRIVE_TO_SHOOT_AMT, pos1.getHeading());
         Pose2d pos3 = new Pose2d(pos2.getX()+Math.cos(theta)*DRIVE_TO_SHOOT_AMT, pos2.getY()+Math.sin(theta)*DRIVE_TO_SHOOT_AMT, pos2.getHeading());
-       switch (motif)
+        addEvent(Route.Action.WAIT, .75);
+        switch (motif)
        {
            case SHOOTGPP:
+
                switch (greenPos){
-                   case 1:  addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                   case 1:
                             addFunction(this::shoot1);
                             break;
-                   case 2: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                   case 2:
                             addFunction(this::shoot2);
                             break;
-                   case 3: addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                   case 3:
                             addFunction(this::shoot3);
                             break;
                }
-               addEvent(Route.Action.WAIT, 2.0);
+               addEvent(Route.Action.WAIT, .5);
                switch (greenPos){
-                   case 1: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                   case 1:
                        addFunction(this::shoot2);
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+
                        addFunction(this::shoot3);
                        break;
-                   case 2:addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                   case 2:
                        addFunction(this::shoot1);
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+
                        addFunction(this::shoot3);
                        break;
-                   case 3: addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                   case 3:
                        addFunction(this::shoot1);
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
                        break;
                }
@@ -1100,38 +1107,33 @@ public void moveToPosition4(){
                break;
            case SHOOTPGP:
                switch (greenPos){
-                   case 1: addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                   case 1:
                        addFunction(this::shoot2);
                        break;
                    case 2:
-                   case 3: addLocation(pos1,LINE, Heading.HEAD_LINEAR);
+                   case 3:
                        addFunction(this::shoot1);
                        break;
                }
-               addEvent(Route.Action.WAIT, 2.0);
+               addEvent(Route.Action.WAIT, .5);
                switch (greenPos){
                    case 1:
-                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot1);
                        break;
                    case 2:
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
                        break;
                    case 3:
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
                }
-               addEvent(Route.Action.WAIT, 2.0);
+               addEvent(Route.Action.WAIT, .50);
                switch (greenPos){
                    case 1:
                    case 2:
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
                    case 3:
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
                        break;
                }
@@ -1141,47 +1143,38 @@ public void moveToPosition4(){
            case SHOOTPPG:
                switch (greenPos){
                    case 1:
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
-                   addEvent(Route.Action.WAIT, 3.0);
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                   addEvent(Route.Action.WAIT, .75);
                        addFunction(this::shoot3);
                        break;
                    case 2:
-                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot1);
-                       addEvent(Route.Action.WAIT, 3.0);
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
+                       addEvent(Route.Action.WAIT, .75);
                        addFunction(this::shoot3);
                        break;
                    case 3:
-                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
 
                        addFunction(this::shoot1);
 
-                       addEvent(Route.Action.WAIT, 3.0);
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
+                       addEvent(Route.Action.WAIT, .75);
 
                        addFunction(this::shoot2);
                        break;
                }
-               addEvent(Route.Action.WAIT, 3.0);
+               addEvent(Route.Action.WAIT, .75);
                switch (greenPos){
                    case 1:
-                       addLocation(pos1,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot1);
                        break;
                    case 2:
-                       addLocation(pos2,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot2);
                        break;
 
                    case 3:
-                       addLocation(pos3,LINE, Heading.HEAD_LINEAR);
                        addFunction(this::shoot3);
                        break;
                }
-               addEvent(Route.Action.WAIT, 1);
+               addEvent(Route.Action.WAIT, .5);
                break;
        }
      }
@@ -1285,8 +1278,10 @@ public void moveToPosition4(){
 
      protected Pose2d preleverwiffle;
      protected Pose2d intakewifflelever;
-     protected Pose2d hitlever;
-     protected Pose2d prenearpos;
+     protected Pose2d prehitlever;
+    protected Pose2d hitlever;
+
+    protected Pose2d prenearpos;
      protected Pose2d nearpos;
      protected Pose2d shootFarPos;
 
@@ -1324,6 +1319,8 @@ public void moveToPosition4(){
     protected Pose2d intakeGoalBlue;
     protected Pose2d intakeGoalWhiffles;
     protected Pose2d shootGoalWhiffles;
+    protected Pose2d route5movementfromstart;
+
 
     protected Pose2d intakeGate;
     protected Pose2d intakeGateBlue;
@@ -1392,7 +1389,11 @@ public void moveToPosition4(){
     protected Pose2d startRedFar;
     protected Pose2d startRedWall;
     protected Pose2d shootfaronred;
+    protected Pose2d shootfaronredpre;
     protected Pose2d shootfarfaronred;
+    protected Pose2d shootfarfarfaronred;
+    protected Pose2d shootfarfarfarfaronred;
+
     protected Pose2d startBlueFar;
     protected Pose2d moveToPark;
     protected Pose2d collect2;

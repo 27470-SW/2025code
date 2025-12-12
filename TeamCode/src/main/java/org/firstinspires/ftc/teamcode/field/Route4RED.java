@@ -42,7 +42,8 @@ public class Route4RED {
 
         route.addLocation(route. redWall, START, HEAD_LINEAR);
         //Shoot preloaded whiffles.
-        route.addLocation(route. aroundPartner, LINE, HEAD_LINEAR, Math.toDegrees(0));
+        //shootGoalWhiffles is really the point for big triangle
+        route.addLocation(route. shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
         route.addFunction(route::shoot3Wiffles);
         route.addEvent(Route.Action.WAIT,3);
 //intake spot 4

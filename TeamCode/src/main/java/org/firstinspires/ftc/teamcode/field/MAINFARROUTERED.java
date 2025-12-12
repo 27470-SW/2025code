@@ -9,7 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
 
-public class Route2Red {
+public class MAINFARROUTERED {
     String TAG = "SAMPLE_ROUTE";
     Route route;
     private Field.Parks stackToBack;
@@ -18,7 +18,7 @@ public class Route2Red {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public Route2Red(Route constructorRoute) {
+    public MAINFARROUTERED(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -35,68 +35,84 @@ public class Route2Red {
         this.teamElement = teamElement;
         this.alliance = alliance;
     */
-        //  qualifierRoute(startPos,parkPos,firstLocation);
+       //  qualifierRoute(startPos,parkPos,firstLocation);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        route.addLocation(route.startRedFar, START, HEAD_LINEAR);
-        // shoot preloaded
-        route.addFunction(route::shootFar);
-        route.addEvent(Route.Action.WAIT,1);
-        route.shootMotif(1,route.shootfaronred );
-        route.addFunction(route::intakeonandthreeTransitionsDown);
-        route.addFunction(route::resetTrajAng);
-        route.addFunction(route::wheelOff);
 
-        //Intake wiffles
-        route.addFunction(route::intakeOn);
+        //shoot pre loaded wiffles
+        route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
+        route.addFunction(route::shootFar);
+        route.addLocation(route.shootfarfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shoot3Wiffles);
+        route.addEvent(Route.Action.WAIT,3);
+
+        //intake park human
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.SLOW,10);
+
+//        route.addLocation(route.helpcollect2, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.helpcollect3, LINE, HEAD_LINEAR, Math.toRadians(0));
+//        route.addLocation(route.helpcollect4, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpcollect5, LINE, HEAD_LINEAR, Math.toRadians(0));
+       
+	    //shoot park wiffles
+      	route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
+        route.addLocation(route.shootfarfaronred, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
         route.addFunction(route::intakeOff);
-        //shooting
         route.addFunction(route::shootFar);
-        route.addEvent(Route.Action.WAIT, .2);
-        route.shootMotif(1, route.shootfaronred);
-        route.makeNewTraj();
+        route.shootMotif(1,route.shootfarfaronred );
         route.addFunction(route::intakeonandthreeTransitionsDown);
-        route.addFunction(route::resetTrajAng);
+        route.addFunction(route::wheelOff);
+        // go to pos lever wiffles
+        route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.SLOW,10);
+        route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
+        //SHOOT  WIFFLES
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
+        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addFunction(route::intakeOff);
+        route.addFunction(route::shootWiffleClose);
+        route.shootMotif(1,route.shootGoalWhiffles );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);
 
-        //intaking
-        route.addFunction(route::intakeOn);
-        route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addLocation(route.collect3, LINE, HEAD_LINEAR, Math.toRadians(0));
-
-        switch (lastLocation) {
-            case GOAL4:
-                //shoot Lever Artifacts
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(190));
-               // shooting
+        switch (lastLocation){
+            case GOAL4 :
+                route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
+                route.addEvent(Route.Action.SLOW,10);
+                route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
+                //SHOOT  WIFFLES
                 route.addFunction(route::shootWiffleClose);
+                route.addEvent(Route.Action.WAIT, 1);
+                route.shootMotif(1,route.nearpos );
+                route.addFunction(route::intakeonandthreeTransitionsDown);
+                route.addFunction(route::intakeOff);
+                route.addFunction(route::wheelOff);
+
+                // route.addFunction(route::transitonDown);
+
+
+                break;
+            case PARK2:
+                route.addLocation(route.pregotoparkwiffle,LINE,HEAD_LINEAR);
+                route.addFunction(route::intakeOn);
+                route.addLocation(route.gotoparkwiffle,LINE,HEAD_LINEAR);
+                route.addLocation(route.prenearpos, LINE, HEAD_LINEAR);
                 route.addFunction(route::intakeOff);
 
-                route.addEvent(Route.Action.WAIT, 3);
-                route.shootMotif(1,route.shootNear);
+                route.addLocation(route.nearpos, LINE, HEAD_LINEAR);
+                route.addEvent(Route.Action.WAIT, 0.2);
+                route.addFunction(route::transitonUp);
+                route.addEvent(Route.Action.WAIT, 0.2);
+               // route.addFunction(route::transitonDown);
 
-                route.addFunction(route::intakeonandthreeTransitionsDown);
-                route.addFunction(route::resetTrajAng);
-                route.addFunction(route::wheelOff);
                 break;
-            case HUMAN1:
-                //wont do prob cuz no time
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
-                route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addLocation(route.collect1, LINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addEvent(Route.Action.TANGENT, Math.toRadians(100));
-                route.addLocation(route.shootNear2, SPLINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addEvent(Route.Action.WAIT, 0.1);
-                break;
-
         }
+
+
     }
-
-
-
-
+    private double moveArmDelay = 0;
 
 
     private void deliverSample(){
@@ -152,11 +168,10 @@ public class Route2Red {
         }
     }
 
-   private void moveStartToLeft(){
+
+    private void moveStartToLeft(){
 
     }
-
-
 
 
 

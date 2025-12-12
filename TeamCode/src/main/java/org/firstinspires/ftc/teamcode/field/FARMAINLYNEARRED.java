@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.field;
 
-import static org.firstinspires.ftc.teamcode.field.Field.Num_shots.*;
+import static org.firstinspires.ftc.teamcode.field.Field.Num_shots.THREE;
 import static org.firstinspires.ftc.teamcode.field.Route.Movement.*;
 import static org.firstinspires.ftc.teamcode.field.Route.Heading.*;
 import static org.firstinspires.ftc.teamcode.field.Route.TeamElement.*;
@@ -11,8 +11,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
 
-public class Route5RED {
-    String TAG = "ROUTE5RED";
+public class FARMAINLYNEARRED {
+    String TAG = "FARMAINLYNEARRED";
     Route route;
     private Field.Parks stackToBack;
     private Field.Parks pixelStack;
@@ -20,7 +20,7 @@ public class Route5RED {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public Route5RED(Route constructorRoute) {
+    public FARMAINLYNEARRED(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -37,68 +37,92 @@ public class Route5RED {
         this.teamElement = teamElement;
         this.alliance = alliance;
     */
-       //  qualifierRoute(startPos,parkPos,firstLocation);
+        //  qualifierRoute(startPos,parkPos,firstLocation);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        route.addLocation(route. redGoal, START, HEAD_LINEAR);
-        route.addLocation(route. aroundPartner, LINE, HEAD_LINEAR, Math.toDegrees(0));
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,3);
-//intake spot 4
-        route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-        route.addEvent(Route.Action.SLOW,10);
-        route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
-        //SHOOT  WIFFLES
-        route.addLocation(route.nearpos,LINE,HEAD_LINEAR);
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT, 3);
 
-//intake spot3
+
+
+        route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
+        route.addLocation(route.shootfaronred,LINE,HEAD_LINEAR,Math.toRadians(0));
+        route.addFunction(route::shootFar);
+        route.addLocation(route.shootfarfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.shootfarfarfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.shootfarfarfarfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shoot3Wiffles);
+        route.addEvent(Route.Action.WAIT,1.7);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+
+
+
+
+
+        //intake spot3
+        //route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
+        route.addEvent(Route.Action.SLOW,25);
         route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shootWiffleClose);
+        //route.makeNewTraj();
+       // route.addEvent(Route.Action.TANGENT, Math.toRadians(200));
+       // route.addLocation(route.hitlever, LINE, HEAD_LINEAR, Math.toRadians(0));
+        //route.addLocation(route.prehitlever, LINE, HEAD_LINEAR, Math.toRadians(0));
+       // route.addEvent(Route.Action.WAIT,.7);
+
+
         //SHOOT  WIFFLES
         //close
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(230));
+        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
         route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shootWiffleClose);
         route.shootMotif(1,route.shootGoalWhiffles );
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);
+
+//intake spot 4
+        route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
+        route.addEvent(Route.Action.SLOW,0);
+        route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
+        route.addFunction(route::shootWiffleClose);
+
+        //SHOOT  WIFFLES
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
+        route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.shootMotif(1,route.shootGoalWhiffles );
+        route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addFunction(route::intakeOff);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
+
+
 
 
         if (numshot==THREE) {
             route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
             route.addEvent(Route.Action.SLOW,10);
             route.addLocation(route.helpcollect5, LINE, HEAD_LINEAR, Math.toRadians(0));
+            route.addFunction(route::shootWiffleClose);
 
             //shoot park wiffles
             route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
-            route.addLocation(route.shootfarfaronred, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
+            route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(100));
+            route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(100));
             route.addFunction(route::intakeOff);
             route.addFunction(route::shootFar);
-            route.shootMotif(1,route.shootfarfaronred );
+            route.shootMotif(1,route.shootGoalWhiffles );
             route.addFunction(route::intakeonandthreeTransitionsDown);
             route.addFunction(route::wheelOff);
             //route.shootMotif(2, );
         } else{
-            //Shoot whiffles that are near the goal.
-            route.addLocation(route.intakeGoal, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addLocation(route.intakeGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addLocation(route.shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addFunction(route::intakeOff);
-            //route.shootMotif(2, );
 
-            route.addFunction(route::intakeOn);
-            route.addLocation(route. intakePark, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addLocation(route. intakeParkWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addLocation(route. shootParkWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
-            route.addFunction(route::intakeOff);
         }
-        //Shoot whiffles near the parking spot.
 
     }
+
+
+
+
 
 
     private void deliverSample(){
@@ -154,9 +178,10 @@ public class Route5RED {
         }
     }
 
-    private void moveStartToLeft(){
+   private void moveStartToLeft(){
 
     }
+
 
 
 

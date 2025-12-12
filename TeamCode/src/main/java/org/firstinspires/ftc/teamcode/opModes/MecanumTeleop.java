@@ -103,6 +103,9 @@ public class MecanumTeleop extends InitLinearOpMode
                 if (robot.arm != null) {
                     robot.initArmMot();
                 }
+                if (robot.park != null){
+                    robot.initParkMot();
+                }
                 if(robot.shooter != null){
                     robot.shooter.initPos();
                     robot.shooter.spinShooterW(distanceToTheGoal);
@@ -336,7 +339,6 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
         boolean autoDriveAngle = gpad1.pressed(ManagedGamepad.Button.B);
         boolean resetPose = gpad1.just_pressed(ManagedGamepad.Button.D_LEFT) && gpad1.pressed(ManagedGamepad.Button.START);
-
         if(resetPose){
             mechDrv.setRealPoseEstimate(alliance==RED?RED_HUMAN_POSE:BLUE_HUMAN_POSE);
         }
@@ -826,7 +828,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
         if (intakeOn)
         {
-            robot.crAzYIntake.setPwr(-1);
+            robot.crAzYIntake.setPwr(1);
             robot.shooter.resetTransition();
             robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
             robot.shooter.disengageAutoTraj();
@@ -836,7 +838,7 @@ public class MecanumTeleop extends InitLinearOpMode
 
         else if (intakeRev)
         {
-            robot.crAzYIntake.setPwr(1);
+            robot.crAzYIntake.setPwr(-1);
             RobotLog.dd(TAG,"intakereverse");
 
         }
@@ -874,15 +876,27 @@ public class MecanumTeleop extends InitLinearOpMode
         boolean yUp = gpad2.just_pressed(ManagedGamepad.Button.Y);
         boolean trajLimitBreaker = gpad2.pressed(ManagedGamepad.Button.A)&& !gpad2.pressed(ManagedGamepad.Button.START);
         boolean ResetTrajEnc = gpad2.just_released(ManagedGamepad.Button.A) && (Math.abs(leftJoyY) > 0.2);
+        boolean rightJoyPressed = gpad2.just_pressed(ManagedGamepad.Button.R_STICK_BUTTON);
+        double rightJoyY = gpad2.value(ManagedGamepad.AnalogInput.R_STICK_Y);
+        boolean overRideShoot = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
 
         if (ResetTrajEnc){
-            robot.shooter.moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            if(robot.shooter.moveShooterM != null) robot.shooter.moveShooterM.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         if (engageAutoTraj){
             autoTrajEngaged = true;
             robot.shooter.onAutoTraj();
         }
 
+        if (rightJoyPressed){
+            robot.goPark();
+        }
+
+        if (abs(rightJoyY) >= 0.2){
+            robot.park.moveAtControlRate(rightJoyY);
+        }else{
+            robot.park.moveAtControlRate(0);
+        }
 
         if(xDown && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(-.01);
             RobotLog.dd(TAG, "moving transition 1 down");
@@ -932,14 +946,24 @@ public class MecanumTeleop extends InitLinearOpMode
 
 
             if(rightTrig >= 0.3){
-                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT);
-                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT);
-                if(dpadDown || dpadUp) robot.shooter.shoot(CENTER);
+
+                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT,overRideShoot );
+                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT,overRideShoot);
+                if(dpadDown || dpadUp) robot.shooter.shoot(CENTER,overRideShoot);
 
                 RobotLog.dd(TAG,"Dpad + trigger pressed");
 
             }
+
         }
+//        else {
+//            if(yUp){
+//                robot.shooter.wheelGuards.setPosition(robot.shooter.wheelGuards.getPosition()+0.5);
+//            }
+//            if(xDown){
+//                robot.shooter.wheelGuards.setPosition(robot.shooter.wheelGuards.getPosition()-0.5);
+//            }
+//        }
 
 
         if (abs(leftJoyY) >= 0.2){
@@ -976,7 +1000,7 @@ public class MecanumTeleop extends InitLinearOpMode
         RobotLog.dd(TAG,"RUNNING INIT IN MecanumTeleop");
 
         initPreStart();
-        RobotLog.dd(TAG, "pose(1) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
+       // RobotLog.dd(TAG, "pose(1) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
 
 
         dashboard.displayText(0, robot.getName() + " is ready");
@@ -996,7 +1020,7 @@ public class MecanumTeleop extends InitLinearOpMode
         mechDrv.setPoseEstimate(startPose);
         mechDrv.setRealPoseEstimate(startPose);
 
-        RobotLog.dd(TAG, "pose(4) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
+        //RobotLog.dd(TAG, "pose(4) is now: %s", mechDrv.getLocalizer().getPoseEstimate().toString());
 
         RobotLog.dd(TAG, "Mecanum_Driver starting");
 

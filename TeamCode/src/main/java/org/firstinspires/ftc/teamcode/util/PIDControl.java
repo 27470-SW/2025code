@@ -18,7 +18,7 @@ public class PIDControl {
     double Kf = 0;
     ElapsedTime timer = new ElapsedTime();
     private double lastError = 0;
-    private double targetVelocity;
+    public double targetVelocity;
     Input_Shaper ishaper;
 
     public PIDControl(HardwareMap map,String motorName)
@@ -54,20 +54,28 @@ public class PIDControl {
     double b = 0.25;
     double c = 0.2;
     double d = 0.15;
-   public double update (){
+   public double update () {
 
        vel3 = vel2;
        vel2 = vel1;
        vel1 = vel0;
        vel0 = motor.getVelocity();
 
-       filteredVelocity = a*vel0 + b*vel1 + c*vel2 + d*vel3;
+       filteredVelocity = a * vel0 + b * vel1 + c * vel2 + d * vel3;
        double power = PIDControlVoltage(targetVelocity, filteredVelocity);
        power = ishaper.shape(power, 0.02);
-       motor.setPower(power);
 
        timer.reset();
-       return power;
+       if (targetVelocity != 0) {
+           motor.setPower(power);
+           return power;
+       } else {
+           motor.setPower(0);
+           return 0;
+       }
+
+
+
 
     }
 

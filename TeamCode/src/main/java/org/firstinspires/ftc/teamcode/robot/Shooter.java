@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -53,13 +54,13 @@ public class Shooter
         try
         {
             shooterW = hwMap.get(DcMotorEx.class, "shoot");
-            shooterW.setDirection(DcMotor.Direction.REVERSE);
+            shooterW.setDirection(DcMotor.Direction.FORWARD);
             shooterW.setPower(0);
             shooterW.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shooterW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shooterW.setMode(RUN_USING_ENCODER);
             shooterW2 = hwMap.get(DcMotorEx.class, "shoot2");
-            shooterW2.setDirection(DcMotor.Direction.REVERSE);
+            shooterW2.setDirection(DcMotor.Direction.FORWARD);
             shooterW2.setPower(0);
             shooterW2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shooterW2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -138,8 +139,10 @@ public class Shooter
 ////               // dashTelemetry = dashboardShooter.getTelemetry();
 //            }
 
-           double update = controlShooterW.update();
+
+            double update = controlShooterW.update();
             shooterW2.setPower(update);
+
 
             double currentVelocity = controlShooterW.getVelocity();
             double error = targetVelocity - currentVelocity;
@@ -185,7 +188,7 @@ public class Shooter
     private double getTrajEncoderDist(){
         double value = -(TED_M*(TED_K+dist) + TED_B);
         //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
-        RobotLog.dd(TAG, "Traj encoder dist = %d", value);
+        RobotLog.dd(TAG, "Traj encoder dist = %f", value);
         return value;
     }
 
@@ -228,12 +231,24 @@ public void stopWheel(){
     }
 
     boolean usePIDs = true;
-    boolean useDistance = true;
+    boolean useDistance = false;
     public double distanceWVelocity( double distance){
         return DWV_M * (distance + DWV_K) + DWV_B;
         //        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
     }
 
+
+
+    boolean atTargetVel(){
+        if(Math.abs(controlShooterW.targetVelocity - controlShooterW.getVelocity()) <= DISTANCEBETWEENCANDT ){
+
+            return true;
+        }
+        else{
+
+            return false;
+        }
+    }
     public void spinShooterAutonFar(){
         controlShooterW.setWheelVelocity(1550);
     }
@@ -318,14 +333,7 @@ public void stopWheel(){
     public void changeShootTraj(double pwr, boolean limitBreaker){
         engageAutoTraj = false;
 
-        try {
-            if (!limitBreaker && moveShooter1.getPosition() == 0 && pwr < 0) return;
-            if (!limitBreaker && moveShooter1.getPosition() == 1 && pwr > 0) return;
-            moveShooter1.setPosition(pwr / 100 + moveShooter1.getPosition());
-            moveShooter2.setPosition(pwr / 100 + moveShooter2.getPosition());
-        }catch(Exception e) {
-            if(null != moveShooter1) RobotLog.dd(TAG, "unable to change Shoot Servo Trajectory");
-        }
+
 
         try{
 
@@ -351,6 +359,15 @@ public void stopWheel(){
         }catch(Exception e){
             if(null != moveShooterM)    RobotLog.dd(TAG, "unable to change Shoot Motor Trajectory");
         }
+
+        try {
+            if (!limitBreaker && moveShooter1.getPosition() <= TRAJLIMITMIN && pwr < 0) return;
+            if (!limitBreaker && moveShooter1.getPosition() >= TRAJLIMITMAX && pwr > 0) return;
+            moveShooter1.setPosition(pwr / MOVEMENTFORSPEEDOFTRAJ + moveShooter1.getPosition());
+            moveShooter2.setPosition(pwr / MOVEMENTFORSPEEDOFTRAJ + moveShooter2.getPosition());
+        }catch(Exception e) {
+            if(null != moveShooter1) RobotLog.dd(TAG, "unable to change Shoot Servo Trajectory");
+        }
     }
 
     public void shootPower(double pwr)
@@ -371,26 +388,37 @@ public void stopWheel(){
     public void wheelGuardsUp(){
         if(wheelGuards != null){
             wheelGuards.setPosition(WHEEL_GUARDS_OFF);
+            RobotLog.dd(TAG, "Wheel guard pos up: %f ",wheelGuards.getPosition());
         }
     }
     public void wheelGuardsDown(){
         if (wheelGuards != null){
             wheelGuards.setPosition(WHEEL_GUARDS_ON);
+            RobotLog.dd(TAG, "Wheel guard pos down : %f ",wheelGuards.getPosition());
+
         }
     }
 
-    public void shoot(BALL_CHOICE ball){
+    public void shoot(BALL_CHOICE ball) {
+        shoot(ball,false);
+    }
+
+    public void shoot(BALL_CHOICE ball, boolean force){
         wheelGuardsUp();
-        switch (ball){
-            case LEFT:
-                shooter1.startTransition();
-                break;
-            case CENTER:
-                shooter2.startTransition();
-                break;
-            case RIGHT:
-                shooter3.startTransition();
-                break;
+        if (atTargetVel() || force) {
+            switch (ball) {
+                case LEFT:
+                    shooter1.startTransition();
+                    break;
+                case CENTER:
+                    shooter2.startTransition();
+                    break;
+                case RIGHT:
+                    shooter3.startTransition();
+                    break;
+            }
+        } else{
+
         }
     }
 

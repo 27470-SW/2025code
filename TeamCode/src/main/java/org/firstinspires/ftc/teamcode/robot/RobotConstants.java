@@ -72,10 +72,15 @@ public class RobotConstants
   public static double IN_ACT_DLY = 0.0;
   public static double IN_ACT_DUR = 0.5;
   public static double IN_ACT_DIST = 3.0;
-  public static double TRANSITION_RESTPOINT1 = .43;
-  public static double TRANSITION_RESTPOINT2 = .25;
-  public static double TRANSITION_RESTPOINT3 = .35;
-  public static double TRANSITION_MOVEMENT = .15;
+  public static double MOVEMENTFORSPEEDOFTRAJ = 200;
+
+  public static double TRANSITION_RESTPOINT1 = .4;
+  public static double TRANSITION_RESTPOINT2 = .010000;
+  public static double TRANSITION_RESTPOINT3 = .51;
+//    public static double TRANSITION_RESTPOINT1 = .43;
+//    public static double TRANSITION_RESTPOINT2 = .25;
+//    public static double TRANSITION_RESTPOINT3 = .35;
+  public static double TRANSITION_MOVEMENT = .2;
   public static  double SHOOTER_KP = 0.03;
   public static  double SHOOTER_KI = 0.000016;
   public static  double SHOOTER_KD = 0.0005;
@@ -85,6 +90,8 @@ public class RobotConstants
   public static  double MIN_SHOOTER_DIST = 0;
   public static  double MAX_SHOOTER_DIST = 120;
   public static double CLOSE_SHOOTER_DIST = 82;
+  public static double DISTANCEBETWEENCANDT = 30;
+
   public static  int MIN_TRAJ_ENCODER = 0;
   public static  int MAX_TRAJ_ENCODER = 2800;
   public static  double RED_GOAL_APRIL_TAG = 24;
@@ -99,18 +106,21 @@ public class RobotConstants
     public static double SHOOT_SERVO_CLOSE = 0.15;
     public static double WHEEL_GUARDS_ON = 0.75;
     public static double WHEEL_GUARDS_OFF = 0.25;
-  public static double DWV_M = 4.25;
-  public static double DWV_K = 340;
-  public static double DWV_B = -570;
-  public static double TED_M = 8.54;
-  public static double TED_K = 52.1;
-  public static double TED_B = -403;
-    public static double STED_M = .0057;
-    public static double STED_K = .035;
-    public static double STED_B = -.27;
+  public static double DWV_M = 4.65;  //v2 = 4.25
+  public static double DWV_K = -347;  //340
+  public static double DWV_B = 2466;  //-570
+  public static double TED_M = 8.54;  //8.54
+  public static double TED_K = 52.1;  //52.1
+  public static double TED_B = -403;  //-403
+    public static double STED_M = .0025;
+    public static double STED_K = 2643;
+    public static double STED_B = -6.385;
+  public  static double TRAJLIMITMIN = 0;
+    public  static double TRAJLIMITMAX = 0;
 
 
-  public static Pose2d CLOSE_POSE_RED = new Pose2d(24, 23, Math.toRadians(45));
+
+    public static Pose2d CLOSE_POSE_RED = new Pose2d(24, 23, Math.toRadians(45));
   public static Pose2d CLOSE_POSE_BLUE = new Pose2d(-24, 23, Math.toRadians(135));
   public static Pose2d FAR_POSE_RED = new Pose2d(8.5, -54, Math.toRadians(70));
   public static Pose2d FAR_POSE_BLUE = new Pose2d(-8.5, -54, Math.toRadians(110));
@@ -159,10 +169,12 @@ public class RobotConstants
   public static Motors.MotorModel EL_EXT_MOT = Motors.MotorModel.GOBILDA_5202_139;
   public static Motors.MotorModel EL_EX_MOT = Motors.MotorModel.GOBILDA_5202_5_2;
   public static Motors.MotorModel ARM_MOT = Motors.MotorModel.GOBILDA_5202_50_9;
+    public static Motors.MotorModel PARK_MOT = Motors.MotorModel.GOBILDA_5202_13_7;
 
   public static DcMotorSimple.Direction ARM_DIR = DcMotorSimple.Direction.FORWARD;
     public static DcMotorSimple.Direction SLIDE1_DIR = DcMotorSimple.Direction.FORWARD;
   public static DcMotorSimple.Direction SLIDE2_DIR = DcMotorSimple.Direction.FORWARD;
+    public static DcMotorSimple.Direction PARK_DIR = DcMotorSimple.Direction.FORWARD;
 
   public static Double SWP_SRV = 4.8;
 
@@ -295,13 +307,13 @@ public class RobotConstants
   public static double BORD_SPD = .1;
   public static Chassis bot= Chassis.B7252;
   public static Field.Alliance alliance = Field.Alliance.RED;
-  public static PositionOption startPos = Field.Start_Pos.START_FAR_RED2;
+  public static PositionOption startPos = Field.Start_Pos.FARMAINLYNEARRED;
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
-  public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.FORWARD;
-  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.REVERSE;
-  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.REVERSE;
-  public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.FORWARD;
+  public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.REVERSE;
 
   public static AxesOrder HUB_ORDER = AxesOrder.ZYX;
   public static AxesSigns HUB_SIGNS = AxesSigns.PPP;
@@ -357,8 +369,8 @@ public class RobotConstants
    */
 
 
-  public static double MAX_VEL = 80; //RR tune  maxVel 59.96
-  public static double MAX_ACCEL = 40;
+  public static double MAX_VEL = 80; //RR tune  maxVel 59.96 its 80
+  public static double MAX_ACCEL = 40;// its 40
   public static double MAX_ANG_VEL = Math.toRadians(180);
   public static double MAX_ANG_ACCEL = Math.toRadians(180);
 //old 2024
@@ -368,7 +380,7 @@ public class RobotConstants
 //  public static double MAX_ANG_VEL = Math.toRadians(180);
 //  public static double MAX_ANG_ACCEL = Math.toRadians(270);
 
-  public static double SLW_VEL = 15;
+  public static double SLW_VEL = 60;
   public static double SLW_ACCEL = 15;
   public static double SLW_ANG_VEL = Math.toRadians(90);
   public static double SLW_ANG_ACCEL = Math.toRadians(90);

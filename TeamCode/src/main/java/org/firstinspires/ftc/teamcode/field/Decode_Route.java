@@ -75,6 +75,8 @@ public class Decode_Route extends Route
 
        Pose2d lastPose;
 
+       RobotLog.dd(TAG, "choosing park");
+
        if( startPos == START_FAR_RED_SIMPLE)
        {
            SimpleFarRED t1 = new SimpleFarRED(this);
@@ -99,25 +101,25 @@ public class Decode_Route extends Route
 
 
 
-       if( startPos == START_FAR_RED_1AND7)
+       if( startPos == MAINFARROUTERED)
        {
-           F1F3N_Route1and7Red t1 = new F1F3N_Route1and7Red(this);
+           MAINFARROUTERED t1 = new MAINFARROUTERED(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
 
-       else if( startPos == START_FAR_BLUE_1AND7)
+       else if( startPos == MAINFARROUTEBLUE)
        {
-           F1F3N_Route1and7BLUE t1 = new F1F3N_Route1and7BLUE(this);
+           MAINFARROUTEBLUE t1 = new MAINFARROUTEBLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-       else if (startPos == START_FAR_RED2)
+       else if (startPos == FARMAINLYNEARRED)
        {
-           Route2Red t1 = new Route2Red(this);
+           FARMAINLYNEARRED t1 = new FARMAINLYNEARRED(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-       else if (startPos == START_FAR_BLUE2)
+       else if (startPos == FARMAINLYNEARBLUE)
        {
-           Route2BLUE t1 = new Route2BLUE(this);
+           FARMAINLYNEARBLUE t1 = new FARMAINLYNEARBLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
        else if( startPos == START_WALL_RED4)
@@ -130,14 +132,14 @@ public class Decode_Route extends Route
            Route4BLUE t1 = new Route4BLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-       else if( startPos == START_GOAL_RED5)
+       else if( startPos == START_GOAL_ROUTE_RED)
        {
-           Route5RED t1 = new  Route5RED(this);
+           GOALROUTERED t1 = new GOALROUTERED(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-       else if( startPos == START_GOAL_BLUE5)
+       else if( startPos == START_GOAL_ROUTE_BLUE)
        {
-           Route5BLUE t1 = new  Route5BLUE(this);
+           GOALROUTEBLUE t1 = new GOALROUTEBLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
        else if( startPos == START_FAR_RED6)
@@ -162,8 +164,9 @@ public class Decode_Route extends Route
        t1.makeTraj(parkPos,alliance);
 
        lastPose = this.getEnd();
-	   
-	   RobotLog.dd(TAG, "route made");
+       RobotLog.dd(TAG, "Park choice %s",parkPos);
+
+       RobotLog.dd(TAG, "route made");
 
 /*
        RobotLog.dd(TAG, "making park");

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot;
 
+import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.ARM_NUM_LEVS;
@@ -45,6 +46,7 @@ public CrAzYintake crAzYIntake =null;
 public Lifter slides=null;
 public MotorComponent arm=null;
 public Shooter shooter =null;
+public MotorComponent park=null;
     public double logIntakeCurSpd = 0.0;
 
     public MecanumBot()
@@ -171,6 +173,7 @@ public Shooter shooter =null;
         slides = new Lifter( "slide1", "slide2",hwMap);
         arm = new MotorComponent("arm",hwMap);
         shooter = new Shooter(hwMap);
+        park = new MotorComponent("park", hwMap);
         /*redLED1 = hwMap.get(DigitalChannel.class, "red1");
         greenLED1 = hwMap.get(DigitalChannel.class, "green1");
         redLED2 = hwMap.get(DigitalChannel.class, "red2");
@@ -229,6 +232,8 @@ public Shooter shooter =null;
         shooter.initShooter();
          arm.init(RobotConstants.ARM_MOT,1);
         arm.setDir(RobotConstants.ARM_DIR);
+        park.init(RobotConstants.PARK_MOT, 28);
+        park.setDir(RobotConstants.PARK_DIR);
         //arm.setMode(STOP_AND_RESET_ENCODER);        //TODO: make not happen when comming back from auton;
         arm.setLevelOffset(
                 RobotConstants.ARM_LEVS[0],
@@ -253,14 +258,14 @@ public Shooter shooter =null;
     public void update()
     {
         updTimer.reset();
-        RobotLog.dd(TAG, "pose(7) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+        //RobotLog.dd(TAG, "pose(7) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         super.update();
-        RobotLog.dd(TAG, "pose(8) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+        //RobotLog.dd(TAG, "pose(8) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         double botTime = updTimer.milliseconds();
         updTimer.reset();
-        RobotLog.dd(TAG, "pose(9) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+       // RobotLog.dd(TAG, "pose(9) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         if(claw != null)
         {
@@ -270,7 +275,7 @@ public Shooter shooter =null;
         {
             shooter.update();
         }
-        RobotLog.dd(TAG, "pose(10) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+        //RobotLog.dd(TAG, "pose(10) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         if(servoIntake != null)
         {
@@ -288,10 +293,14 @@ public Shooter shooter =null;
         {
             arm.update();
         }
+        if(park != null)
+        {
+            park.update();
+        }
 
         double lftTime = updTimer.milliseconds();
         updTimer.reset();
-        RobotLog.dd(TAG, "pose(11) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+        //RobotLog.dd(TAG, "pose(11) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
         double clawTime;
 //        if(claw != null)
@@ -299,7 +308,7 @@ public Shooter shooter =null;
 //            claw.update();
 //        }
         updTimer.reset();
-        RobotLog.dd(TAG, "pose(12) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
+       // RobotLog.dd(TAG, "pose(12) is now: %s", drive.getLocalizer().getPoseEstimate().toString());
 
 //        if(VERBOSE) { RobotLog.dd(TAG, "UPD BOT:%.2f LFT:%.2f CLW:%.2f", botTime, lftTime, clawTime); }
         ledUpdate();
@@ -351,6 +360,13 @@ public Shooter shooter =null;
         arm.moveToCnt(-300, 0.4);
         Thread.sleep(2000);
         arm.moveToCnt(-215, 0.1);
+    }
+    public void initParkMot() throws InterruptedException {
+        park.moveToCnt(2000,.02);
+
+        Thread.sleep(2000);
+        park.setMode(STOP_AND_RESET_ENCODER);
+        park.setMode(RUN_USING_ENCODER);
     }
     public void initClaw() {
         claw.setClawPos(1);
@@ -423,6 +439,9 @@ public  int slideLevel;
         }
     }
 
+public void goPark(){
+        park.moveToCnt(2000, 1);
+}
 
     public void hangPos(){
         arm.moveToCnt(-900, 1);

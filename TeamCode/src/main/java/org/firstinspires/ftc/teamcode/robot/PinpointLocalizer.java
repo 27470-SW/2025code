@@ -23,7 +23,7 @@ public class PinpointLocalizer implements Localizer {
 
         // TODO: Set your odometry pod offsets here (in mm)
         // These are the distances from the robot's center to each odometry pod
-        pinpoint.setOffsets(7, 1, DistanceUnit.INCH); // Example: X offset = -84mm, Y offset = -168mm
+        pinpoint.setOffsets(7, 5.5, DistanceUnit.INCH); // Example: X offset = -84mm, Y offset = -168mm
 
         // TODO: Set which pod is which
         // STANDARD: X pod is parallel to forward, Y pod is perpendicular (strafe)
@@ -31,8 +31,8 @@ public class PinpointLocalizer implements Localizer {
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
         // TODO: Reverse encoder directions if needed
-        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
-                GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         // Reset position to start
         pinpoint.resetPosAndIMU();

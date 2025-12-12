@@ -53,6 +53,8 @@ import static org.firstinspires.ftc.teamcode.robot.RobotConstants.kA;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.robot.RobotConstants.kV;
 
+import android.widget.Switch;
+
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
@@ -354,7 +356,7 @@ public class MecanumDriveLRR extends MecanumDrive
 
     // Stall detection configuration
     public static boolean ENABLE_STALL_PROTECTION = true;
-    public static double STALL_VELOCITY_THRESHOLD = 2.0; // inches/sec - velocity below this is considered stalled
+    public static double STALL_VELOCITY_THRESHOLD = 1.0; // inches/sec - velocity below this is considered stalled
     public static double STALL_POWER_THRESHOLD = 0.15;   // Motor power above this will trigger stall check
     public static double STALL_DETECTION_TIME_MS = 150;  // Milliseconds before triggering stall protection
     
@@ -383,9 +385,30 @@ public class MecanumDriveLRR extends MecanumDrive
         
         // Count how many wheels are stalled
         int stalledWheelCount = 0;
+        int i = 0;
         for (Double velocity : velocities) {
+            i++;
             if (Math.abs(velocity) <= STALL_VELOCITY_THRESHOLD) {
                 stalledWheelCount++;
+                String stalledMotorString;
+                switch (i){
+                    case 1:
+                        stalledMotorString = "leftFront";
+                        break;
+                    case 2:
+                        stalledMotorString = "leftRear";
+                        break;
+                    case 3:
+                        stalledMotorString ="rightRear";
+                        break;
+                    case 4:
+                        stalledMotorString ="rightFront";
+                        break;
+                    default:
+                        stalledMotorString ="unknown";
+
+                }
+                RobotLog.dd(TAG, "stalledMotor = %s", stalledMotorString);
             }
         }
         
