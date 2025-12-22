@@ -233,6 +233,9 @@ public class MecanumTeleop extends InitLinearOpMode
                     dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor mode %s", robot.shooter.moveShooterM.getMode().toString()));
                     dashboard.displayText(l++, String.format(Locale.US, "Trajectroty motor current encoder %d", robot.shooter.moveShooterM.getCurrentPosition()));
                 }
+                if(null != robot.shooter.moveShooter1)
+                    dashboard.displayText(l++, String.format(Locale.US, "Trajectroty servo position: %f", robot.shooter.moveShooter1.getPosition()));
+
                 dashboard.displayText(l++, String.format(Locale.US, "Shooter motor velo %f", robot.shooter.getFilteredVelocity()));
             }
         Pose2d currentPose = mechDrv.getRealPoseEstimate();
@@ -830,7 +833,7 @@ public class MecanumTeleop extends InitLinearOpMode
         {
             robot.crAzYIntake.setPwr(1);
             robot.shooter.resetTransition();
-            robot.shooter.setShooterTrajPos(MIN_TRAJ_ENCODER);
+            robot.shooter.setShooterTrajPos(DEFAULT_TRAJ_POSITION);
             robot.shooter.disengageAutoTraj();
             robot.shooter.wheelGuardsDown();
             RobotLog.dd(TAG,"intakeon");
@@ -944,10 +947,17 @@ public class MecanumTeleop extends InitLinearOpMode
         if (dpadDown ||dpadUp||dpadRight||dpadLeft){
             RobotLog.dd(TAG,"Dpad pressed");
 
+            if(dpadDown){
+                robot.shooter.setBallCount(3);
+            }
+            else {
+                robot.shooter.setBallCount(1);
+            }
+
 
             if(rightTrig >= 0.3){
 
-                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT,overRideShoot );
+                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT,overRideShoot);
                 if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT,overRideShoot);
                 if(dpadDown || dpadUp) robot.shooter.shoot(CENTER,overRideShoot);
 
@@ -1056,6 +1066,7 @@ public class MecanumTeleop extends InitLinearOpMode
 //            oTimer.reset();
 //            if(VERBOSE){RobotLog.vv(TAG, "looping");}
         }
+ //       robot.shooter.shooterAngleCold();
     }
 
     double spinnerPwr = RobotConstants.SP_POWER;

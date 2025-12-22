@@ -11,7 +11,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
 
-public class Route3Red {
+public class
+FarStayFarBlue {
     String TAG = "SAMPLE_ROUTE";
     Route route;
     private Field.Parks stackToBack;
@@ -20,7 +21,7 @@ public class Route3Red {
     private Route.TeamElement teamElement;
     private Field.Alliance alliance;
 
-    public Route3Red(Route constructorRoute) {
+    public FarStayFarBlue(Route constructorRoute) {
         route = constructorRoute;
     }
 
@@ -40,59 +41,72 @@ public class Route3Red {
        //  qualifierRoute(startPos,parkPos,firstLocation);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        route.addLocation(route.startRedWall, START, HEAD_LINEAR);
+        route.addLocation(route.startSmallTriBlue, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
-        route.addLocation(route.aroundPartner, LINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.WAIT, 1.0);
-        route.addFunction(route::shoot1);
-        route.addEvent(Route.Action.WAIT, 1);
-        route.addFunction(route::shoot2);
-        route.addEvent(Route.Action.WAIT, 1);
-        route.addFunction(route::shoot3);
-        route.addEvent(Route.Action.WAIT, 0.35);
-        //route.addFunction(route::transitonDown);
-        route.addFunction(route::intakeOn);
+        route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(110));
+        route.addLocation(route.shootFarfarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(110));
+        route.addEvent(Route.Action.WAIT,3 );
+        route.addFunction(route::shootAllThree);
+        route.addEvent(Route.Action.WAIT,0.5);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
 
 
-        route.addLocation(route.moveToPark, LINE, HEAD_LINEAR);
-        route.addLocation(route.collect2, LINE, HEAD_LINEAR);
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
-        route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
 
+        route.addLocation(route.moveToLeverblue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.SLOW,25);
+        route.addLocation(route.helpCollectLever5blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shootWiffleClose);
+
+
+        //Shoot 3 spot.
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(-50));
+        route.addLocation(route.shootGateWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toRadians(80));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shoot1);
-        route.addEvent(Route.Action.WAIT, 1);
-        route.addFunction(route::shoot2);
-        route.addEvent(Route.Action.WAIT, 1);
-        route.addFunction(route::shoot3);
-        route.addEvent(Route.Action.WAIT, 0.35);
-        //route.addFunction(route::transitonDown);
-        route.addFunction(route::intakeOn);
+        route.shootMotif(1,route.shootGateWhifflesBlue );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
+
+        route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addEvent(Route.Action.SLOW,25);
+        route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::shootWiffleClose);
+        //shoot park wiffles
+
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
+        route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addFunction(route::intakeOff);
+        route.addFunction(route::shootFar);
+        route.shootMotif(1,route.shootGateWhifflesBlue );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
+
+
+
 
         if (numshot==THREE) {
-            route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR);
-            route.addLocation(route.collect3, LINE, HEAD_LINEAR);
-            route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
-            route.addFunction(route::intakeOff);
-            //route.shootMotif(2, );
-        } else {
-
-            route.addLocation(route.nearLeaver, LINE, HEAD_LINEAR);
-            route.addLocation(route.collect3, LINE, HEAD_LINEAR);
-            route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
-            route.addFunction(route::intakeOff);
-           // route.shootMotif(2, );
-
-            route.addFunction(route::intakeOn);
-            route.addLocation(route.moveToHumanPlayerZone, SPLINE, HEAD_LINEAR, Math.toRadians(0));
-            route.addLocation(route.collect1, LINE, HEAD_LINEAR, Math.toRadians(0));
-            route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
-            route.addLocation(route.shootZonefornearblue, SPLINE, HEAD_LINEAR);
-            route.addEvent(Route.Action.WAIT, 0.1);
-            route.addFunction(route::intakeOff);
-            //route.shootMotif(2, );
+//            route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
+//            route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
+//            route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
+//            route.addFunction(route::intakeOff);
+//            route.shootMotif(2,route.shootNearBlue );
+        }else {
+//            route.addLocation(route.goNear3Blue, LINE, HEAD_LINEAR);
+//            route.addLocation(route.collect3Blue, LINE, HEAD_LINEAR);
+//            route.addEvent(Route.Action.TANGENT, Math.toRadians(-15));
+//            route.addFunction(route::intakeOff);
+//            route.shootMotif(2, route.shootNearBlue);
+//
+//            route.addFunction(route::intakeOn);
+//            route.addEvent(Route.Action.TANGENT, Math.toRadians(60));
+//            route.addLocation(route.goNear1Blue, SPLINE, HEAD_LINEAR);
+//            route.addLocation(route.collect1Blue, LINE, HEAD_LINEAR);
+//            route.addEvent(Route.Action.TANGENT, Math.toRadians(90));
+//            route.addFunction(route::intakeOff);
+//            route.shootMotif(2, route.shootNearBlueSpline);
         }
     }
+    private double moveArmDelay = 0;
 
 
     private void deliverSample(){
@@ -148,9 +162,14 @@ public class Route3Red {
         }
     }
 
-    private void moveStartToLeft(){
+
+     private void moveStartToLeft(){
 
     }
+
+
+
+
 
 
 

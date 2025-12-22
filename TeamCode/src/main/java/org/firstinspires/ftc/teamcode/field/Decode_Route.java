@@ -132,6 +132,16 @@ public class Decode_Route extends Route
            Route4BLUE t1 = new Route4BLUE(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
+       else if( startPos == START_HUMANONLY)
+       {
+           RouteHumanOnly t1 = new RouteHumanOnly(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
+       else if( startPos == START_FAR_FAR_HUMAN_BLUE)
+       {
+           FarStayFarBlueHuman t1 = new FarStayFarBlueHuman(this);
+           t1.makeTraj(startPos, parkPos, lastLocation);
+       }
        else if( startPos == START_GOAL_ROUTE_RED)
        {
            GOALROUTERED t1 = new GOALROUTERED(this);
@@ -151,12 +161,12 @@ public class Decode_Route extends Route
            ROUTE6BLUET t1 = new ROUTE6BLUET(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-       else if (startPos == START_WALL_BLUE_3){
-           Route3BLUE t1 = new Route3BLUE(this);
+       else if (startPos == STARTFARSTAYFARBLUE){
+           FarStayFarBlue t1 = new FarStayFarBlue(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
-         else if (startPos == START_WALL_RED_3){
-             Route3Red t1 = new Route3Red(this);
+         else if (startPos == FARSTAYFARRED){
+             FarStayFarRed t1 = new FarStayFarRed(this);
            t1.makeTraj(startPos, parkPos, lastLocation);
        }
 

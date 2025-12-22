@@ -41,19 +41,23 @@ public class FARMAINLYNEARBLUE {
 
         route.addLocation(route.startSmallTriBlue, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
-        route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(290));
+        route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(110));
+        route.addEvent(Route.Action.WAIT,5);
         route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,1.7);
+        route.addEvent(Route.Action.WAIT,1);
 
-        route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+
+
+        route.addLocation(route.moveToLeverblue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addEvent(Route.Action.SLOW,25);
-        route.addLocation(route.intakeGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.helpCollectLever5blue, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addFunction(route::shootWiffleClose);
 
 
         //Shoot 3 spot.
-        route.addEvent(Route.Action.TANGENT, Math.toRadians(130));
-        route.addLocation(route.shootGateWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toRadians(100));
+        route.addEvent(Route.Action.TANGENT, Math.toRadians(-50));
+        route.addLocation(route.shootGateWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toRadians(80));
         route.addFunction(route::intakeOff);
         route.shootMotif(1,route.shootGateWhifflesBlue );
         route.addFunction(route::intakeonandthreeTransitionsDown);
@@ -76,17 +80,17 @@ public class FARMAINLYNEARBLUE {
 
 
         if (numshot==THREE) {
-            //potentially shoot slot 2
-            route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-            route.addEvent(Route.Action.SLOW,10);
-            route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
-            //shoot the park
-            route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-            route.addFunction(route::intakeOff);
-            route.addFunction(route::shootWiffleClose);
-            route.shootMotif(1,route.shootGateWhifflesBlue );
-            route.addFunction(route::intakeonandthreeTransitionsDown);
-            route.addFunction(route::wheelOff);
+//            //potentially shoot slot 2
+//            route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//            route.addEvent(Route.Action.SLOW,10);
+//            route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//            //shoot the park
+//            route.addLocation(route.shootGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+//            route.addFunction(route::intakeOff);
+//            route.addFunction(route::shootWiffleClose);
+//            route.shootMotif(1,route.shootGateWhifflesBlue );
+//            route.addFunction(route::intakeonandthreeTransitionsDown);
+//            route.addFunction(route::wheelOff);
         }else {
 
             // route.shootMotif(2, );

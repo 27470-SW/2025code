@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -180,10 +179,17 @@ public class Shooter
     }
 
     private double getTrajServoVal(){
-        double value = -(STED_M*(STED_K+dist) + STED_B);
-        //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
-        RobotLog.dd(TAG, "Traj servo val = %f", value);
-        return value;
+        if(ballCount == 1) {
+            double value = (STED_M1 * (STED_K1 + dist) + STED_B1);
+            //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
+            RobotLog.dd(TAG, "Traj servo val = %f", value);
+            return value;
+        }else {
+            double value = (STED_M3 * (STED_K3 + dist) + STED_B3);
+            //        int value = (int) (MIN_TRAJ_ENCODER + dist * (MAX_TRAJ_ENCODER - MIN_TRAJ_ENCODER) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST));
+            RobotLog.dd(TAG, "Traj servo val = %f", value);
+            return value;
+        }
     }
     private double getTrajEncoderDist(){
         double value = -(TED_M*(TED_K+dist) + TED_B);
@@ -231,10 +237,14 @@ public void stopWheel(){
     }
 
     boolean usePIDs = true;
-    boolean useDistance = false;
+    boolean useDistance = true;
     public double distanceWVelocity( double distance){
-        return DWV_M * (distance + DWV_K) + DWV_B;
-        //        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
+        if(ballCount == 1) {
+            return DWV_M1 * (distance + DWV_K1) + DWV_B1;
+            //        return MIN_W_SPEED + distance * (MAX_W_SPEED - MIN_W_SPEED) / (MAX_SHOOTER_DIST - MIN_SHOOTER_DIST);
+        }else{
+            return DWV_M3 * (distance + DWV_K3) + DWV_B3;
+        }
     }
 
 
@@ -296,6 +306,10 @@ public void stopWheel(){
     }
     public void defaultCloseShooterTraj(){
         if(null != moveShooterM) setShooterTrajPos(SHOOT_CLOSE_TRAJ);
+        if(null != moveShooter1) setShooterTrajPos(SHOOT_SERVO_GOAL);
+    }
+    public void autonShootClose(){
+        if(null != moveShooterM) setShooterTrajPos(SHOOT_CLOSE_TRAJ);
         if(null != moveShooter1) setShooterTrajPos(SHOOT_SERVO_CLOSE);
     }
 
@@ -329,6 +343,10 @@ public void stopWheel(){
         engageAutoTraj = false;
     }
 
+    private int ballCount;
+    public void setBallCount(int balls){
+        ballCount = balls;
+    }
 
     public void changeShootTraj(double pwr, boolean limitBreaker){
         engageAutoTraj = false;
@@ -439,6 +457,11 @@ public void stopWheel(){
         shooterW2.setPIDFCoefficients(RUN_USING_ENCODER, shtPid);
     }
 
+    public void shooterAngleCold()
+    {
+        moveShooter1.close();
+        moveShooter2.close();
+    }
     private final double SHOOTER_CPER = 28; //quad encoder cnts/encoder rev
     private final double SHOOTER_INT_GEAR = 1; //1:1 motor - approx 6000 rpm (no load)
     private final double SHOOTER_EXT_GEAR = 1.0;
@@ -452,8 +475,8 @@ public void stopWheel(){
 
     public DcMotorEx moveShooterM = null;
     private VoltageSensor vs;
-    private Servo moveShooter1 = null;
-    private Servo moveShooter2 = null;
+    public Servo moveShooter1 = null;
+    public Servo moveShooter2 = null;
     public Transition shooter1 = null;
     public Transition shooter2 = null;
     public Transition shooter3 = null;

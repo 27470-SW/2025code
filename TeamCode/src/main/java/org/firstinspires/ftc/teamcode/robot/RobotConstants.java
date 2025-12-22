@@ -75,7 +75,7 @@ public class RobotConstants
   public static double MOVEMENTFORSPEEDOFTRAJ = 200;
 
   public static double TRANSITION_RESTPOINT1 = .4;
-  public static double TRANSITION_RESTPOINT2 = .010000;
+  public static double TRANSITION_RESTPOINT2 = 0.00;
   public static double TRANSITION_RESTPOINT3 = .51;
 //    public static double TRANSITION_RESTPOINT1 = .43;
 //    public static double TRANSITION_RESTPOINT2 = .25;
@@ -89,9 +89,10 @@ public class RobotConstants
   public static  double MAX_W_SPEED = 1675;
   public static  double MIN_SHOOTER_DIST = 0;
   public static  double MAX_SHOOTER_DIST = 120;
-  public static double CLOSE_SHOOTER_DIST = 82;
-  public static double DISTANCEBETWEENCANDT = 30;
+  public static double CLOSE_SHOOTER_DIST = 31;
+  public static double DISTANCEBETWEENCANDT = 50;
 
+  public static double DEFAULT_TRAJ_POSITION = 0.45;
   public static  int MIN_TRAJ_ENCODER = 0;
   public static  int MAX_TRAJ_ENCODER = 2800;
   public static  double RED_GOAL_APRIL_TAG = 24;
@@ -102,21 +103,32 @@ public class RobotConstants
   public static  double SHOOTER_VELOCITY = 1250;
   public static int SHOOT_CLOSE_TRAJ = -400;
   public static int SHOOT_FAR_TRAJ = -1250;
-    public static double SHOOT_SERVO_FAR = 0.8;
-    public static double SHOOT_SERVO_CLOSE = 0.15;
+    public static double SHOOT_SERVO_FAR = 0.62;
+    public static double SHOOT_SERVO_CLOSE = 0.41;
+    public static double SHOOT_SERVO_GOAL = 0.25;
     public static double WHEEL_GUARDS_ON = 0.75;
     public static double WHEEL_GUARDS_OFF = 0.25;
-  public static double DWV_M = 4.65;  //v2 = 4.25
-  public static double DWV_K = -347;  //340
-  public static double DWV_B = 2466;  //-570
-  public static double TED_M = 8.54;  //8.54
+  public static double DWV_M1 = 4.66;  //v2 = 4.25
+  public static double DWV_K1 =  -723.6;  //340
+  public static double DWV_B1 = 4156;  //-570
+
+    public static double DWV_M3 = 4.625;  //v2 = 4.25
+    public static double DWV_K3 = -13.45;  //340
+    public static double DWV_B3 = 1000;  //-570
+
+
+    public static double TED_M = 8.54;  //8.54
   public static double TED_K = 52.1;  //52.1
   public static double TED_B = -403;  //-403
-    public static double STED_M = .0025;
-    public static double STED_K = 2643;
-    public static double STED_B = -6.385;
+    public static double STED_M1 = 0.00289;
+    public static double STED_K1 = -2146;
+    public static double STED_B1 = -6.365;
+    public static double STED_M3 = .003055;
+    public static double STED_K3 = -2069;
+    public static double STED_B3 = 6.466;
   public  static double TRAJLIMITMIN = 0;
-    public  static double TRAJLIMITMAX = 0;
+  public  static double TRAJLIMITMAX = 1;
+
 
 
 
@@ -124,9 +136,9 @@ public class RobotConstants
   public static Pose2d CLOSE_POSE_BLUE = new Pose2d(-24, 23, Math.toRadians(135));
   public static Pose2d FAR_POSE_RED = new Pose2d(8.5, -54, Math.toRadians(70));
   public static Pose2d FAR_POSE_BLUE = new Pose2d(-8.5, -54, Math.toRadians(110));
-  public static Pose2d RED_GOAL_POSE = new Pose2d(68,65,0);
-  public static Pose2d BLUE_GOAL_POSE = new Pose2d(-68,65,0);
-  public static Pose2d RED_HUMAN_POSE = new Pose2d(-71.42,-60.36,Math.toRadians(-90));
+  public static Pose2d RED_GOAL_POSE = new Pose2d(73,74.5,0);
+  public static Pose2d BLUE_GOAL_POSE = new Pose2d(-71,76.5,0);
+  public static Pose2d RED_HUMAN_POSE = new Pose2d(-63.42,-45.36,Math.toRadians(-90));
   public static Pose2d BLUE_HUMAN_POSE = new Pose2d(63.33,-58.86,Math.toRadians(90));
 
   //Elev
