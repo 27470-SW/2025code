@@ -44,21 +44,24 @@ public class MAINFARROUTEBLUE {
         route.addFunction(route::shoot3Wiffles);
         route.addEvent(Route.Action.WAIT,3);
 
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
+        //route.addEvent(Route.Action.SLOW,10);
         route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
 
         route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
-        route.addFunction(route::shootFar);
         route.addLocation(route.shootFarfarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(290));
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,3);
+        route.addFunction(route::intakeOff);
+        route.addFunction(route::shootFar);
+        route.shootMotif(1,route.shootFarfarPosBLUE );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
 
         // go to pos lever wiffles
-        route.addLocation(route.intakeGateBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
-        route.addLocation(route.intakeGateWhifflesBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        route.addLocation(route.moveToLeverblue, LINE, HEAD_LINEAR, Math.toRadians(0));
+        //route.addEvent(Route.Action.SLOW,10);
+        route.addLocation(route.helpCollectLever5blue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
         route.makeNewTraj();
         route.addEvent(Route.Action.TANGENT,Math.toRadians(80));
@@ -77,7 +80,7 @@ public class MAINFARROUTEBLUE {
 
 
                 route.addLocation(route.intakeGoalBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
-                route.addEvent(Route.Action.SLOW,10);
+               // route.addEvent(Route.Action.SLOW,10);
                 route.addLocation(route.intakeGoalWhifflesBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
                 route.makeNewTraj();

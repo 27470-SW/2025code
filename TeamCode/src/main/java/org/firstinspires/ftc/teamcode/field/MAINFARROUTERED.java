@@ -47,8 +47,9 @@ public class MAINFARROUTERED {
         route.addEvent(Route.Action.WAIT,3);
 
         //intake park human
+        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
+       // route.addEvent(Route.Action.SLOW,10);
 
 //        route.addLocation(route.helpcollect2, LINE, HEAD_LINEAR, Math.toRadians(0));
 //        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
@@ -66,7 +67,7 @@ public class MAINFARROUTERED {
         route.addFunction(route::wheelOff);
         // go to pos lever wiffles
         route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
+       // route.addEvent(Route.Action.SLOW,10);
         route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
         //SHOOT  WIFFLES
         route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
@@ -80,7 +81,7 @@ public class MAINFARROUTERED {
         switch (lastLocation){
             case GOAL4 :
                 route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-                route.addEvent(Route.Action.SLOW,10);
+              //  route.addEvent(Route.Action.SLOW,10);
                 route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
                 //SHOOT  WIFFLES
                 route.addFunction(route::shootWiffleClose);

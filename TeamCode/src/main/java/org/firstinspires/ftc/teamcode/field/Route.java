@@ -244,7 +244,7 @@ public class Route
         pregotoparkwiffle = new Pose2d (sx * 15,-40,flip +sh*Math.toRadians(90));
         gotoparkwiffle = new Pose2d (sx * 50,-40,flip +sh*Math.toRadians(90));
         pregotogoalwiffles= new Pose2d (sx * 31,7,flip +sh*Math.toRadians(90));
-        gotogoalwiffles= new Pose2d (sx * 53,7,flip +sh*Math.toRadians(90));
+        gotogoalwiffles= new Pose2d (sx * 54.5,7,flip +sh*Math.toRadians(90));
 
         parkInside1Red = new Pose2d(sx * 17,37,flip +sh*Math.toRadians(90));
         parkInside1Blue = new Pose2d(sx * -16,38,flip +sh*Math.toRadians(90));
@@ -276,9 +276,9 @@ public class Route
 
 
 
-        moveToParkBlue = new Pose2d (sx * -20, -18, flip + sh*Math.toRadians(270));
+        moveToParkBlue = new Pose2d (sx * -20, -17, flip + sh*Math.toRadians(270));
         collect2Blue = new Pose2d (sx * -56, -41, flip + sh*Math.toRadians(267));
-        helpcollect5Blue = new Pose2d (sx * -71, -18, flip + sh*Math.toRadians(265));
+        helpcollect5Blue = new Pose2d (sx * -66, -17, flip + sh*Math.toRadians(265));
         helpcollect4Blue = new Pose2d (sx * -68, -41, flip + sh*Math.toRadians(265));
         helpcollect3Blue = new Pose2d (sx * -62, -41, flip + sh*Math.toRadians(266));
         helpcollect2Blue= new Pose2d (sx * -50, -41, flip + sh*Math.toRadians(268));
@@ -414,12 +414,12 @@ public class Route
         shootfarfaronred = new Pose2d (16, -57,Math.toRadians(70));
         shootfarfarfaronred = new Pose2d (15, -57,Math.toRadians(70));
         shootfarfarfarfaronred = new Pose2d (15, -58,Math.toRadians(66.5));
-        moveToPark = new Pose2d( 29,-40,Math.toRadians(90));
-        helpcollect5 = new Pose2d(57,-40,Math.toRadians(90));
+        moveToPark = new Pose2d( 29,-36,Math.toRadians(90));
+        helpcollect5 = new Pose2d(57,-36,Math.toRadians(90));
 
 
-        moveToLeverblue = new Pose2d(-17.25, -2 ,Math.toRadians(255.65));
-        helpCollectLever5blue = new Pose2d(-58, 10,Math.toRadians(251.51));
+        moveToLeverblue = new Pose2d(-17.25, -2 ,Math.toRadians(251.65));
+        helpCollectLever5blue = new Pose2d(-58, 10,Math.toRadians(249));
 
 
 
@@ -427,6 +427,7 @@ public class Route
         moveToLever = new Pose2d(31, -20 ,Math.toRadians(104.35));
         helpCollectLever5 = new Pose2d(61.36, -14,Math.toRadians(104.49));
         shootGoalWhiffles = new Pose2d(12,8,Math.toRadians(49.63));
+        shootGoalWhifflesinside = new Pose2d(10,9,Math.toRadians(49.63));
         route5movementfromstart= new Pose2d(25,37,Math.toRadians(35));
 
 
@@ -1333,6 +1334,7 @@ public void moveToPosition4(){
     protected Pose2d intakeGoalBlue;
     protected Pose2d intakeGoalWhiffles;
     protected Pose2d shootGoalWhiffles;
+    protected Pose2d shootGoalWhifflesinside;
     protected Pose2d route5movementfromstart;
 
 

@@ -42,20 +42,22 @@ public class GOALROUTERED {
 
         route.addLocation(route. redGoal, START, HEAD_LINEAR);
         route.addFunction(route::shootWiffleClose);
-        route.addLocation(route.route5movementfromstart, LINE, HEAD_LINEAR, Math.toDegrees(0));
-        route.makeNewTraj();
+        //route.addLocation(route.route5movementfromstart, LINE, HEAD_LINEAR, Math.toDegrees(0));
+       // route.makeNewTraj();
         route.addLocation(route. shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
         route.addFunction(route::shoot3Wiffles);
         route.addEvent(Route.Action.WAIT,3);
+        route.addFunction(route::intakeonandthreeTransitionsDown);
+
 
         //intake spot3
         route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addEvent(Route.Action.SLOW,10);
+        //route.addEvent(Route.Action.SLOW,10);
         route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
         //SHOOT  WIFFLES
         //close
         route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
-        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
+        route.addLocation(route.shootGoalWhiffles, SPLINE, HEAD_LINEAR, Math.toDegrees(130));
         route.addFunction(route::intakeOff);
         route.addFunction(route::shootWiffleClose);
         route.shootMotif(1,route.shootGoalWhiffles );
@@ -64,21 +66,21 @@ public class GOALROUTERED {
 
 //intake spot 4
         route.addLocation(route.pregotogoalwiffles,LINE,HEAD_LINEAR);
-        route.addEvent(Route.Action.SLOW,10);
+        //route.addEvent(Route.Action.SLOW,10);
         route.addLocation(route.gotogoalwiffles,LINE,HEAD_LINEAR);
         //SHOOT  WIFFLES
         route.makeNewTraj();
-        route.addLocation(route.route5movementfromstart, LINE, HEAD_LINEAR, Math.toDegrees(0));
+       // route.addLocation(route.route5movementfromstart, LINE, HEAD_LINEAR, Math.toDegrees(0));
         route.addFunction(route::shootWiffleClose);
-        route.addLocation(route.shootGoalWhiffles,LINE,HEAD_LINEAR);
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT, 3);
+        route.addLocation(route.shootGoalWhifflesinside,LINE,HEAD_LINEAR,Math.toDegrees(130));
+        route.shootMotif(1,route.shootGoalWhifflesinside );
+
 
 
 
         if (numshot==THREE) {
             route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
-            route.addEvent(Route.Action.SLOW,10);
+          //  route.addEvent(Route.Action.SLOW,10);
             route.addLocation(route.helpcollect5, LINE, HEAD_LINEAR, Math.toRadians(0));
 
             //shoot park wiffles
