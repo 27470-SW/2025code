@@ -42,17 +42,15 @@ public class GOALROUTERED {
 
         route.addLocation(route. redGoal, START, HEAD_LINEAR);
         route.addFunction(route::shootWiffleClose);
-        //route.addLocation(route.route5movementfromstart, LINE, HEAD_LINEAR, Math.toDegrees(0));
-       // route.makeNewTraj();
         route.addLocation(route. shootGoalWhiffles, LINE, HEAD_LINEAR, Math.toDegrees(0));
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,3);
+        route.shootMotif(1,route.shootGoalWhiffles );
         route.addFunction(route::intakeonandthreeTransitionsDown);
+        route.addFunction(route::wheelOff);
 
 
         //intake spot3
         route.addLocation(route.moveToLever, LINE, HEAD_LINEAR, Math.toRadians(0));
-        //route.addEvent(Route.Action.SLOW,10);
+        route.addFunction(route::shootWiffleClose);
         route.addLocation(route.helpCollectLever5, LINE, HEAD_LINEAR, Math.toRadians(0));
         //SHOOT  WIFFLES
         //close

@@ -41,19 +41,18 @@ public class MAINFARROUTEBLUE {
         route.addLocation(route.startSmallTriBlue, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
         route.addLocation(route.shootFarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(290));
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,3);
+        route.addEvent(Route.Action.WAIT,1.3);
+        route.shootMotif(1,route.shootFarPosBLUE );
 
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addLocation(route.moveToParkBlue, LINE, HEAD_LINEAR, Math.toRadians(0));
         //route.addEvent(Route.Action.SLOW,10);
         route.addLocation(route.helpcollect5Blue, LINE, HEAD_LINEAR, Math.toRadians(0));
-
+        route.addFunction(route::shootFar);
 
         route.addEvent(Route.Action.TANGENT, Math.toRadians(0));
         route.addLocation(route.shootFarfarPosBLUE, SPLINE, HEAD_LINEAR, Math.toRadians(290));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shootFar);
         route.shootMotif(1,route.shootFarfarPosBLUE );
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);
@@ -61,11 +60,12 @@ public class MAINFARROUTEBLUE {
         // go to pos lever wiffles
         route.addLocation(route.moveToLeverblue, LINE, HEAD_LINEAR, Math.toRadians(0));
         //route.addEvent(Route.Action.SLOW,10);
+        route.addFunction(route::shootWiffleClose);
         route.addLocation(route.helpCollectLever5blue, LINE, HEAD_LINEAR, Math.toRadians(0));
 
         route.makeNewTraj();
         route.addEvent(Route.Action.TANGENT,Math.toRadians(80));
-        route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toRadians(0));
+        //route.addLocation(route.aroundWhiffles, LINE, HEAD_LINEAR, Math.toRadians(0));
 
         //Shoot whiffles that are near the gate.
         route.addLocation(route.shootGateWhifflesBlue, SPLINE, HEAD_LINEAR, Math.toRadians(100));
@@ -74,6 +74,8 @@ public class MAINFARROUTEBLUE {
         route.shootMotif(1,route.shootGateWhifflesBlue );
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);
+
+        route.addLocation(route.shootGateWhifflesBluebackup, LINE, HEAD_LINEAR, Math.toRadians(100));
 
         switch (lastLocation){
             case GOAL4 :

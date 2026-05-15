@@ -43,25 +43,20 @@ public class MAINFARROUTERED {
         route.addLocation(route.startSmallTri, START, HEAD_LINEAR);
         route.addFunction(route::shootFar);
         route.addLocation(route.shootfarfaronred, LINE, HEAD_LINEAR, Math.toRadians(0));
-        route.addFunction(route::shoot3Wiffles);
-        route.addEvent(Route.Action.WAIT,3);
+        route.addEvent(Route.Action.WAIT,1.3);
+        route.shootMotif(1,route.shootfarfaronred );
+        route.addFunction(route::intakeonandthreeTransitionsDown);
 
         //intake park human
-        route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addLocation(route.moveToPark, LINE, HEAD_LINEAR, Math.toRadians(0));
-       // route.addEvent(Route.Action.SLOW,10);
-
-//        route.addLocation(route.helpcollect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.collect2, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.helpcollect3, LINE, HEAD_LINEAR, Math.toRadians(0));
-//        route.addLocation(route.helpcollect4, LINE, HEAD_LINEAR, Math.toRadians(0));
         route.addLocation(route.helpcollect5, LINE, HEAD_LINEAR, Math.toRadians(0));
-       
-	    //shoot park wiffles
+        route.addFunction(route::shootFar);
+
+
+        //shoot park wiffles
       	route.addEvent(Route.Action.TANGENT, Math.toRadians(180));
         route.addLocation(route.shootfarfaronred, SPLINE, HEAD_LINEAR, Math.toDegrees(100));
         route.addFunction(route::intakeOff);
-        route.addFunction(route::shootFar);
         route.shootMotif(1,route.shootfarfaronred );
         route.addFunction(route::intakeonandthreeTransitionsDown);
         route.addFunction(route::wheelOff);

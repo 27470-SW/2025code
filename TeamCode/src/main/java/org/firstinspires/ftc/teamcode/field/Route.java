@@ -184,7 +184,7 @@ public class Route
         intakeParkWhiffles = new Pose2d(sx * 52, -37, flip + sh*Math.toRadians(90));
         shootParkWhiffles = new Pose2d(sx * 13, 43.1, flip + sh*Math.toRadians(30));
         redGoal = new Pose2d(sx * 48.41, 47.94, flip + sh*Math.toRadians(38.5));
-        blueGoal = new Pose2d(sx * -48.41, 47.94, flip + sh*Math.toRadians(128.5));
+        blueGoal = new Pose2d(sx * -45.41, 53, flip + sh*Math.toRadians(128.5));
         blueWall  = new Pose2d(sx * -36, 62, flip + sh*Math.toRadians(270));
         aroundPartnerBlue = new Pose2d(sx * -13, 43.1, flip + sh*Math.toRadians(150));
 
@@ -192,13 +192,17 @@ public class Route
         intakeGateBlue = new Pose2d(sx * -31.3, -14, flip + sh*Math.toRadians(-90));
         intakeGateWhifflesBlue = new Pose2d(sx * -52, -14, flip + sh*Math.toRadians(-90));
         shootGateWhifflesBlue = new Pose2d(sx * -12, 13,flip + sh*Math.toRadians(130.37));
+        shootGateWhifflesBluebackup = new Pose2d(sx * -12, 0,flip + sh*Math.toRadians(130.37));
         aroundWhiffles = new Pose2d(sx * -28, -5, flip + sh*Math.toRadians(150));
 
-        intakeGoalBlue = new Pose2d(sx * -31.3, 7, flip + sh*Math.toRadians(180));
+        intakeGoalBlue = new Pose2d(sx * -20, 25, flip + sh*Math.toRadians(255));
+
+
 
         shootGoalWhifflesBlue = new Pose2d(sx * -20.03, 10.72, flip + sh*Math.toRadians(130.37));
+        intakeGoalWhifflesBlue = new Pose2d(sx * -59 , 28, flip + sh*Math.toRadians(255));
 
-        intakeGoalWhifflesBlue = new Pose2d(sx * -53 , 7, flip + sh*Math.toRadians(270));
+
 
         intakeParkBlue = new Pose2d(sx * -13, -29.4, flip + sh*Math.toRadians(270));
         intakeParkWhifflesBlue = new Pose2d(sx * -51, -29.4, flip + sh*Math.toRadians(270));
@@ -209,8 +213,8 @@ public class Route
 
         startSmallTriBlue = new Pose2d(sx * -10, -60, flip + sh*Math.toRadians(90));
         humanZone = new Pose2d(sx * -55, -50, flip + sh*Math.toRadians(270));
-        shootFarPosBLUE = new Pose2d(sx * -20, -53, flip + sh*Math.toRadians(110));
-        shootFarfarPosBLUE = new Pose2d(sx * -20, -52, flip + sh*Math.toRadians(110));
+        shootFarPosBLUE = new Pose2d(sx * -20, -53, flip + sh*Math.toRadians(109.2));
+        shootFarfarPosBLUE = new Pose2d(sx * -20, -52, flip + sh*Math.toRadians(109));
 
         shootFarPos = new Pose2d (sx * 15, -58, flip + sh*Math.toRadians(70));
         shootFarPosB = new Pose2d (sx * -16, -58, flip + sh*Math.toRadians(290));
@@ -278,7 +282,7 @@ public class Route
 
         moveToParkBlue = new Pose2d (sx * -20, -17, flip + sh*Math.toRadians(270));
         collect2Blue = new Pose2d (sx * -56, -41, flip + sh*Math.toRadians(267));
-        helpcollect5Blue = new Pose2d (sx * -66, -17, flip + sh*Math.toRadians(265));
+        helpcollect5Blue = new Pose2d (sx * -62, -17, flip + sh*Math.toRadians(265));
         helpcollect4Blue = new Pose2d (sx * -68, -41, flip + sh*Math.toRadians(265));
         helpcollect3Blue = new Pose2d (sx * -62, -41, flip + sh*Math.toRadians(266));
         helpcollect2Blue= new Pose2d (sx * -50, -41, flip + sh*Math.toRadians(268));
@@ -419,7 +423,8 @@ public class Route
 
 
         moveToLeverblue = new Pose2d(-17.25, -2 ,Math.toRadians(251.65));
-        helpCollectLever5blue = new Pose2d(-58, 10,Math.toRadians(249));
+        helpCollectLever5blue = new Pose2d(-56, 10,Math.toRadians(255));
+        helpCollectLever5bluefar = new Pose2d(-69, 8.3,Math.toRadians(255));
 
 
 
@@ -954,8 +959,14 @@ public void moveToPosition4(){
     protected void shootFar(){
         shootingFar = true;
         robot.shooter.defaultFarShooterTraj();
-        robot.shooter.controlShooterW.setWheelVelocity(1600);
+        robot.shooter.controlShooterW.setWheelVelocity(1500);
          RobotLog.dd(TAG, "Turn on wheel");
+    }
+    protected void shootFar3(){
+        shootingFar = true;
+        robot.shooter.defaultFarShooterTraj();
+        robot.shooter.controlShooterW.setWheelVelocity(1750);
+        RobotLog.dd(TAG, "Turn on wheel");
     }
     Pose2d goalLocation;
     double distanceToTheGoal;
@@ -1048,7 +1059,7 @@ public void moveToPosition4(){
 
     protected void shoot3Wiffles(){
         intakeOff();
-        shootFar();
+        shootFar3();
 
         mTimerShoot3 = new Timer();
         mTtShoot3 = new TimerTask() {
@@ -1338,6 +1349,7 @@ public void moveToPosition4(){
     protected Pose2d route5movementfromstart;
 
 
+    protected Pose2d helpCollectLever5bluefar;
 
 
     protected Pose2d helpCollectLever5blue;
@@ -1352,6 +1364,7 @@ public void moveToPosition4(){
     protected Pose2d intakeGoalWhifflesBlue;
     protected Pose2d shootGateWhiffles;
     protected Pose2d shootGateWhifflesBlue;
+    protected Pose2d shootGateWhifflesBluebackup;
     protected Pose2d aroundWhiffles;
     protected Pose2d shootGoalWhifflesBlue;
     protected Pose2d intakePark;
