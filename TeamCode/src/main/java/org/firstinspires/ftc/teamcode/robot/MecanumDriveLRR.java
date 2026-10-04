@@ -355,7 +355,7 @@ public class MecanumDriveLRR extends MecanumDrive
 
 
     // Stall detection configuration
-    public static boolean ENABLE_STALL_PROTECTION = true;
+    public static boolean ENABLE_STALL_PROTECTION = false;
     public static double STALL_VELOCITY_THRESHOLD = 1.0; // inches/sec - velocity below this is considered stalled
     public static double STALL_POWER_THRESHOLD = 0.15;   // Motor power above this will trigger stall check
     public static double STALL_DETECTION_TIME_MS = 150;  // Milliseconds before triggering stall protection

@@ -58,14 +58,16 @@ public class Shooter
             shooterW.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shooterW.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shooterW.setMode(RUN_USING_ENCODER);
+
+            controlShooterW = new PIDControl(hwMap, "shoot");
+            controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
+
             shooterW2 = hwMap.get(DcMotorEx.class, "shoot2");
             shooterW2.setDirection(DcMotor.Direction.FORWARD);
             shooterW2.setPower(0);
             shooterW2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             shooterW2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shooterW2.setMode(RUN_USING_ENCODER);
-            controlShooterW = new PIDControl(hwMap, "shoot");
-            controlShooterW.init(SHOOTER_KP, SHOOTER_KI, SHOOTER_KD, SHOOTER_KF);
 
             success = true;
         }
@@ -107,11 +109,11 @@ public class Shooter
 
         vs = hwMap.get(VoltageSensor.class, "Control Hub");
         shooter1 = new Transition("shooter1", hwMap);
-        shooter2 = new Transition("shooter2", hwMap);
-        shooter3 = new Transition("shooter3", hwMap);
+    //    shooter2 = new Transition("shooter2", hwMap);
+    //    shooter3 = new Transition("shooter3", hwMap);
         if(shooter1 != null) shooter1.init(TRANSITION_RESTPOINT1, true);
-        if(shooter2 != null) shooter2.init(TRANSITION_RESTPOINT2, true);
-        if(shooter3 != null) shooter3.init(TRANSITION_RESTPOINT3, false);
+    //    if(shooter2 != null) shooter2.init(TRANSITION_RESTPOINT2, true);
+    //    if(shooter3 != null) shooter3.init(TRANSITION_RESTPOINT3, false);
 
         setPIDF(new PIDFCoefficients(80.0, 0.0, 0.0,14.9));
 
@@ -140,8 +142,7 @@ public class Shooter
 
 
             double update = controlShooterW.update();
-            shooterW2.setPower(update);
-
+            if(null != shooterW2) shooterW2.setPower(update);
 
             double currentVelocity = controlShooterW.getVelocity();
             double error = targetVelocity - currentVelocity;
@@ -294,8 +295,8 @@ public void stopWheel(){
     }
     public void resetTransition() {
         shooter1.moveToStartPos();
-        shooter2.moveToStartPos();
-        shooter3.moveToStartPos();
+    //    shooter2.moveToStartPos();
+    //    shooter3.moveToStartPos();
         RobotLog.dd(TAG,"reseting transtions");
     }
 

@@ -323,9 +323,9 @@ public class RobotConstants
 
   public static BasicBot.DriveDir  DT_DIR = BasicBot.DriveDir.PUSHER;
   public static DcMotorSimple.Direction DT_FLDIR = DcMotorSimple.Direction.REVERSE;
-  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.FORWARD;
   public static DcMotorSimple.Direction DT_BLDIR = DcMotorSimple.Direction.FORWARD;
-  public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_FRDIR = DcMotorSimple.Direction.REVERSE;
+  public static DcMotorSimple.Direction DT_BRDIR = DcMotorSimple.Direction.FORWARD;
 
   public static AxesOrder HUB_ORDER = AxesOrder.ZYX;
   public static AxesSigns HUB_SIGNS = AxesSigns.PPP;

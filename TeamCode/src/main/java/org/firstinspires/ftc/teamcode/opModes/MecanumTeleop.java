@@ -329,9 +329,9 @@ public class MecanumTeleop extends InitLinearOpMode
 
         if (robot.motors.size() == 0) return;
 
-        raw_lr =  gpad1.value(ManagedGamepad.AnalogInput.R_STICK_X);
-        raw_fb = -gpad1.value(ManagedGamepad.AnalogInput.R_STICK_Y);
-        raw_turn =  gpad1.value(ManagedGamepad.AnalogInput.L_STICK_X);
+        raw_lr =  gpad1.value(ManagedGamepad.AnalogInput.L_STICK_X);
+        raw_fb = -gpad1.value(ManagedGamepad.AnalogInput.L_STICK_Y);
+        raw_turn =  gpad1.value(ManagedGamepad.AnalogInput.R_STICK_X);
 
         //boolean strt =  gpad1.pressed(ManagedGamepad.Button.START);
         boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
@@ -407,7 +407,7 @@ public class MecanumTeleop extends InitLinearOpMode
         }
         else
         {
-            driveInput = new Vector2d(-lr, -fb);
+            driveInput = new Vector2d(fb, -lr);
         }
 
         double maxCPS = RobotConstants.DT_SAF_CPS;
@@ -891,29 +891,29 @@ public class MecanumTeleop extends InitLinearOpMode
             robot.shooter.onAutoTraj();
         }
 
-        if (rightJoyPressed){
-            robot.goPark();
-        }
+//        if (rightJoyPressed){
+//            robot.goPark();
+//        }
 
-        if (abs(rightJoyY) >= 0.2){
-            robot.park.moveAtControlRate(rightJoyY);
-        }else{
-            robot.park.moveAtControlRate(0);
-        }
+//        if (abs(rightJoyY) >= 0.2){
+//            robot.park.moveAtControlRate(rightJoyY);
+//        }else{
+//            robot.park.moveAtControlRate(0);
+//        }
 
         if(xDown && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(-.01);
             RobotLog.dd(TAG, "moving transition 1 down");
         }
-        if(xDown && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(-.01);
-            RobotLog.dd(TAG, "moving transition 2 down");}
-        if(xDown && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(-.01);
-            RobotLog.dd(TAG, "moving transition 3 down");}
+//        if(xDown && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(-.01);
+//            RobotLog.dd(TAG, "moving transition 2 down");}
+//        if(xDown && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(-.01);
+//            RobotLog.dd(TAG, "moving transition 3 down");}
         if(yUp && dpadLeft) { robot.shooter.shooter1.moveTransitionLittle(.01);
             RobotLog.dd(TAG, "moving transition 1 up");}
-        if(yUp && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(.01);
-            RobotLog.dd(TAG, "moving transition 2 up"); }
-        if(yUp && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(.01);
-            RobotLog.dd(TAG, "moving transition 3 up");}
+//        if(yUp && dpadUp) { robot.shooter.shooter2.moveTransitionLittle(.01);
+//            RobotLog.dd(TAG, "moving transition 2 up"); }
+//        if(yUp && dpadRight) { robot.shooter.shooter3.moveTransitionLittle(.01);
+//            RobotLog.dd(TAG, "moving transition 3 up");}
           if(leftTrig >= 0.3) {
               if(autoTrajEngaged) {
                   distanceToTheGoal = calcDistanceToGoal();
@@ -944,28 +944,27 @@ public class MecanumTeleop extends InitLinearOpMode
               robot.shooter.stopWheel();
           }
 
-        if (dpadDown ||dpadUp||dpadRight||dpadLeft){
-            RobotLog.dd(TAG,"Dpad pressed");
+//        if (dpadDown ||dpadUp||dpadRight||dpadLeft){
+//            RobotLog.dd(TAG,"Dpad pressed");
 
-            if(dpadDown){
-                robot.shooter.setBallCount(3);
-            }
-            else {
-                robot.shooter.setBallCount(1);
-            }
+//            if(dpadDown){
+//                robot.shooter.setBallCount(3);
+//            }
+//            else {
+//                robot.shooter.setBallCount(1);
+//            }
 
 
             if(rightTrig >= 0.3){
-
-                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT,overRideShoot);
-                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT,overRideShoot);
-                if(dpadDown || dpadUp) robot.shooter.shoot(CENTER,overRideShoot);
+//                if(dpadDown || dpadRight) robot.shooter.shoot(RIGHT,overRideShoot);
+//                if(dpadDown || dpadLeft) robot.shooter.shoot(LEFT,overRideShoot);
+//                if(dpadDown || dpadUp)
+                    robot.shooter.shoot(CENTER,overRideShoot);
 
                 RobotLog.dd(TAG,"Dpad + trigger pressed");
-
             }
 
-        }
+//        }
 //        else {
 //            if(yUp){
 //                robot.shooter.wheelGuards.setPosition(robot.shooter.wheelGuards.getPosition()+0.5);
@@ -981,8 +980,6 @@ public class MecanumTeleop extends InitLinearOpMode
             robot.shooter.changeShootTraj(leftJoyY, trajLimitBreaker);
             stopTrajM = true;
             RobotLog.dd(TAG,"Shooter Traj Y changed up or down");
-
-
         }
         else if(stopTrajM){
             robot.shooter.changeShootTraj(0, false);

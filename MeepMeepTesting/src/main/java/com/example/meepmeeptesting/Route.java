@@ -138,14 +138,14 @@ public abstract class Route
 
          if (startPos == START_SAMPLES)
          {
-             strtY = 0.5 * ITD_Field.tileWidth;
+             strtY = 0.5 * Decode_Field.tileWidth;
           }
          else
          {
-             strtY = -1.5 * ITD_Field.tileWidth;
+             strtY = -1.5 * Decode_Field.tileWidth;
          }
 
-         strtX =  3.0f * ITD_Field.tileWidth - botBackToCtr;
+         strtX =  3.0f * Decode_Field.tileWidth - botBackToCtr;
 
          strtH = Math.toRadians(180.0);
 
