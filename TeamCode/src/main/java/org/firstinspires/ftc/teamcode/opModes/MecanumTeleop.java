@@ -216,6 +216,7 @@ public class MecanumTeleop extends InitLinearOpMode
             poseEstimate.getX(), poseEstimate.getY(), Math.toDegrees(poseEstimate.getHeading()));
 
      //   dashboard.displayText(l++, "Dir " + robot.getDriveDir());
+        dashboard.displayText(l++, "Drive mode: " + (useField ? "FIELD oriented" : "ROBOT oriented") + " (Y to toggle)");
         dashboard.displayText(l++, posStr);
         dashboard.displayText(l++, cntStr);
         dashboard.displayText(l++, velStr);
@@ -334,12 +335,11 @@ public class MecanumTeleop extends InitLinearOpMode
         raw_turn =  gpad1.value(ManagedGamepad.AnalogInput.R_STICK_X);
 
         //boolean strt =  gpad1.pressed(ManagedGamepad.Button.START);
-        boolean  goto4Tag = gpad1.just_pressed(ManagedGamepad.Button.Y);
         boolean incr = gpad1.just_pressed(ManagedGamepad.Button.D_UP);
         boolean decr = gpad1.just_pressed(ManagedGamepad.Button.D_DOWN);
         boolean hspd = gpad1.pressed(ManagedGamepad.Button.R_TRIGGER);
         boolean slow = gpad1.pressed(ManagedGamepad.Button.L_TRIGGER);
-        boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y);
+        boolean tglF = gpad1.just_pressed(ManagedGamepad.Button.Y); // toggle field-oriented drive
         boolean autoDriveAngle = gpad1.pressed(ManagedGamepad.Button.B);
         boolean resetPose = gpad1.just_pressed(ManagedGamepad.Button.D_LEFT) && gpad1.pressed(ManagedGamepad.Button.START);
         if(resetPose){
@@ -399,11 +399,13 @@ public class MecanumTeleop extends InitLinearOpMode
 
         if (tglF) useField = !useField;
 
+        // Robot-relative input in RoadRunner convention: x = forward, y = left
         Vector2d driveInput;
         if(useField)
         {
-            // Rotate input vector by the inverse of current bot heading
-            driveInput = new Vector2d(lr, fb).rotated(-poseEstimate.getHeading());
+            // Rotate the stick vector by the inverse of the bot heading so that
+            // pushing the stick "up" always drives away from the driver
+            driveInput = new Vector2d(fb, -lr).rotated(-poseEstimate.getHeading());
         }
         else
         {
