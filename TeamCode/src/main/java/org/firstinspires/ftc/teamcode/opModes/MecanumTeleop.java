@@ -218,6 +218,13 @@ public class MecanumTeleop extends InitLinearOpMode
      //   dashboard.displayText(l++, "Dir " + robot.getDriveDir());
         dashboard.displayText(l++, "Drive mode: " + (useField ? "FIELD oriented" : "ROBOT oriented") + " (Y to toggle)");
         dashboard.displayText(l++, posStr);
+        if (robot.shooter != null && robot.shooter.shooter1 != null) {
+            dashboard.displayText(l++, String.format(Locale.US,
+                "Dumper pos %.2f (rest %.2f, dump %.2f)",
+                robot.shooter.shooter1.percent,
+                RobotConstants.TRANSITION_RESTPOINT1,
+                RobotConstants.TRANSITION_RESTPOINT1 + RobotConstants.TRANSITION_MOVEMENT));
+        }
         dashboard.displayText(l++, cntStr);
         dashboard.displayText(l++, velStr);
        // dashboard.displayText(l++, lStr);

@@ -214,9 +214,9 @@ public class Shooter
         if(moveShooter1 != null) moveShooter1.setPosition(moveShooter1.getPosition());
         if(moveShooter2 != null) moveShooter2.setPosition(moveShooter2.getPosition());
         if(moveShooterM != null) moveShooterM.setVelocity(cps);
-        shooter1.stop();
-        shooter2.stop();
-        shooter3.stop();
+        if(shooter1 != null) shooter1.stop();
+        if(shooter2 != null) shooter2.stop();
+        if(shooter3 != null) shooter3.stop();
     }
 public void stopWheel(){
         cps = 0.0;
@@ -294,7 +294,7 @@ public void stopWheel(){
         if(shooterW2 != null) shooterW2.setMode(mode);
     }
     public void resetTransition() {
-        shooter1.moveToStartPos();
+        if(shooter1 != null) shooter1.moveToStartPos();
     //    shooter2.moveToStartPos();
     //    shooter3.moveToStartPos();
         RobotLog.dd(TAG,"reseting transtions");
@@ -425,17 +425,17 @@ public void stopWheel(){
     public void shoot(BALL_CHOICE ball, boolean force){
         wheelGuardsUp();
         if (atTargetVel() || force) {
+            Transition t;
             switch (ball) {
+                case CENTER: t = shooter2; break;
+                case RIGHT:  t = shooter3; break;
                 case LEFT:
-                    shooter1.startTransition();
-                    break;
-                case CENTER:
-                    shooter2.startTransition();
-                    break;
-                case RIGHT:
-                    shooter3.startTransition();
-                    break;
+                default:     t = shooter1; break;
             }
+            // Only shooter1 (the dumper) is set up on this bot; use it if the
+            // requested transition isn't configured (prevents a NullPointerException)
+            if (t == null) t = shooter1;
+            if (t != null) t.startTransition();
         } else{
 
         }
